@@ -12,7 +12,7 @@ change an agent's output on the same input.
 - Operating contract (`CLAUDE.md` / `AGENTS.md`) with 10 invariants and
   bar-protection triggers
 - `templates/CONSTRAINTS.template.md` — the project quality bar as a contract
-- 13 slash commands and 6 subagents
+- 15 slash commands and 6 subagents
 - 12 reference checklists and 8 document templates
 - `scripts/validate_repo.py`, `scripts/check_triggers.py`, `scripts/new_skill.py`
 - Trigger eval case per skill

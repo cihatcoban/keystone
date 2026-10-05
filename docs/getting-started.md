@@ -3,7 +3,7 @@
 ## 1. Install
 
 ```bash
-git clone <your-remote> keystone
+git clone https://github.com/cihatcoban/keystone.git
 cd keystone
 claude --plugin-dir "$(pwd)"
 ```
