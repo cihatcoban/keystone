@@ -1,0 +1,32 @@
+{
+  "skill_name": "refactoring-and-simplification",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "Clean this module up",
+        "top_k": 3
+      },
+      {
+        "prompt": "This legacy code has no tests and I need to change it",
+        "top_k": 3
+      },
+      {
+        "prompt": "Reduce the complexity of this function",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "Add a new endpoint"
+      },
+      {
+        "prompt": "Set the SLO"
+      }
+    ]
+  },
+  "expectations": [
+    "'refactoring-and-simplification' is selected among the top candidate skills",
+    "The skill's exit checklist items are addressed in the response",
+    "No CONSTRAINTS.md threshold is lowered to complete the work"
+  ]
+}

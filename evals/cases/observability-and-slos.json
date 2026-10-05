@@ -1,0 +1,32 @@
+{
+  "skill_name": "observability-and-slos",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "We could not tell what happened during the outage",
+        "top_k": 3
+      },
+      {
+        "prompt": "Define an SLO for this service",
+        "top_k": 3
+      },
+      {
+        "prompt": "What should we log here?",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "Refactor this class"
+      },
+      {
+        "prompt": "Write the migration"
+      }
+    ]
+  },
+  "expectations": [
+    "'observability-and-slos' is selected among the top candidate skills",
+    "The skill's exit checklist items are addressed in the response",
+    "No CONSTRAINTS.md threshold is lowered to complete the work"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "recommendations": [
+    "anthropic.claude-code",
+    "yzhang.markdown-all-in-one",
+    "davidanson.vscode-markdownlint",
+    "bierner.markdown-mermaid",
+    "ms-python.python",
+    "charliermarsh.ruff",
+    "redhat.vscode-yaml",
+    "eamodio.gitlens",
+    "streetsidesoftware.code-spell-checker",
+    "ms-vscode-remote.remote-wsl",
+    "ms-vscode-remote.remote-containers"
+  ],
+  "unwantedRecommendations": ["ms-python.autopep8", "ms-python.black-formatter"]
+}

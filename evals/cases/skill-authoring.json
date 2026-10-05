@@ -1,0 +1,32 @@
+{
+  "skill_name": "skill-authoring",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "Add a new skill to this pack",
+        "top_k": 3
+      },
+      {
+        "prompt": "This skill never triggers when I ask for it",
+        "top_k": 3
+      },
+      {
+        "prompt": "Write a domain pack for our product",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "Review my pull request"
+      },
+      {
+        "prompt": "Why is this query slow?"
+      }
+    ]
+  },
+  "expectations": [
+    "'skill-authoring' is selected among the top candidate skills",
+    "The skill's exit checklist items are addressed in the response",
+    "No CONSTRAINTS.md threshold is lowered to complete the work"
+  ]
+}

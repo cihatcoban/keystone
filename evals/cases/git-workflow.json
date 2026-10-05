@@ -1,0 +1,32 @@
+{
+  "skill_name": "git-workflow",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "Write a commit message for this",
+        "top_k": 3
+      },
+      {
+        "prompt": "Split this messy working tree into clean commits",
+        "top_k": 3
+      },
+      {
+        "prompt": "How do I find the commit that broke this?",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "Design the schema"
+      },
+      {
+        "prompt": "Profile memory usage"
+      }
+    ]
+  },
+  "expectations": [
+    "'git-workflow' is selected among the top candidate skills",
+    "The skill's exit checklist items are addressed in the response",
+    "No CONSTRAINTS.md threshold is lowered to complete the work"
+  ]
+}

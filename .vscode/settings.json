@@ -1,0 +1,52 @@
+{
+  // ---- Markdown is the primary language of this repository ----
+  "[markdown]": {
+    "editor.defaultFormatter": "yzhang.markdown-all-in-one",
+    "editor.wordWrap": "wordWrapColumn",
+    "editor.wordWrapColumn": 88,
+    "editor.rulers": [88],
+    "editor.quickSuggestions": { "comments": false, "strings": false, "other": false },
+    "files.trimTrailingWhitespace": false
+  },
+  "markdownlint.config": {
+    "MD013": { "line_length": 88, "tables": false, "code_blocks": false },
+    "MD024": { "siblings_only": true },
+    "MD033": false,
+    "MD041": false
+  },
+
+  // ---- Python tooling for the validators ----
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": { "source.fixAll.ruff": "explicit" }
+  },
+
+  // ---- Editor ----
+  "editor.renderWhitespace": "boundary",
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  "files.eol": "\n",
+
+  "files.associations": {
+    "SKILL.md": "markdown",
+    "CLAUDE.md": "markdown",
+    "AGENTS.md": "markdown",
+    "*.template.md": "markdown"
+  },
+
+  "yaml.schemas": {
+    "https://json.schemastore.org/github-workflow.json": ".github/workflows/*.yml"
+  },
+
+  "cSpell.language": "en",
+  "cSpell.words": [
+    "adversarial", "backfill", "backoff", "backpressure", "bulkhead", "codemod",
+    "devcontainer", "idempotency", "idempotent", "keystone", "kebab",
+    "observability", "pgvector", "postmortem", "runbook", "semver", "STRIDE",
+    "bisect", "ratchet", "hexagonal", "choreography", "mikado"
+  ],
+
+  "search.exclude": { "**/.git": true },
+  "terminal.integrated.defaultProfile.linux": "bash"
+}

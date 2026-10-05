@@ -1,0 +1,7 @@
+# Default owner for everything
+*                       @cihatcoban
+
+# The operating contract and quality bar change deliberately
+/CLAUDE.md              @cihatcoban
+/AGENTS.md              @cihatcoban
+/templates/CONSTRAINTS.template.md @cihatcoban

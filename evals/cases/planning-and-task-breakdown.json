@@ -1,0 +1,32 @@
+{
+  "skill_name": "planning-and-task-breakdown",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "Break this spec into tasks",
+        "top_k": 3
+      },
+      {
+        "prompt": "How should we sequence this work?",
+        "top_k": 3
+      },
+      {
+        "prompt": "This task feels too big to start",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "Write the acceptance criteria"
+      },
+      {
+        "prompt": "Threat-model this endpoint"
+      }
+    ]
+  },
+  "expectations": [
+    "'planning-and-task-breakdown' is selected among the top candidate skills",
+    "The skill's exit checklist items are addressed in the response",
+    "No CONSTRAINTS.md threshold is lowered to complete the work"
+  ]
+}

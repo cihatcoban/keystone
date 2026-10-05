@@ -1,0 +1,32 @@
+{
+  "skill_name": "architecture-decisions",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "Should we use a queue or direct calls?",
+        "top_k": 3
+      },
+      {
+        "prompt": "Write an ADR for this choice",
+        "top_k": 3
+      },
+      {
+        "prompt": "Why is the system built this way?",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "Rename this variable"
+      },
+      {
+        "prompt": "Add a test for the parser"
+      }
+    ]
+  },
+  "expectations": [
+    "'architecture-decisions' is selected among the top candidate skills",
+    "The skill's exit checklist items are addressed in the response",
+    "No CONSTRAINTS.md threshold is lowered to complete the work"
+  ]
+}

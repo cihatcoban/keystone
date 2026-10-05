@@ -1,0 +1,117 @@
+---
+name: ai-integration-guardrails
+description: Puts a language model into a product safely - bounded role, schema-validated output, prompt-injection defense, cost caps, evaluation and human decision points. Use when adding an LLM or ML model to a user-facing or automated path. Triggers - add AI to this, LLM feature, use GPT for, model in production, prompt injection, hallucination, AI agent in our product, evaluate the model, RAG, structured output.
+---
+
+# AI Integration Guardrails
+
+A model is a **non-deterministic, occasionally confident, externally-controlled
+function**. Every property engineers rely on — same input same output, errors
+that look like errors, output that cannot contain an instruction — is absent.
+Code that treats a model call like a library call fails in ways that are hard
+to detect, because wrong output looks exactly like right output.
+
+## Decide the role first
+
+| Role | Risk | Requirement |
+|---|---|---|
+| **Suggest** — proposes, human accepts | Low | Make rejecting as easy as accepting |
+| **Draft** — produces content a human edits and sends | Low–medium | The human must be able to see the source material |
+| **Classify with confidence** — routes into buckets | Medium | Thresholds; a low-confidence path to a human |
+| **Extract** — pulls structure from text | Medium | Schema validation + a review path for low confidence |
+| **Decide** — acts without review | High | Only with deterministic bounds on the action space, full audit, and an undo |
+| **Act** — takes real-world actions via tools | Highest | Allow-listed tools, per-action limits, confirmation on anything irreversible |
+
+Default to the lowest role that solves the problem. Most "AI decides" designs
+work as "AI proposes, rule disposes" — with better accuracy, because the
+deterministic rule handles the cases it knows and the model handles the rest.
+
+**In a control path, the model must not be the final decision maker.** Score,
+rank, draft, summarize — then a deterministic rule or a person decides.
+
+## Output is untrusted data
+
+Model output may contain anything, including text engineered by a third party
+who controls part of the input.
+
+- **Always validate against a schema** before use. Malformed output after one
+  retry goes to a failure path — never a best-effort parse of prose.
+- Never pass output directly into SQL, a shell, a file path, a URL, an
+  `eval`, or a template without the same escaping you would apply to user input.
+- Never let output determine an authorization decision or a recipient address.
+- Constrain the space where the API supports it (JSON schema, function calling,
+  grammar). Cheaper and more reliable than instructing and hoping.
+
+## Prompt injection
+
+Any text from outside — a document, a web page, a user field, a tool's response
+— can contain instructions for the model. There is **no reliable defense at the
+prompt level**; the delimiters help and do not solve it.
+
+Design so a successful injection is survivable:
+
+1. **Separate data from instruction** structurally, and state that content
+   inside the data block is never an instruction.
+2. **Bound the action space.** The model can only invoke allow-listed tools with
+   validated arguments. If it cannot delete, injection cannot cause deletion.
+3. **Authorize the user, never the model.** Every tool call runs with the
+   requesting user's permissions, checked independently.
+4. **Confirm irreversible actions** with a human, showing exactly what will
+   happen.
+5. **Treat retrieved content as hostile** — RAG with untrusted sources is the
+   highest-risk pattern in common use.
+
+## Cost, latency, availability
+
+- Hard caps per request, per user, per day. Exceeding a cap fails loudly; it
+  does not silently continue.
+- Timeouts and a fallback path. A model provider is an external dependency with
+  worse availability than your database — `distributed-systems-and-resilience`
+  applies fully.
+- Cache by normalized input where semantics allow.
+- Never put a model call in a hot path that must be fast unless you have
+  measured its tail latency and accepted it.
+- Degrade gracefully: the feature disappears or falls back to a rule; the
+  product does not break.
+
+## Reproducibility
+
+Log for every call: prompt template **version**, model and version, parameters,
+input hash, output, token counts, latency, and the correlation id. Without this
+you cannot explain a past decision or reproduce a complaint.
+
+Prompts are code: versioned files in the repository, reviewed, never edited in
+a console. A prompt change is a behavior change and needs the same gates.
+
+## Evaluation
+
+"It looked good in testing" is not evidence. Build an eval set before shipping:
+
+- 50–200 real examples with expected outputs, including known-hard cases
+- Failure-mode tests: empty input, adversarial input, very long input,
+  wrong-language input, injection attempts
+- Run the eval in CI on every prompt or model change; block regressions
+- Measure the metric that matches the cost asymmetry — for most products, a
+  confident wrong answer costs far more than an abstention, so precision at the
+  auto-accept threshold matters more than overall accuracy
+- Track acceptance rate in production: how often does the human accept the
+  draft unchanged? Falling acceptance is the earliest signal of drift
+
+## Being honest with users
+
+Label model-generated content. Show sources for claims. Make correction easy
+and capture corrections as future eval data. Never present a generated number
+or citation as verified fact — fabricated specifics are the characteristic
+failure, and they are most convincing exactly where they matter most.
+
+## Exit checklist
+
+- [ ] Role chosen deliberately; the model is not the final decider in a control path
+- [ ] Output schema-validated; failure path defined
+- [ ] Output never reaches an interpreter, query, or path unescaped
+- [ ] Tool access allow-listed; user's permissions enforced per call
+- [ ] Irreversible actions require human confirmation
+- [ ] Cost caps, timeout and fallback in place
+- [ ] Prompts versioned in the repository; calls logged with versions
+- [ ] Eval set exists and runs in CI, including injection and edge cases
+- [ ] Generated content is labeled and correctable

@@ -1,0 +1,32 @@
+{
+  "skill_name": "using-skills",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "Which skill should I use for this?",
+        "top_k": 3
+      },
+      {
+        "prompt": "Where do I start with this task?",
+        "top_k": 3
+      },
+      {
+        "prompt": "What's the process for adding a new service here?",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "Fix the typo in the README"
+      },
+      {
+        "prompt": "Run the tests"
+      }
+    ]
+  },
+  "expectations": [
+    "'using-skills' is selected among the top candidate skills",
+    "The skill's exit checklist items are addressed in the response",
+    "No CONSTRAINTS.md threshold is lowered to complete the work"
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "skill_name": "concurrency-and-consistency",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "Two requests updating the same row lose data",
+        "top_k": 3
+      },
+      {
+        "prompt": "Which isolation level do we need?",
+        "top_k": 3
+      },
+      {
+        "prompt": "This test fails intermittently under load",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "Write the API docs"
+      },
+      {
+        "prompt": "Choose a logging library"
+      }
+    ]
+  },
+  "expectations": [
+    "'concurrency-and-consistency' is selected among the top candidate skills",
+    "The skill's exit checklist items are addressed in the response",
+    "No CONSTRAINTS.md threshold is lowered to complete the work"
+  ]
+}

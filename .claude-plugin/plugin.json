@@ -1,0 +1,10 @@
+{
+  "name": "keystone",
+  "version": "1.0.0",
+  "description": "Master-level engineering skills for AI coding agents — architecture-first, stack-agnostic, from intent to operations.",
+  "author": { "name": "Cihat" },
+  "license": "Apache-2.0",
+  "commands": ["./commands"],
+  "skills": "./skills",
+  "agents": "./agents"
+}

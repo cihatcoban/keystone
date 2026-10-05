@@ -1,0 +1,32 @@
+{
+  "skill_name": "data-modeling-and-storage",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "Design the schema for this feature",
+        "top_k": 3
+      },
+      {
+        "prompt": "Do we need a document database here?",
+        "top_k": 3
+      },
+      {
+        "prompt": "Write the migration to add this column",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "Review the PR"
+      },
+      {
+        "prompt": "Draft the incident timeline"
+      }
+    ]
+  },
+  "expectations": [
+    "'data-modeling-and-storage' is selected among the top candidate skills",
+    "The skill's exit checklist items are addressed in the response",
+    "No CONSTRAINTS.md threshold is lowered to complete the work"
+  ]
+}

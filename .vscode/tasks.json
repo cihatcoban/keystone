@@ -1,0 +1,64 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Validate repository",
+      "type": "shell",
+      "command": "python3 scripts/validate_repo.py",
+      "group": { "kind": "test", "isDefault": true },
+      "presentation": { "clear": true },
+      "problemMatcher": {
+        "owner": "keystone",
+        "fileLocation": ["relative", "${workspaceFolder}"],
+        "pattern": {
+          "regexp": "^(?:ERROR|warn)\\s+([^:]+):\\s+(.*)$",
+          "file": 1,
+          "message": 2
+        }
+      }
+    },
+    {
+      "label": "Check skill triggers",
+      "type": "shell",
+      "command": "python3 scripts/check_triggers.py",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Lint markdown",
+      "type": "shell",
+      "command": "npx --yes markdownlint-cli2 '**/*.md' '#node_modules'",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "New skill…",
+      "type": "shell",
+      "command": "python3 scripts/new_skill.py ${input:skillName} --category ${input:skillCategory}",
+      "problemMatcher": []
+    },
+    {
+      "label": "Skill word counts",
+      "type": "shell",
+      "command": "wc -w skills/*/SKILL.md | sort -n",
+      "problemMatcher": []
+    },
+    {
+      "label": "Pre-commit: all checks",
+      "dependsOrder": "sequence",
+      "dependsOn": ["Validate repository", "Check skill triggers", "Lint markdown"],
+      "group": "test",
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    { "id": "skillName", "type": "promptString", "description": "kebab-case skill name" },
+    {
+      "id": "skillCategory",
+      "type": "pickString",
+      "description": "category",
+      "options": ["meta", "define", "architect", "build", "verify", "operate"],
+      "default": "build"
+    }
+  ]
+}

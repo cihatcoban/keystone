@@ -1,0 +1,76 @@
+{
+  "Skill scaffold": {
+    "scope": "markdown",
+    "prefix": "skill",
+    "description": "New SKILL.md with frontmatter and required sections",
+    "body": [
+      "---",
+      "name: ${1:kebab-name}",
+      "description: ${2:One sentence - what it does and when to use it}. Triggers - ${3:phrases people actually type}.",
+      "---",
+      "",
+      "# ${4:Title}",
+      "",
+      "${5:The concrete failure this prevents.}",
+      "",
+      "## When to use",
+      "- $6",
+      "",
+      "**When not to use:** $7",
+      "",
+      "## ${8:Procedure}",
+      "",
+      "1. $9",
+      "",
+      "## Anti-patterns",
+      "",
+      "| Pattern | Cost |",
+      "|---|---|",
+      "| $10 | $11 |",
+      "",
+      "## Exit checklist",
+      "",
+      "- [ ] $12"
+    ]
+  },
+  "ADR": {
+    "scope": "markdown",
+    "prefix": "adr",
+    "body": [
+      "# ADR-${1:001}: ${2:decision}",
+      "",
+      "- **Status:** proposed",
+      "- **Date:** ${CURRENT_YEAR}-${CURRENT_MONTH}-${CURRENT_DATE}",
+      "- **Reversibility:** ${3|reversible,costly,one-way door|}",
+      "",
+      "## Context",
+      "Forces: $4",
+      "",
+      "## Decision",
+      "We will $5",
+      "",
+      "## Options considered",
+      "| Option | Fit | Better at | Worse at |",
+      "|---|---|---|---|",
+      "| A (chosen) | | | |",
+      "| B | | | |",
+      "| C: do nothing | | | |",
+      "",
+      "## Consequences",
+      "$6",
+      "",
+      "## The assumption most likely to be wrong",
+      "$7"
+    ]
+  },
+  "Exit checklist": {
+    "scope": "markdown",
+    "prefix": "exit",
+    "body": ["## Exit checklist", "", "- [ ] $1", "- [ ] $2", "- [ ] $3"]
+  },
+  "Decision table": {
+    "scope": "markdown",
+    "prefix": "table",
+    "body": ["| ${1:Situation} | ${2:Choose} | ${3:Because} |", "|---|---|---|", "| $4 | $5 | $6 |"]
+  }
+}

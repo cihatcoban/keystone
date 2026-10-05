@@ -1,0 +1,32 @@
+{
+  "skill_name": "documentation-and-knowledge",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "Write the README for this service",
+        "top_k": 3
+      },
+      {
+        "prompt": "The setup docs are wrong",
+        "top_k": 3
+      },
+      {
+        "prompt": "We need a runbook for this alert",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "Optimize the bundle size"
+      },
+      {
+        "prompt": "Fix the race condition"
+      }
+    ]
+  },
+  "expectations": [
+    "'documentation-and-knowledge' is selected among the top candidate skills",
+    "The skill's exit checklist items are addressed in the response",
+    "No CONSTRAINTS.md threshold is lowered to complete the work"
+  ]
+}

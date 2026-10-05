@@ -1,0 +1,32 @@
+{
+  "skill_name": "release-engineering",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "Ship this to production",
+        "top_k": 3
+      },
+      {
+        "prompt": "How should we roll this out?",
+        "top_k": 3
+      },
+      {
+        "prompt": "We need a rollback plan",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "Interview me about requirements"
+      },
+      {
+        "prompt": "Fix the flaky test"
+      }
+    ]
+  },
+  "expectations": [
+    "'release-engineering' is selected among the top candidate skills",
+    "The skill's exit checklist items are addressed in the response",
+    "No CONSTRAINTS.md threshold is lowered to complete the work"
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "skill_name": "dependency-and-license-policy",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "Should we add this library?",
+        "top_k": 3
+      },
+      {
+        "prompt": "Is this license compatible with our project?",
+        "top_k": 3
+      },
+      {
+        "prompt": "I copied this snippet from Stack Overflow",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "Write the runbook"
+      },
+      {
+        "prompt": "Break down the spec"
+      }
+    ]
+  },
+  "expectations": [
+    "'dependency-and-license-policy' is selected among the top candidate skills",
+    "The skill's exit checklist items are addressed in the response",
+    "No CONSTRAINTS.md threshold is lowered to complete the work"
+  ]
+}

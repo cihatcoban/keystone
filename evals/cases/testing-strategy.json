@@ -1,0 +1,32 @@
+{
+  "skill_name": "testing-strategy",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "What should we test and at which level?",
+        "top_k": 3
+      },
+      {
+        "prompt": "Our tests pass but bugs still ship",
+        "top_k": 3
+      },
+      {
+        "prompt": "The test suite takes twenty minutes",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "Design the API contract"
+      },
+      {
+        "prompt": "Roll back production"
+      }
+    ]
+  },
+  "expectations": [
+    "'testing-strategy' is selected among the top candidate skills",
+    "The skill's exit checklist items are addressed in the response",
+    "No CONSTRAINTS.md threshold is lowered to complete the work"
+  ]
+}

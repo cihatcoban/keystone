@@ -1,0 +1,32 @@
+{
+  "skill_name": "incident-response",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "Production is down",
+        "top_k": 3
+      },
+      {
+        "prompt": "Write the postmortem for yesterday's outage",
+        "top_k": 3
+      },
+      {
+        "prompt": "Users are reporting errors right now",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "Design the schema"
+      },
+      {
+        "prompt": "Add a new skill"
+      }
+    ]
+  },
+  "expectations": [
+    "'incident-response' is selected among the top candidate skills",
+    "The skill's exit checklist items are addressed in the response",
+    "No CONSTRAINTS.md threshold is lowered to complete the work"
+  ]
+}

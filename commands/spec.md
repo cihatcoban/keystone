@@ -1,0 +1,17 @@
+---
+description: Produce a specification with measurable acceptance criteria
+---
+
+Apply `spec-driven-development`. If the request is underspecified, apply
+`requirements-interrogation` first — one question at a time.
+
+Input: $ARGUMENTS
+
+1. Read `CLAUDE.md`, `CONSTRAINTS.md` and any related ADRs.
+2. Interrogate only what changes the design; write assumptions for the rest.
+3. Write `docs/specs/NNN-<slug>.md` using every section of the template.
+4. Acceptance criteria must be testable as written — no adjectives.
+5. Sections for out-of-scope, data impact and failure behavior are mandatory.
+6. Report: problem, scope boundary, top risk, criteria count, open questions.
+
+Do not write code until the spec is approved.

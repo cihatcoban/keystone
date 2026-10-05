@@ -1,0 +1,32 @@
+{
+  "skill_name": "performance-engineering",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "This endpoint is slow",
+        "top_k": 3
+      },
+      {
+        "prompt": "We are hitting the latency budget",
+        "top_k": 3
+      },
+      {
+        "prompt": "Memory keeps growing under load",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "Write the ADR"
+      },
+      {
+        "prompt": "Set up the linter"
+      }
+    ]
+  },
+  "expectations": [
+    "'performance-engineering' is selected among the top candidate skills",
+    "The skill's exit checklist items are addressed in the response",
+    "No CONSTRAINTS.md threshold is lowered to complete the work"
+  ]
+}

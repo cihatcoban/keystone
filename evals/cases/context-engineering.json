@@ -1,0 +1,32 @@
+{
+  "skill_name": "context-engineering",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "Set up CLAUDE.md for this repo",
+        "top_k": 3
+      },
+      {
+        "prompt": "The agent keeps ignoring our conventions",
+        "top_k": 3
+      },
+      {
+        "prompt": "Output quality has dropped over this long session",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "Design the database schema"
+      },
+      {
+        "prompt": "Write a postmortem"
+      }
+    ]
+  },
+  "expectations": [
+    "'context-engineering' is selected among the top candidate skills",
+    "The skill's exit checklist items are addressed in the response",
+    "No CONSTRAINTS.md threshold is lowered to complete the work"
+  ]
+}

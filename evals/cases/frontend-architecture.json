@@ -1,0 +1,32 @@
+{
+  "skill_name": "frontend-architecture",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "Build the settings page",
+        "top_k": 3
+      },
+      {
+        "prompt": "Where should this component state live?",
+        "top_k": 3
+      },
+      {
+        "prompt": "The page feels slow and jumps around while loading",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "Design the database indexes"
+      },
+      {
+        "prompt": "Write the deploy script"
+      }
+    ]
+  },
+  "expectations": [
+    "'frontend-architecture' is selected among the top candidate skills",
+    "The skill's exit checklist items are addressed in the response",
+    "No CONSTRAINTS.md threshold is lowered to complete the work"
+  ]
+}

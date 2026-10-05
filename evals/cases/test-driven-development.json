@@ -1,0 +1,32 @@
+{
+  "skill_name": "test-driven-development",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "Write a failing test for this bug first",
+        "top_k": 3
+      },
+      {
+        "prompt": "Implement this with red-green-refactor",
+        "top_k": 3
+      },
+      {
+        "prompt": "Prove this function handles the edge cases",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "Choose a deployment strategy"
+      },
+      {
+        "prompt": "Record this architecture decision in an ADR"
+      }
+    ]
+  },
+  "expectations": [
+    "'test-driven-development' is selected among the top candidate skills",
+    "The skill's exit checklist items are addressed in the response",
+    "No CONSTRAINTS.md threshold is lowered to complete the work"
+  ]
+}
