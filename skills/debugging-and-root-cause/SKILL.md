@@ -1,6 +1,6 @@
 ---
 name: debugging-and-root-cause
-description: Finds the actual cause of a defect systematically instead of guessing, including intermittent and production-only failures. Use when a test fails, a build breaks, behavior is unexpected, or something that worked yesterday stopped. Triggers - it broke, crashed, stack trace, this is failing, why is this happening, worked yesterday, cannot reproduce, intermittent failure, works on my machine, debug this, unexpected result.
+description: Finds the real cause of a defect systematically, including intermittent and production-only failures. Triggers - it worked yesterday and now it doesn't, can't reproduce, crashed with this stack trace, why is this failing, works on my machine, debug this, unexpected result.
 ---
 
 # Debugging and Root Cause

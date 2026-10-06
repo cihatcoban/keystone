@@ -1,6 +1,6 @@
 ---
 name: constraint-driven-development
-description: Turns a project's quality bar into a written contract with numbers and keeps agents from quietly lowering it. Use when no standards are written down, when picking coverage or latency thresholds, or when checks keep getting suppressed to reach green. Triggers - set up constraints, define our standards, what threshold should we use, quality bar, agent keeps skipping tests, coverage target, disable this check.
+description: Turns a project's quality bar into a written contract with numbers and stops agents quietly lowering it. Triggers - what coverage target should we set, define our quality standards, agent keeps disabling checks or skipping tests to get green, what threshold to use.
 ---
 
 # Constraint-Driven Development
@@ -48,11 +48,32 @@ Starting points, not laws. Say they are adjustable.
 Two of these are never negotiable defaults: secrets and known critical
 vulnerabilities. Everything else is a trade-off the team owns.
 
+## Validate the instrument before trusting the number
+
+A gate that measures the wrong thing is worse than no gate: it blocks good work
+or passes bad work, and it does so with authority. Before a threshold gates
+anything, prove the measurement is real:
+
+1. **Break it deliberately.** Delete a test, or a line of coverage, and confirm
+   the number moves in the direction and magnitude you expect.
+2. **Check the denominator.** Coverage tools disagree about what counts as an
+   executable line; complexity tools disagree about what counts as a branch.
+   Read one file's report by hand and confirm it matches reality.
+3. **Check what is invisible to the tool.** Work in threads, subprocesses,
+   generated code or code imported before instrumentation started is routinely
+   missed — a coverage figure that excludes your concurrency tests is fiction.
+4. **Record what the tool cannot see** next to the threshold, so the next reader
+   knows the number's scope.
+
+A suspiciously low number is usually a broken instrument; a suspiciously high
+one usually means the denominator is wrong. Investigate both before changing
+any code.
+
 ## Ramps, not cliffs
 
 A legacy project at 30% coverage cannot adopt 70% today. Write both:
 
-```
+```text
 Coverage: current 31% · target 70% · gate: diff coverage ≥ 85%, overall must not decrease
 ```
 
@@ -87,6 +108,7 @@ Say the exemption out loud and put an expiry on it — "prototype until Friday"
 
 - [ ] `CONSTRAINTS.md` exists at the project root with no blank thresholds
 - [ ] Every threshold names the command that measures it
+- [ ] Each measurement was validated by breaking something and watching the number move
 - [ ] Current measured values recorded next to targets
 - [ ] Where current is far from target, a ratchet gate is in place
 - [ ] Bar-protection triggers are enforced in review and CI

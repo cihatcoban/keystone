@@ -1,6 +1,6 @@
 ---
 name: spec-driven-development
-description: Writes a specification with measurable acceptance criteria before any code exists. Use when starting a feature, subsystem or significant change and nothing is written down. Triggers - write a spec, PRD, requirements doc, what are we building, new feature, define the scope, design doc.
+description: Writes a specification with measurable acceptance criteria before code exists. Triggers - write a spec for this feature, we need a PRD before we start, what exactly are we building, define the scope, requirements doc.
 ---
 
 # Spec-Driven Development

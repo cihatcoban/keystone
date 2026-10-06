@@ -1,6 +1,6 @@
 ---
 name: test-driven-development
-description: Drives implementation with a failing test first and proves bug fixes with a reproduction test. Use when writing any logic or fixing any defect. Triggers - write a test, TDD, red-green-refactor, fix this bug, prove it works, test first, reproduce the bug, is this covered.
+description: Drives implementation with a failing test first and proves bug fixes with a reproduction test. Triggers - write a failing test for this bug first, TDD, implement with red-green-refactor, prove this handles the edge cases, test first.
 ---
 
 # Test-Driven Development

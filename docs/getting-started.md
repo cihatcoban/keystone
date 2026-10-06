@@ -12,11 +12,14 @@ Verify: in a new session, ask *"which skill should I use to add a new external
 API call?"* The router should point at `distributed-systems-and-resilience` and
 `api-and-contract-design`. If it answers generically, the plugin is not loaded.
 
+Using Gemini CLI or Codex instead (or as well)? See
+[`multi-agent-setup.md`](multi-agent-setup.md) — same skills, same commands.
+
 ## 2. Set up a project to use it
 
 In the project you are working on, not in Keystone:
 
-```
+```text
 /onboard        # discovers the stack, writes the agent's operating context
 /constraints    # fills CONSTRAINTS.md with real numbers
 ```
@@ -31,7 +34,7 @@ them leaves the agent reasoning from generic defaults.
 
 ## 3. The daily loop
 
-```
+```text
 /spec  →  /design (only if a choice is costly to reverse)  →  /plan
        →  /build (per task)  →  /review  →  /ship
 ```

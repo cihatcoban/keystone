@@ -1,6 +1,6 @@
 ---
 name: refactoring-and-simplification
-description: Improves the structure and clarity of existing code without changing behavior, including safely changing legacy code with no tests. Use when code works but is hard to read or modify, before extending a messy area, or when touching code you did not write and cannot fully verify. Triggers - refactor this, clean this up, simplify, this code is a mess, legacy code, no tests exist, too complex, reduce duplication, make this readable, strangler fig.
+description: Improves structure without changing behavior, including legacy code with no tests - characterization tests, seams, strangler fig. Triggers - clean this module up, this legacy code has no tests and I need to change it, reduce the complexity, refactor, simplify.
 ---
 
 # Refactoring and Simplification

@@ -1,6 +1,6 @@
 ---
 name: deprecation-and-migration
-description: Removes or replaces something people depend on without breaking them - sunset plans, consumer migration, dual-running and safe deletion. Use when retiring an API, feature, table or service, or moving consumers from an old implementation to a new one. Triggers - remove this feature, deprecate, sunset, migrate users, replace the old system, can we delete this, breaking change, legacy system removal, dual write.
+description: Removes or replaces something people depend on without breaking them - usage measurement, sunset, consumer migration, dual-running, safe deletion. Triggers - can we delete this old endpoint, deprecate, sunset this feature, move users off the legacy system, dual write.
 ---
 
 # Deprecation and Migration

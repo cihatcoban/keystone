@@ -28,7 +28,10 @@
   "files.trimFinalNewlines": true,
   "files.eol": "\n",
 
+  "files.readonlyInclude": { "commands/keystone/*.toml": true },
   "files.associations": {
+    ".env.example": "properties",
+    "*.template": "properties",
     "SKILL.md": "markdown",
     "CLAUDE.md": "markdown",
     "AGENTS.md": "markdown",

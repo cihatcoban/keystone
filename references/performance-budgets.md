@@ -4,6 +4,7 @@ Starting values. Adjust per product, then enforce — an unenforced budget is a
 preference.
 
 ## Backend
+
 | Path | p50 | p95 | p99 |
 |---|---|---|---|
 | Read endpoint (cached) | 20 ms | 80 ms | 200 ms |
@@ -16,6 +17,7 @@ inside loops; every list bounded; every external call has a timeout shorter
 than the caller's remaining budget.
 
 ## Frontend
+
 | Metric | Target | Notes |
 |---|---|---|
 | LCP | ≤ 2.5 s | Mid-range device, throttled network |
@@ -26,6 +28,7 @@ than the caller's remaining budget.
 | Fonts | ≤ 2 families, subset, `font-display: swap` | |
 
 ## Build and test
+
 | Stage | Budget |
 |---|---|
 | Fast test tier | ≤ 2 min |
@@ -34,6 +37,7 @@ than the caller's remaining budget.
 | Container image | ≤ 500 MB |
 
 ## Capacity
+
 - Steady-state utilization ≤ 60–70%. Above ~80%, latency enters the steep part
   of the queueing curve (Little's law) and small load increases produce large
   latency increases.
@@ -41,6 +45,7 @@ than the caller's remaining budget.
 - Know the resource that runs out first, from a load test — not from a guess.
 
 ## Enforcement
+
 - Bundle-size check in CI, failing on regression
 - Query-count assertion on critical endpoints (catches N+1 permanently)
 - Benchmark with a regression threshold for core algorithms

@@ -7,4 +7,8 @@ node_modules/
 .DS_Store
 .idea/
 *.log
+
+# Secrets — real env files never enter the repository
 .env
+.env.*
+!.env.example

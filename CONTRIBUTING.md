@@ -25,7 +25,9 @@ Then:
    the router pick badly. Extend an existing skill when you can.
 2. **Write the description last and carefully.** It is the only thing the router
    sees. Format: one English sentence saying what it does and when to use it,
-   followed by concrete trigger phrases. Keep it under 500 characters.
+   followed by concrete trigger phrases. Aim for ≤ 320 characters: every
+   description is injected into every session, and Codex drops all of them
+   when the catalog exceeds its budget (`make validate` enforces it).
 3. **Body: 400–1400 words.** Longer content belongs in
    `skills/<name>/references/*.md`, loaded on demand.
 4. **Stack-agnostic.** No skill assumes a language or framework. Show the
@@ -34,7 +36,12 @@ Then:
 5. **Every skill ends with an exit checklist** of verifiable statements.
 6. **Add an eval case**: `evals/cases/<name>.json`, at least 3 positive and
    2 negative trigger prompts.
-7. `make validate` must pass with zero errors.
+7. `make all` must pass with zero errors.
+
+## Adding or changing a command
+
+Edit `commands/<name>.md` only, then run `make adapters`. The Gemini CLI
+version in `commands/keystone/` is generated — never edit it by hand.
 
 ## Style rules for skill bodies
 

@@ -1,6 +1,6 @@
 ---
 name: ai-integration-guardrails
-description: Puts a language model into a product safely - bounded role, schema-validated output, prompt-injection defense, cost caps, evaluation and human decision points. Use when adding an LLM or ML model to a user-facing or automated path. Triggers - add AI to this, LLM feature, use GPT for, model in production, prompt injection, hallucination, AI agent in our product, evaluate the model, RAG, structured output.
+description: Puts an LLM into a product safely - bounded role, schema-validated output, prompt-injection defense, cost caps, evals, human decision points. Use when a model enters a product or automated path. Triggers - add an LLM, AI feature, prompt injection, should the model decide, hallucination, RAG, structured output.
 ---
 
 # AI Integration Guardrails

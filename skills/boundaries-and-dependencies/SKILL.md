@@ -1,6 +1,6 @@
 ---
 name: boundaries-and-dependencies
-description: Structures modules, layers and dependency direction so changes stay local - ports and adapters, the dependency rule, coupling and cohesion. Use when a small change touches many files, when modules import each other in cycles, or when deciding where new code belongs. Triggers - where should this code live, circular dependency, everything is coupled, hexagonal architecture, clean architecture, layering, module structure, this change touches 20 files.
+description: Structures modules and dependency direction so changes stay local - ports and adapters, the dependency rule, coupling, cycles. Triggers - one change touches twenty files, circular dependency, where should this new code live, everything is coupled, hexagonal or clean architecture, layering.
 ---
 
 # Boundaries and Dependencies
@@ -15,7 +15,7 @@ behavior change requires edits in eight files across four concerns.
 **Dependencies point inward, toward policy. Nothing in the core knows about the
 outside.**
 
-```
+```text
         ┌──────────────────────────────────────┐
         │  Frameworks, drivers, I/O            │   ← replaceable details
         │  ┌────────────────────────────────┐  │

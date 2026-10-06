@@ -1,6 +1,6 @@
 ---
 name: testing-strategy
-description: Decides what to test, at which level, with what test data, and fixes a suite that is slow, flaky or gives false confidence. Use when designing a test suite, when tests are slow or unreliable, or when coverage is high but bugs still ship. Triggers - test strategy, integration vs unit, flaky test, slow test suite, test pyramid, contract test, property based testing, mutation testing, what should I test, tests pass but it broke.
+description: Decides what to test, at which level, with what data, and fixes slow, flaky or false-confidence suites. Triggers - what should we test and at which level, tests pass but bugs still ship, the test suite takes twenty minutes, flaky test, contract or mutation testing.
 ---
 
 # Testing Strategy

@@ -1,6 +1,6 @@
 ---
 name: observability-and-slos
-description: Instruments a system so production behavior is explainable, and defines SLIs, SLOs and alerts that are worth waking someone for. Use when shipping a feature, when an incident could not be diagnosed from available data, or when defining reliability targets. Triggers - what to log, logging, metrics, tracing, monitoring, SLO, SLI, error budget, alerting, we could not tell what happened, dashboard, instrumentation, on-call noise.
+description: Instruments a system so production is explainable, and defines SLIs, SLOs and alerts worth waking for. Triggers - we could not tell what happened during the outage, what should we log, define an SLO, metrics, tracing, error budget, alert noise.
 ---
 
 # Observability and SLOs

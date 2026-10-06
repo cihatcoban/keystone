@@ -1,6 +1,6 @@
 ---
 name: incident-response
-description: Runs a production incident and the learning afterwards - mitigate first, coordinate, communicate, then blameless postmortem with real follow-through. Use when production is degraded or down, or when writing up an incident. Triggers - production is down, outage, incident, users are affected, page fired, postmortem, root cause analysis, we had an incident, sev1, rollback now.
+description: Runs a production incident - mitigate first, coordinate, communicate - then a blameless postmortem with tracked actions. Triggers - production is down, users are reporting errors right now, outage, page fired, write the postmortem, rollback now, sev1.
 ---
 
 # Incident Response

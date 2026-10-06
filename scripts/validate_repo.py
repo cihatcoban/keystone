@@ -196,8 +196,145 @@ def check_evals(skills: dict[str, str]) -> None:
             warn(f"{rel(f)}: eval case for unknown skill")
 
 
+AGENT_PLUGIN_SCHEMA = "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json"
+AGENT_PLUGIN_FIELDS = {"$schema", "name", "version", "description", "author", "homepage",
+                       "repository", "license", "keywords", "extensions"}
+# Codex drops every skill description when the catalog exceeds its budget
+# (2% of the context window, 8,000 chars when the window is unknown). Keep
+# well inside the 2%-of-200k-tokens line so other installed skills still fit.
+CATALOG_WARN_TOKENS, CATALOG_MAX_TOKENS = 3_200, 3_800
+
+
+def load_json(path: Path) -> dict | None:
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        err(f"{rel(path)}: missing")
+        return None
+    except (OSError, json.JSONDecodeError) as e:
+        err(f"{rel(path)}: unreadable ({e})")
+        return None
+    if not isinstance(data, dict):
+        err(f"{rel(path)}: must contain a JSON object")
+        return None
+    return data
+
+
+def check_manifests() -> None:
+    """Every agent's manifest, in the shape that agent's loader accepts.
+
+    Each rule here mirrors a check in the agent's own loader, so a manifest the
+    agent would reject fails this build instead of failing on a user's machine.
+    """
+    versions: dict[str, str] = {}
+
+    # Claude Code — .claude-plugin/plugin.json
+    f = ROOT / ".claude-plugin" / "plugin.json"
+    if (data := load_json(f)) is not None:
+        if not data.get("name"):
+            err(f"{rel(f)}: 'name' is required")
+        for key in ("agents", "commands"):
+            value = data.get(key)
+            paths = [value] if isinstance(value, str) else (value or [])
+            for path in paths:
+                if not str(path).endswith(".md"):
+                    err(f"{rel(f)}: '{key}' must list .md files, got '{path}' — "
+                        f"omit the field to auto-discover {key}/")
+        versions[rel(f)] = data.get("version", "")
+
+    f = ROOT / ".claude-plugin" / "marketplace.json"
+    if (data := load_json(f)) is not None:
+        for plugin in data.get("plugins", []):
+            versions[f"{rel(f)}#{plugin.get('name')}"] = plugin.get("version", "")
+
+    # Codex — root plugin.json as an Agent Plugins manifest
+    f = ROOT / "plugin.json"
+    if (data := load_json(f)) is not None:
+        if data.get("$schema") != AGENT_PLUGIN_SCHEMA:
+            err(f"{rel(f)}: '$schema' must be {AGENT_PLUGIN_SCHEMA} — without it Codex "
+                "ignores this file and falls back to .claude-plugin/plugin.json")
+        name = str(data.get("name", ""))
+        if not re.fullmatch(r"[a-z0-9][a-z0-9.-]{0,63}", name) or "--" in name or ".." in name:
+            err(f"{rel(f)}: invalid Agent Plugins name '{name}' (lowercase, digits, dots, hyphens)")
+        for key in ("version", "description"):
+            if not str(data.get(key, "")).strip():
+                err(f"{rel(f)}: '{key}' is required and must be non-empty")
+        for key in sorted(set(data) - AGENT_PLUGIN_FIELDS):
+            warn(f"{rel(f)}: unknown Agent Plugins field '{key}' will be ignored by Codex")
+        versions[rel(f)] = data.get("version", "")
+
+    f = ROOT / ".agents" / "plugins" / "marketplace.json"
+    if (data := load_json(f)) is not None:
+        for plugin in data.get("plugins", []):
+            source = plugin.get("source", {})
+            if source.get("source") != "local" or source.get("path") not in (".", "./"):
+                err(f"{rel(f)}: plugin source must be local with path './' (repo root)")
+            if not plugin.get("policy", {}).get("installation"):
+                err(f"{rel(f)}: plugin entry needs policy.installation")
+            versions[f"{rel(f)}#{plugin.get('name')}"] = plugin.get("version", "")
+
+    # Gemini CLI — gemini-extension.json
+    f = ROOT / "gemini-extension.json"
+    if (data := load_json(f)) is not None:
+        name = str(data.get("name", ""))
+        if not re.fullmatch(r"[a-z0-9][a-z0-9-]*", name):
+            err(f"{rel(f)}: name '{name}' must be lowercase letters, digits and dashes")
+        if not data.get("version"):
+            err(f"{rel(f)}: 'version' is required")
+        context = data.get("contextFileName")
+        for ctx in ([context] if isinstance(context, str) else (context or [])):
+            if Path(ctx).is_absolute() or ".." in Path(ctx).parts or not (ROOT / ctx).is_file():
+                err(f"{rel(f)}: contextFileName '{ctx}' must be an existing relative file")
+        versions[rel(f)] = data.get("version", "")
+
+    # Gemini sub-agents use the same agents/*.md; names must be slugs there.
+    for agent in sorted((ROOT / "agents").glob("*.md")):
+        fm, _ = frontmatter(agent.read_text(encoding="utf-8"), agent)
+        if fm.get("name") and not re.fullmatch(r"[a-z0-9_-]+", fm["name"]):
+            err(f"{rel(agent)}: name '{fm['name']}' is not a valid Gemini sub-agent slug")
+
+    distinct = {v for v in versions.values()}
+    if len(distinct) > 1:
+        detail = ", ".join(f"{k}={v or '(none)'}" for k, v in sorted(versions.items()))
+        err(f"manifest versions disagree: {detail}")
+
+
+def check_adapters() -> None:
+    """Generated Gemini commands must match their commands/*.md sources."""
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import build_adapters
+
+    try:
+        expected = build_adapters.expected_outputs()
+    except build_adapters.SourceError as e:
+        err(f"commands/: {e}")
+        return
+    existing = set(build_adapters.GEMINI_DIR.glob("*.toml"))
+    for path, content in expected.items():
+        if not path.exists() or path.read_text(encoding="utf-8") != content:
+            err(f"{rel(path)}: stale or missing generated adapter — run `make adapters`")
+    for path in sorted(existing - set(expected)):
+        err(f"{rel(path)}: generated adapter has no commands/*.md source — run `make adapters`")
+
+
+def check_catalog_budget(skills: dict[str, str]) -> None:
+    """Estimate the skill catalog an agent injects into every session."""
+    chars = sum(len(f"- {name}: {desc} (file: ~/keystone/skills/{name}/SKILL.md)")
+                for name, desc in skills.items())
+    tokens = chars // 4
+    if tokens > CATALOG_MAX_TOKENS:
+        err(f"skill catalog ≈ {tokens} tokens ({chars} chars) exceeds {CATALOG_MAX_TOKENS}: "
+            "Codex removes all descriptions past its budget — shorten descriptions")
+    elif tokens > CATALOG_WARN_TOKENS:
+        warn(f"skill catalog ≈ {tokens} tokens ({chars} chars), close to the "
+             f"{CATALOG_MAX_TOKENS}-token limit")
+
+
 def main() -> int:
+    check_manifests()
+    check_adapters()
     skills = check_skills(ROOT)
+    check_catalog_budget(skills)
     check_dir_frontmatter("commands", need_name=False)
     check_dir_frontmatter("agents", need_name=True)
     check_references(skills)

@@ -3,6 +3,7 @@
 Ten minutes, written down, per non-trivial change.
 
 ## Frame
+
 1. What are we protecting? (data, money, availability, reputation)
 2. Who attacks it? (anonymous outsider, other tenant, insider, compromised
    dependency, automated scanner)
@@ -10,6 +11,7 @@ Ten minutes, written down, per non-trivial change.
 4. What is the worst outcome of each boundary being abused?
 
 ## Entry points to enumerate
+
 HTTP handlers · webhooks · queue consumers · scheduled jobs · file uploads ·
 CLI arguments · environment and config · deserializers · third-party callbacks ·
 admin interfaces · database seeds and fixtures · anything an LLM can invoke
@@ -42,6 +44,7 @@ record)? Is deny-by-default in place for new routes? Can a low-privilege path
 reach a high-privilege operation indirectly (a job, a webhook, a tool call)?
 
 ## Output
+
 | Threat | Entry point | Likelihood | Impact | Mitigation | Status |
 |---|---|---|---|---|---|
 

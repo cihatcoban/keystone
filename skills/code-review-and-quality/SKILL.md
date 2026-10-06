@@ -1,6 +1,6 @@
 ---
 name: code-review-and-quality
-description: Reviews a change before merge across correctness, design, failure behavior, security, performance and tests, and blocks quiet erosion of the quality bar. Use before merging anything, including code an agent wrote. Triggers - review this PR, code review, check before merge, is this ready to merge, look at my changes, feedback on this code.
+description: Reviews a change before merge - correctness, failure behavior, design, security, performance, tests - and blocks quiet erosion of the quality bar, including in agent-written code. Triggers - review this pull request, code review, is this ready to merge, look over my changes before I push.
 ---
 
 # Code Review
@@ -88,7 +88,7 @@ arrives.
 
 ## Writing findings
 
-```
+```text
 [BLOCKER] src/payments/capture.go:88
 Issue: retry on 5xx has no idempotency key; a timed-out capture can double-charge.
 Impact: duplicate charges under normal network conditions, not just outages.

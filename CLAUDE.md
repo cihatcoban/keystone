@@ -37,7 +37,7 @@ a project's own `CLAUDE.md` wins over this one only where it is stricter.
 
 ## 2. Working sequence
 
-```
+```text
 intent → spec → plan → slice → test → build → review → ship → observe
 ```
 

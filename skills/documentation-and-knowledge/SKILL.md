@@ -1,6 +1,6 @@
 ---
 name: documentation-and-knowledge
-description: Writes documentation that stays true and gets used - READMEs, runbooks, ADRs, API docs - and prunes what has rotted. Use when shipping something others will operate or integrate with, or when the docs are misleading. Triggers - write documentation, README, runbook, document this, the docs are wrong, onboarding guide, how does this work, API docs, knowledge transfer.
+description: Writes documentation that stays true - README, runbooks, API docs, architecture overview - and prunes what rotted. Triggers - write the README, the setup docs are wrong, we need a runbook for this alert, document this service, onboarding guide.
 ---
 
 # Documentation and Knowledge

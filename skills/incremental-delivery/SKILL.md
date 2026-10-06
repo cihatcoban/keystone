@@ -1,6 +1,6 @@
 ---
 name: incremental-delivery
-description: Implements a task in thin vertical slices that each leave the system shippable, behind flags where needed. Use when writing code for any planned task that touches more than one file. Triggers - implement this, build the next task, start coding, feature flag, trunk based development, big change, how do I land this safely, long-lived branch.
+description: Implements a planned task in thin vertical slices that each leave the system shippable, behind flags where needed. Triggers - implement the next task from the plan, start coding, how do I land this big change safely, should this go behind a feature flag, long-lived branch.
 ---
 
 # Incremental Delivery
@@ -12,7 +12,7 @@ the ability to stop, redirect or ship at any moment.
 
 ## The loop
 
-```
+```text
 pick slice → failing test → minimal code → green → clean up → full suite → commit
      ↑                                                                       │
      └───────────────────────────────────────────────────────────────────────┘

@@ -1,6 +1,7 @@
 # AGENTS.md — Operating Contract
 
-> Read by agents other than Claude Code (Codex, Cursor, Gemini CLI, opencode, Aider).
+> Read by agents other than Claude Code (Codex, Cursor, opencode, Aider), and
+> loaded automatically by the Gemini CLI extension (`contextFileName`).
 > The body is byte-identical to `CLAUDE.md`; update both together —
 > `scripts/validate_repo.py` fails the build when they drift.
 
@@ -41,7 +42,7 @@ a project's own `CLAUDE.md` wins over this one only where it is stricter.
 
 ## 2. Working sequence
 
-```
+```text
 intent → spec → plan → slice → test → build → review → ship → observe
 ```
 

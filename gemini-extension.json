@@ -1,0 +1,6 @@
+{
+  "name": "keystone",
+  "version": "1.2.0",
+  "description": "Master-level engineering skills for AI coding agents — architecture-first, stack-agnostic, from intent to operations. Works in Claude Code, Gemini CLI and Codex.",
+  "contextFileName": "AGENTS.md"
+}

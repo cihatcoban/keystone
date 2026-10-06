@@ -1,6 +1,6 @@
 ---
 name: requirements-interrogation
-description: Extracts what someone actually needs before anything is designed or built, one question at a time. Use when a request is underspecified, when the stated solution may not match the real problem, or before committing to expensive work. Triggers - build me X, interview me, stress-test my thinking, are we sure about this, what do you actually need, vague request, grill me.
+description: Extracts what someone actually needs before anything is built, one question at a time. Triggers - build me an admin dashboard (or any X), interview me about what I need, stress-test my thinking, vague request, are we sure about this, grill me.
 ---
 
 # Requirements Interrogation

@@ -1,22 +1,41 @@
-.PHONY: help validate triggers lint all new stats hooks
+PYTHON ?= python3
+
+.PHONY: help validate triggers test adapters adapters-check env-check lint all new stats hooks agents-doctor
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
-	  awk 'BEGIN{FS=":.*?## "}{printf "\033[36m%-12s\033[0m %s\n",$$1,$$2}'
+	  awk 'BEGIN{FS=":.*?## "}{printf "\033[36m%-15s\033[0m %s\n",$$1,$$2}'
 
-validate: ## Structure, frontmatter, links, contract parity, eval coverage
-	@python3 scripts/validate_repo.py
+validate: ## Structure, manifests, adapters, catalog budget, contract parity, evals
+	@$(PYTHON) scripts/validate_repo.py
 
 triggers: ## Static routing check on eval prompts
-	@python3 scripts/check_triggers.py
+	@$(PYTHON) scripts/check_triggers.py
+
+test: ## Unit tests for Keystone's own tooling
+	@$(PYTHON) -m unittest discover -s scripts/tests -t . -q
+
+adapters: ## Regenerate Gemini CLI commands from commands/*.md
+	@$(PYTHON) scripts/build_adapters.py
+
+adapters-check: ## Fail if generated adapters are stale
+	@$(PYTHON) scripts/build_adapters.py --check
+
+env-check: ## Secret and .env hygiene for this repository
+	@$(PYTHON) scripts/check_env.py --strict
 
 lint: ## Markdown lint
-	@npx --yes markdownlint-cli2 >/dev/null 2>&1 || npx --yes markdownlint-cli2
+	@npx --yes markdownlint-cli2@0.22.1
 
-all: validate triggers ## Everything CI runs
+all: validate triggers test adapters-check env-check ## Everything CI runs
+
+agents-doctor: ## Which agent CLIs are installed, and their versions
+	@for c in claude gemini codex; do \
+	  printf "%-7s " $$c; command -v $$c >/dev/null && $$c --version 2>/dev/null | head -1 || echo "not installed"; \
+	done
 
 new: ## Scaffold a skill: make new NAME=my-skill CAT=architect
-	@python3 scripts/new_skill.py $(NAME) --category $(or $(CAT),build)
+	@$(PYTHON) scripts/new_skill.py $(NAME) --category $(or $(CAT),build)
 
 stats: ## Skill sizes
 	@wc -w skills/*/SKILL.md | sort -n

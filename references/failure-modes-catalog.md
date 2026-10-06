@@ -4,6 +4,7 @@ Prompts for design review and incident triage. Ask "what happens when…" agains
 each row for the component in front of you.
 
 ## Network and dependencies
+
 | Failure | Common mishandling |
 |---|---|
 | Dependency slow, not down | No timeout → connection pool exhausted → total outage |
@@ -15,6 +16,7 @@ each row for the component in front of you.
 | Cascading failure | No breaker or bulkhead; one dependency takes down all handlers |
 
 ## State and data
+
 | Failure | Common mishandling |
 |---|---|
 | Duplicate message / double submit | Non-idempotent write creates two records |
@@ -27,6 +29,7 @@ each row for the component in front of you.
 | Data growth | Query that was fast at 10k rows is fatal at 10M |
 
 ## Resources
+
 | Failure | Common mishandling |
 |---|---|
 | Memory growth | No bound on a cache or queue; OOM kill |
@@ -36,6 +39,7 @@ each row for the component in front of you.
 | Thread/event-loop starvation | One blocking call stalls everything |
 
 ## Deployment and operations
+
 | Failure | Common mishandling |
 |---|---|
 | Old and new code running together | Migration assumes one version |
@@ -46,6 +50,7 @@ each row for the component in front of you.
 | Scheduled job overlap | Two runs of the same job corrupt state |
 
 ## Human and process
+
 | Failure | Common mishandling |
 |---|---|
 | Alert fires with no runbook | Responder improvises at 3am |

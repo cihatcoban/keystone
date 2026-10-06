@@ -1,6 +1,6 @@
 ---
 name: performance-engineering
-description: Diagnoses and fixes performance problems with measurement first - profiling, budgets, queueing behavior, caching. Use when something is slow, when a latency or throughput budget is at risk, or before scaling capacity. Triggers - this is slow, optimize this, performance problem, latency, high CPU, memory leak, N+1 query, slow endpoint, scaling, caching, load test, timeout under load.
+description: Diagnoses performance problems measurement-first - profiling, budgets, queueing, caching - and guards wins in CI. Triggers - this endpoint is slow, hitting the latency budget, memory keeps growing under load, optimize this, N+1 query, high CPU, load test.
 ---
 
 # Performance Engineering

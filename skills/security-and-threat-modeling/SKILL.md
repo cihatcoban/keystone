@@ -1,6 +1,6 @@
 ---
 name: security-and-threat-modeling
-description: Threat-models a change and hardens it - untrusted input, authentication and authorization, secrets, supply chain, personal data. Use when handling external input, touching auth, storing sensitive data, or integrating a third party. Triggers - is this secure, threat model, injection, authentication, authorization, secrets management, OWASP, vulnerability, user input, permissions, GDPR, personal data, dependency vulnerability.
+description: Threat-models and hardens a change - untrusted input, authentication, authorization, supply chain, personal data. Triggers - is this endpoint secure, threat-model this feature, we are storing personal data here, injection, permissions, OWASP, vulnerability.
 ---
 
 # Security and Threat Modeling
@@ -60,6 +60,9 @@ Injection is well-tooled; broken access control is not.
 - Re-check on state change; permissions granted at login may have been revoked.
 
 ## Secrets
+
+Configuration and `.env` handling, provider API keys and keeping secrets out of
+agents' context are covered in depth by `configuration-and-secrets`.
 
 - Zero secrets in the repository, including tests, examples and history.
   `.env.example` lists key names with empty values.

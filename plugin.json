@@ -1,5 +1,31 @@
 {
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "keystone",
-  "version": "1.0.0",
-  "description": "Master-level engineering skills for AI coding agents."
+  "version": "1.2.0",
+  "description": "Master-level engineering skills for AI coding agents — architecture-first, stack-agnostic, from intent to operations. Works in Claude Code, Gemini CLI and Codex.",
+  "author": {
+    "name": "Cihat"
+  },
+  "license": "Apache-2.0",
+  "keywords": [
+    "architecture",
+    "skills",
+    "agents",
+    "ddd",
+    "tdd",
+    "review",
+    "reliability",
+    "slo",
+    "secrets"
+  ],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Keystone",
+        "shortDescription": "Architecture-first engineering skills: spec, design, build, verify, operate.",
+        "developerName": "Cihat",
+        "category": "Coding"
+      }
+    }
+  }
 }

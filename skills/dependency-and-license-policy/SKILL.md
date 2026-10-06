@@ -1,6 +1,6 @@
 ---
 name: dependency-and-license-policy
-description: Gates every new dependency, model, dataset or copied snippet on necessity, health, license compatibility and supply-chain risk. Use before adding a library, upgrading a major version, copying code from elsewhere, or pulling in model weights. Triggers - add this library, new dependency, which package should we use, is this license ok, GPL, copied this from stack overflow, upgrade this dependency, model weights, dataset license.
+description: Gates every new dependency, model, dataset or copied snippet on necessity, health, license and supply-chain risk. Triggers - should we add this library, is this license compatible, GPL, copied this snippet from Stack Overflow, upgrade a major version, model weights license.
 ---
 
 # Dependency and License Policy

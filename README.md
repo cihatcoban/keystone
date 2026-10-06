@@ -36,7 +36,7 @@ project with a green pipeline and no standards.
 
 Keystone gives the agent three things it otherwise lacks:
 
-- **A procedure for each kind of work** — 31 skills, each describing what good
+- **A procedure for each kind of work** — 32 skills, each describing what good
   looks like and ending in a verifiable exit checklist.
 - **A quality bar written as numbers** — thresholds and the commands that check
   them, kept in your project rather than in the agent's memory.
@@ -51,24 +51,45 @@ starts by discovering how *this* repository actually builds, tests and ships.
 
 ### 1. Install
 
-**Claude Code — from the marketplace**
+One repository, three agents. Skills, the operating contract and the subagents
+are shared; each agent gets the manifest its own loader expects.
+
+**Claude Code** — from the marketplace:
 
 ```bash
 /plugin marketplace add cihatcoban/keystone
 /plugin install keystone@keystone-skills
 ```
 
-**Claude Code — from a local clone**
+**Gemini CLI** — as an extension:
+
+```bash
+gemini extensions install https://github.com/cihatcoban/keystone
+```
+
+**Codex (ChatGPT)** — as a plugin marketplace:
+
+```bash
+codex plugin marketplace add cihatcoban/keystone    # then enable it in /plugins
+```
+
+**From a local clone** — any of the three:
 
 ```bash
 git clone https://github.com/cihatcoban/keystone.git
 claude --plugin-dir ./keystone
+gemini extensions link ./keystone
+codex plugin marketplace add ./keystone
 ```
 
-**Other agents** — `AGENTS.md` at the root serves Codex, Cursor, Gemini CLI,
-opencode and Aider. Copy or symlink `skills/` into the directory your tool
-reads. Hosts without native skill routing can wire `hooks/session-start.sh` as a
-session-start hook.
+In Claude Code and Gemini CLI the commands are namespaced: `/keystone:review`,
+`/keystone:spec` and so on. Codex has no plugin commands; invoke the skill
+directly, for example `$code-review-and-quality`. The full guide is
+[Multi-agent setup](docs/multi-agent-setup.md).
+
+**Other agents** (Cursor, opencode, Aider) — `AGENTS.md` sits at the root. Copy
+or symlink `skills/` into the directory your tool reads. Hosts without native
+skill routing can wire `hooks/session-start.sh` as a session-start hook.
 
 ### 2. Verify
 
@@ -128,6 +149,7 @@ your project's `CONSTRAINTS.md`, or an accepted ADR.
 | `/ship` | Release readiness, rollout, rollback |
 | `/incident` | Run an incident, or write the postmortem |
 | `/audit` | Dependencies, licenses, personal data |
+| `/env` | `.env` hygiene, config drift, agent access to secrets, provider keys |
 
 ## Skills
 
@@ -138,7 +160,7 @@ your project's `CONSTRAINTS.md`, or an accepted ADR.
 | **Architect** | `architecture-decisions` · `domain-modeling` · `boundaries-and-dependencies` · `api-and-contract-design` · `data-modeling-and-storage` · `distributed-systems-and-resilience` · `concurrency-and-consistency` · `frontend-architecture` |
 | **Build** | `incremental-delivery` · `test-driven-development` · `testing-strategy` · `refactoring-and-simplification` · `git-workflow` |
 | **Verify** | `code-review-and-quality` · `debugging-and-root-cause` · `performance-engineering` · `security-and-threat-modeling` |
-| **Operate** | `observability-and-slos` · `release-engineering` · `deprecation-and-migration` · `incident-response` · `dependency-and-license-policy` · `documentation-and-knowledge` · `ai-integration-guardrails` |
+| **Operate** | `observability-and-slos` · `release-engineering` · `configuration-and-secrets` · `deprecation-and-migration` · `incident-response` · `dependency-and-license-policy` · `documentation-and-knowledge` · `ai-integration-guardrails` |
 
 **Subagents:** `architect` · `code-reviewer` · `adversarial-reviewer` ·
 `test-engineer` · `security-auditor` · `performance-auditor`
@@ -149,22 +171,23 @@ the chain of skills around it.
 ## Repository layout
 
 ```text
-skills/        31 skills, one directory each (SKILL.md + optional references/)
+skills/        32 skills, one directory each (SKILL.md + optional references/)
 commands/      slash commands that apply a skill chain deliberately
 agents/        subagent definitions
 references/    checklists and catalogs the skills load on demand
 templates/     CONSTRAINTS, spec, plan, ADR, design doc, runbook, postmortem
 evals/         trigger cases per skill, checked statically in CI
 examples/      a worked domain pack
-scripts/       validators and the skill scaffolder
+scripts/       validators, adapter generator, env check and the skill scaffolder
 hooks/         optional session-start router for hosts without skill routing
-docs/          getting started, principles, glossary, maturity model
+docs/          getting started, multi-agent setup, principles, glossary
 ```
 
 ## Quality control on the skills themselves
 
 ```bash
-make all                                # structure + routing checks, same as CI
+make all                                # everything CI runs except lint and secret scan
+make lint                               # markdown lint, pinned version
 make stats                              # skill sizes
 make new NAME=my-skill CAT=architect    # scaffold a new skill
 ```
@@ -176,6 +199,12 @@ references, `CLAUDE.md`/`AGENTS.md` parity and eval coverage.
 trigger phrase missing from a description, and two descriptions competing for
 the same prompt. CI runs both — plus markdown lint and a secret scan — with no
 model calls.
+
+`scripts/build_adapters.py` generates the Gemini CLI commands from
+`commands/*.md`; `--check` fails CI when they drift. `scripts/check_env.py` is a
+stack-agnostic, standard-library-only secret and `.env` hygiene check you can
+run in **any** project: `python3 path/to/keystone/scripts/check_env.py`.
+Keystone's own tooling has a unit-test suite: `make test`.
 
 **VS Code:** open `keystone.code-workspace` for validation tasks, launch
 configurations, snippets (`skill`, `adr`, `exit`, `table`) and a devcontainer.
@@ -201,5 +230,5 @@ Licensed under the [Apache License 2.0](LICENSE). See [NOTICE](NOTICE).
 [license-badge]: https://img.shields.io/badge/license-Apache%202.0-blue.svg
 [ci-badge]: https://github.com/cihatcoban/keystone/actions/workflows/validate.yml/badge.svg
 [ci]: https://github.com/cihatcoban/keystone/actions/workflows/validate.yml
-[version-badge]: https://img.shields.io/badge/version-1.0.0-informational
-[skills-badge]: https://img.shields.io/badge/skills-31-success
+[version-badge]: https://img.shields.io/badge/version-1.2.0-informational
+[skills-badge]: https://img.shields.io/badge/skills-32-success

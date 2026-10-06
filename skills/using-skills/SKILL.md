@@ -1,6 +1,6 @@
 ---
 name: using-skills
-description: Routes the current piece of work to the right Keystone skill and chains them in the correct order. Use at the start of a session, when unsure which process applies, or when a task spans several phases. Triggers - which skill, where do I start, what is the process here, how should I approach this, hangi skill, nereden başlayayım.
+description: Routes the current work to the right Keystone skills and chains them in order. Use at session start or when unsure which process applies. Triggers - which skill should I use, where do I start with this task, what is the process here, hangi skill, nereden başlayayım.
 ---
 
 # Using Skills
@@ -46,6 +46,7 @@ process produces confident, wrong-shaped work.
 | Removing or replacing something in use | `deprecation-and-migration` |
 | Production is on fire, or just stopped being | `incident-response` |
 | Adding a library, model, dataset or copied snippet | `dependency-and-license-policy` |
+| A config value, API key, `.env` file or leaked secret | `configuration-and-secrets` |
 | Writing docs a future person will rely on | `documentation-and-knowledge` |
 | Putting a model in the product | `ai-integration-guardrails` |
 | Setting or enforcing the quality bar | `constraint-driven-development` |

@@ -1,6 +1,6 @@
 ---
 name: domain-modeling
-description: Models a business domain so the code uses the same words and enforces the same rules as the business - bounded contexts, invariants, aggregates. Use when the domain is non-trivial, when the same word means different things in different places, or when business rules are scattered across the codebase. Triggers - domain model, DDD, bounded context, ubiquitous language, where do these rules belong, entity vs value object, aggregate, the model does not match the business.
+description: Models a business domain so code uses the business's words and enforces its rules - bounded contexts, invariants, aggregates. Triggers - code and business use different words, entity or value object, where do these business rules belong, DDD, bounded context, aggregate.
 ---
 
 # Domain Modeling

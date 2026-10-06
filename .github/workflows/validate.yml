@@ -23,8 +23,17 @@ jobs:
       - name: Skill routing check
         run: python3 scripts/check_triggers.py
 
+      - name: Tooling unit tests
+        run: python3 -m unittest discover -s scripts/tests -t . -v
+
+      - name: Generated agent adapters are current
+        run: python3 scripts/build_adapters.py --check
+
+      - name: Secret and .env hygiene
+        run: python3 scripts/check_env.py --strict
+
       - name: Markdown lint
-        run: npx --yes markdownlint-cli2
+        run: npx --yes markdownlint-cli2@0.22.1   # pinned: lint rules change between versions
 
       - name: Secret scan
         uses: gitleaks/gitleaks-action@v2

@@ -1,6 +1,6 @@
 ---
 name: skill-authoring
-description: Writes, revises or extends a Keystone skill, including domain-specific skill packs for a particular product. Use when adding a skill, fixing one that fails to trigger, splitting an overgrown skill, or building a domain pack. Triggers - add a skill, write a skill, this skill does not trigger, skill too long, domain pack, extend keystone.
+description: Writes or extends a Keystone skill, including product-specific domain packs. Triggers - add a new skill to this pack, this skill never triggers when I ask for it, write a domain pack for our product, skill too long, extend keystone.
 ---
 
 # Skill Authoring
@@ -23,7 +23,7 @@ Answer honestly. Any "no" means don't create the skill.
 
 ## Anatomy
 
-```
+```text
 skills/<kebab-name>/
   SKILL.md              required — frontmatter + body
   references/*.md       optional — loaded only when the body points to them

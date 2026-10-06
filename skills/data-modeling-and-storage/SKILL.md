@@ -1,6 +1,6 @@
 ---
 name: data-modeling-and-storage
-description: Designs schemas, constraints, indexes and storage choices, and changes them safely with expand-contract migrations. Use when adding or altering tables, choosing a datastore, fixing slow queries, or planning a migration. Triggers - schema design, add a column, migration, which database, index this query, normalize, denormalize, data model, slow query, backfill.
+description: Designs schemas, constraints, indexes and storage choices, and changes them safely with expand-contract migrations. Triggers - design the schema, add a column, write the migration, which database, document database or relational, index this query, slow query, backfill.
 ---
 
 # Data Modeling and Storage

@@ -1,6 +1,9 @@
+<!-- markdownlint-disable-file MD029 -- adoption steps are numbered 1-20 across
+     sections on purpose: the number is the step's position in the whole path. -->
+
 # Adoption Path
 
-Adopting 31 skills at once produces ceremony, not quality. Adopt in the order
+Adopting 32 skills at once produces ceremony, not quality. Adopt in the order
 that removes the most risk per unit of effort.
 
 ## Level 0 → 1: Make the bar visible
@@ -18,11 +21,11 @@ and dependency rule without asking, and a lowered threshold is caught in review.
 
 Changes land, but "done" is decided by whoever is most tired.
 
-4. `spec-driven-development` on anything larger than a day
-5. `planning-and-task-breakdown` — vertical slices, no L-sized tasks
-6. `test-driven-development` for bug fixes first (the easiest habit to adopt —
+1. `spec-driven-development` on anything larger than a day
+2. `planning-and-task-breakdown` — vertical slices, no L-sized tasks
+3. `test-driven-development` for bug fixes first (the easiest habit to adopt —
    the reproduction test is obviously useful)
-7. `code-review-and-quality` with the six axes and a verdict
+4. `code-review-and-quality` with the six axes and a verdict
 
 **Done when:** every merged change has a criterion it satisfies and a test that
 was observed failing first.
@@ -31,11 +34,11 @@ was observed failing first.
 
 The code works; the structure is accidental.
 
-8. `architecture-decisions` — start recording, even retroactively for the three
+1. `architecture-decisions` — start recording, even retroactively for the three
    decisions people keep re-arguing
-9. `boundaries-and-dependencies` — draw one line, enforce it with a tool
-10. `domain-modeling` if the domain has real rules
-11. `api-and-contract-design` for anything with consumers
+2. `boundaries-and-dependencies` — draw one line, enforce it with a tool
+3. `domain-modeling` if the domain has real rules
+4. `api-and-contract-design` for anything with consumers
 
 **Done when:** new code has an obvious home, cycles are impossible, and "why is
 it like this?" has a document.
@@ -44,22 +47,22 @@ it like this?" has a document.
 
 It works until something else does not.
 
-12. `distributed-systems-and-resilience` — timeouts and idempotency first; they
+1. `distributed-systems-and-resilience` — timeouts and idempotency first; they
     prevent the most expensive incidents
-13. `concurrency-and-consistency` where shared state exists
-14. `observability-and-slos` — correlation ids, then golden signals, then SLOs
-15. `release-engineering` — tested rollback, staged rollout
+2. `concurrency-and-consistency` where shared state exists
+3. `observability-and-slos` — correlation ids, then golden signals, then SLOs
+4. `release-engineering` — tested rollback, staged rollout
 
 **Done when:** you can answer "what happens when X is down?" for every
 dependency, and you have rolled back at least once without drama.
 
 ## Level 4 → 5: Make improvement systematic
 
-16. `incident-response` with blameless postmortems and tracked actions
-17. `deprecation-and-migration` — start removing things on purpose
-18. `performance-engineering` with budgets in CI
-19. `testing-strategy` — mutation testing on the core, flakiness at zero
-20. Your own domain pack
+1. `incident-response` with blameless postmortems and tracked actions
+2. `deprecation-and-migration` — start removing things on purpose
+3. `performance-engineering` with budgets in CI
+4. `testing-strategy` — mutation testing on the core, flakiness at zero
+5. Your own domain pack
 
 **Done when:** the same incident does not happen twice, and the codebase gets
 smaller some months.

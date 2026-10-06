@@ -1,6 +1,6 @@
 ---
 name: concurrency-and-consistency
-description: Handles shared mutable state correctly - races, locking, transaction isolation, lost updates, async correctness. Use when two things can touch the same data at once, when a bug is intermittent, or when choosing an isolation level or locking strategy. Triggers - race condition, deadlock, lost update, isolation level, optimistic locking, intermittent test failure, thread safety, works locally fails in production, double submit, concurrent requests.
+description: Handles shared mutable state correctly - races, locks, transaction isolation, lost updates, async correctness. Triggers - two requests update the same row and lose data, race condition, which isolation level, deadlock, optimistic locking, test fails intermittently under load, double submit.
 ---
 
 # Concurrency and Consistency
@@ -27,7 +27,7 @@ Ranked by reliability:
 
 ## The canonical bug: read-modify-write
 
-```
+```text
   T1: read balance (100) ─────────┐
   T2: read balance (100) ───┐     │
   T2: write 100 - 30 = 70 ──┘     │

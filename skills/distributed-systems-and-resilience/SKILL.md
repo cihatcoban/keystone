@@ -1,6 +1,6 @@
 ---
 name: distributed-systems-and-resilience
-description: Makes code survive partial failure - timeouts, retries, idempotency, backpressure, circuit breakers, outbox and saga patterns. Use when adding any network call, queue, job or cross-service workflow. Triggers - calling an external API, retry logic, timeout, message queue, webhook, exactly once, duplicate messages, cascading failure, circuit breaker, distributed transaction, eventual consistency.
+description: Makes code survive partial failure - timeouts, retries, idempotency, backpressure, circuit breakers, outbox, sagas. Triggers - calling an external API, how should retries work, timeout, duplicate messages from the queue, webhook, exactly once, cascading failure.
 ---
 
 # Distributed Systems and Resilience

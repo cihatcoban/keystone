@@ -5,7 +5,7 @@
 A procedure an agent can follow to a verifiable end state. Not a tutorial, not
 a philosophy, not a reference manual.
 
-```
+```text
 skills/<kebab-name>/
   SKILL.md            frontmatter + body (always loaded when selected)
   references/*.md     detail, loaded only when the body points at it
@@ -28,7 +28,9 @@ never runs. A sharp description with a vague body runs and changes nothing.
 description: <what it does and when to use it, one sentence>. Triggers - <phrases people type>.
 ```
 
-- 80–500 characters, enforced by the validator
+- 80–500 characters hard limit; aim for ≤ 320. All descriptions together form
+  a catalog injected into every session — Codex drops the whole catalog when it
+  exceeds its budget, so `make validate` caps the total
 - Trigger phrases are what a person types **under pressure** — "it's slow",
   "this broke", "should we use a queue" — not the formal name of the discipline
 - Include other languages your team works in; routing is lexical enough to care

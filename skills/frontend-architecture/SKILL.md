@@ -1,6 +1,6 @@
 ---
 name: frontend-architecture
-description: Structures user interfaces for correctness, accessibility and performance - state ownership, data fetching, component boundaries, rendering budgets. Use when building or restructuring UI, when state handling has become tangled, or when the interface feels slow or inaccessible. Triggers - build a UI, component structure, state management, where should this state live, accessibility, WCAG, slow page, loading spinner, form handling, design system, re-render.
+description: Structures UI for correctness, accessibility and performance - state ownership, data fetching, components, rendering budgets. Triggers - build the settings page, where should this component state live, page feels slow or jumps while loading, accessibility, WCAG, form handling.
 ---
 
 # Frontend Architecture

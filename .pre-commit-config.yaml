@@ -33,3 +33,13 @@ repos:
         entry: python3 scripts/check_triggers.py
         language: system
         pass_filenames: false
+      - id: adapters-current
+        name: generated agent adapters are current
+        entry: python3 scripts/build_adapters.py --check
+        language: system
+        pass_filenames: false
+      - id: env-hygiene
+        name: .env and secret hygiene
+        entry: python3 scripts/check_env.py --strict
+        language: system
+        pass_filenames: false

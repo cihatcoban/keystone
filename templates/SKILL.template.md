@@ -8,15 +8,16 @@ description: <One English sentence - what it does and when to use it>. Triggers 
 <One paragraph: the concrete failure this prevents. Not a definition.>
 
 ## When to use
+
 - <situation>
 
 **When not to use:** <the case where this is overhead, and what to do instead>
 
-## <Core procedure>
+## Procedure (rename to what it is)
 
 1. <Step with an observable outcome>
 
-## <Decision table where judgment is required>
+## Decisions (a table wherever judgment is required)
 
 | Situation | Choose | Because |
 |---|---|---|

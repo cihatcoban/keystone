@@ -1,6 +1,6 @@
 ---
 name: planning-and-task-breakdown
-description: Decomposes an approved spec into small, ordered, independently verifiable tasks. Use when a spec exists and the work must be sequenced, or when a task feels too large to start. Triggers - break this down, make a plan, task list, where do we start, sequence the work, this task is too big, estimate scope.
+description: Decomposes an approved spec into small, ordered, independently verifiable tasks. Triggers - break this spec into tasks, make a plan, how should we sequence this work, where do we start, this task feels too big to start.
 ---
 
 # Planning and Task Breakdown

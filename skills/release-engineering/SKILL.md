@@ -1,6 +1,6 @@
 ---
 name: release-engineering
-description: Ships to production safely - versioning, changelogs, reproducible builds, staged rollout, rollback and release-time migrations. Use when preparing a release, cutting a version, or designing a deployment process. Triggers - ship it, deploy, roll out, release, version bump, semver, changelog, rollout plan, canary, rollback, blue green, we broke production after deploy.
+description: Ships safely - versioning, changelog, reproducible builds, staged rollout, rollback, release-time migrations. Triggers - ship this to production, deploy, how should we roll this out, we need a rollback plan, version bump, canary, broke production after deploy.
 ---
 
 # Release Engineering

@@ -4,6 +4,7 @@ A smell is a symptom, not a verdict. Fix it when it is in the way of a change
 you are already making — not on a sweep.
 
 ## Within a function
+
 | Smell | Cost | Move |
 |---|---|---|
 | Long function (several responsibilities) | Cannot be named, tested or reused | Extract by responsibility |
@@ -15,6 +16,7 @@ you are already making — not on a sweep.
 | Comment explaining *what* | Code should say it | Rename, extract |
 
 ## Between units
+
 | Smell | Cost | Move |
 |---|---|---|
 | Feature envy (uses another object's data more than its own) | Logic far from its data | Move the method |
@@ -25,6 +27,7 @@ you are already making — not on a sweep.
 | Middle man (delegates everything) | Indirection with no value | Inline it |
 
 ## Types and data
+
 | Smell | Cost | Move |
 |---|---|---|
 | Primitive obsession | Nothing prevents the wrong string | Value type |
@@ -34,6 +37,7 @@ you are already making — not on a sweep.
 | Mutable shared state | Races, action at a distance | Immutability or single ownership |
 
 ## Duplication — read carefully
+
 | Kind | Verdict |
 |---|---|
 | Same **knowledge** in two places (a rule, a format, a constant) | Unify. Divergence here is a silent bug |
@@ -43,6 +47,7 @@ Wait for the third occurrence before abstracting. A wrong abstraction is more
 expensive than duplication, because it is harder to undo.
 
 ## Tests
+
 | Smell | Cost |
 |---|---|
 | Asserting implementation details | Breaks on every refactor, catches nothing |

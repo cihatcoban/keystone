@@ -1,6 +1,6 @@
 ---
 name: architecture-decisions
-description: Makes and records a significant technical decision - options, trade-offs, reversibility - as an ADR. Use when choosing between technologies or patterns, when a choice will be expensive to undo, or when nobody remembers why something is the way it is. Triggers - should we use X or Y, queue or direct calls, build or buy, ADR, architecture decision, monolith or microservices, which database, why is it built this way, design doc, trade-offs.
+description: Makes and records a costly-to-reverse technical decision as an ADR - forces, options, trade-offs, reversibility. Triggers - should we use a queue or direct calls, X or Y, build or buy, write an ADR, which database, monolith or microservices, why is the system built this way.
 ---
 
 # Architecture Decisions
@@ -89,6 +89,13 @@ that links back. The history is the value: it shows what was true when, which
 is the only way to judge whether the reasoning still applies.
 
 Revisit when the recorded assumption breaks, not on a schedule.
+
+**One carve-out: pre-implementation amendment.** Implementation regularly shows
+that the decision was right but its write-up was imprecise. While nothing has
+shipped against the ADR, append a dated `## Amendment (pre-implementation)`
+section correcting the description — do not supersede a document that is hours
+old, and do not leave the imprecise version standing. Once code depends on the
+decision, the carve-out closes and any change is a new ADR.
 
 ## Exit checklist
 

@@ -1,6 +1,6 @@
 ---
 name: api-and-contract-design
-description: Designs interfaces other systems depend on - REST, GraphQL, RPC, events, library APIs - including versioning, compatibility and error contracts. Use when creating or changing any public surface. Triggers - design an API, REST endpoint, GraphQL schema, event schema, breaking change, API versioning, backward compatible, what should this return, interface design, contract test.
+description: Designs interfaces other systems depend on - REST, GraphQL, RPC, events - with versioning, compatibility and error contracts. Use when creating or changing a public surface. Triggers - design REST endpoints, breaking change, API versioning, what should this return on error, event schema, contract test.
 ---
 
 # API and Contract Design

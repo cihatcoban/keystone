@@ -1,6 +1,6 @@
 ---
 name: context-engineering
-description: Sets up what an agent knows about a repository - operating contract, conventions, session hygiene - and fixes degrading output quality. Use when onboarding an agent to a codebase, when answers get worse as a session grows, or when the agent keeps violating project conventions. Triggers - set up CLAUDE.md, agent keeps ignoring our conventions, output quality dropped, context window, onboard the agent, repo rules.
+description: Sets up what an agent knows about a repository - operating contract, conventions, session hygiene - and fixes degrading output. Triggers - set up CLAUDE.md or AGENTS.md, agent keeps ignoring our conventions, output quality dropped in a long session, onboard the agent, repo rules.
 ---
 
 # Context Engineering

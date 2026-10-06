@@ -4,7 +4,11 @@
     "MD024": { "siblings_only": true },
     "MD033": false,
     "MD041": false,
-    "MD046": { "style": "fenced" }
+    "MD046": { "style": "fenced" },
+    // MD060 (table pipe alignment) arrived in markdownlint 0.38. Keystone uses
+    // compact tables on purpose: aligned pipes make every one-cell edit a
+    // whole-table diff. Decided 2026-10-01; see CHANGELOG 1.2.0.
+    "MD060": false
   },
   "globs": ["**/*.md"],
   "ignores": ["node_modules/**"]

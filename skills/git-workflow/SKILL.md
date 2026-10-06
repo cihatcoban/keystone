@@ -1,6 +1,6 @@
 ---
 name: git-workflow
-description: Keeps version history reviewable and recoverable - atomic commits, branch strategy, conflict resolution, PR hygiene, bisect and recovery. Use when committing, branching, splitting messy work, opening a PR, or recovering from a bad git state. Triggers - commit this, write a commit message, branch strategy, merge conflict, rebase or merge, split this commit, git bisect, undo a commit, PR description, messy working tree.
+description: Keeps history reviewable and recoverable - atomic commits, branching, conflicts, PR hygiene, bisect, recovery. Triggers - write a commit message, split this messy working tree into clean commits, find the commit that broke this, merge conflict, rebase or merge, undo a commit.
 ---
 
 # Git Workflow
@@ -22,7 +22,7 @@ A commit is **one logical change**, and the repository works at that commit.
 
 ### Message
 
-```
+```text
 type(scope): imperative summary, ≤ 72 chars
 
 Why this change exists — the condition or decision that required it, not a
