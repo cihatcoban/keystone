@@ -26,6 +26,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 DESC_MIN, DESC_MAX = 80, 500
+DESC_TARGET = 320  # every description is injected into every session; see CONTRIBUTING
 BODY_MIN, BODY_MAX = 350, 1600
 
 errors: list[str] = []
@@ -95,6 +96,8 @@ def check_skills(base: Path, strict: bool = True) -> dict[str, str]:
         else:
             if not DESC_MIN <= len(desc) <= DESC_MAX:
                 err(f"{rel(f)}: description {len(desc)} chars, must be {DESC_MIN}-{DESC_MAX}")
+            elif len(desc) > DESC_TARGET:
+                warn(f"{rel(f)}: description {len(desc)} chars, over the target {DESC_TARGET}")
             if "Triggers" not in desc:
                 err(f"{rel(f)}: description must contain a 'Triggers - ...' section")
             if not desc[:1].isupper():

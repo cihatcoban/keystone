@@ -19,7 +19,7 @@ with its own justification. It never rides along inside a feature change.
 | Repository validation | 0 errors, 0 warnings | `make validate` (CI) | 0 / 0 |
 | Skill routing | 0 weak prompts, 0 collisions | `make triggers` (CI) | 0 / 0 across 97 prompts |
 | Eval coverage | 1 case file per skill; ≥ 3 positive and ≥ 2 negative prompts | `make validate` (CI) | 32 / 32 |
-| Tooling unit tests | 100% passing | `make test` (CI) | 25 / 25 |
+| Tooling unit tests | 100% passing | `make test` (CI) | 28 / 28 |
 | Skipped or quarantined tests | 0 | review | 0 |
 | Line coverage, `scripts/` | n/a — no coverage tool; tooling is stdlib-only by rule. Revisit if `scripts/` exceeds 1,500 lines | — | 892 lines |
 | Bug fixes | reproduction test first | PR shows red-then-green | — |
@@ -31,8 +31,8 @@ with its own justification. It never rides along inside a feature change.
 | Markdown lint | 0 errors | `make lint`, pinned `markdownlint-cli2@0.22.1` (CI) | 0 |
 | Python lint and format | 0 findings, 0 diffs | `ruff` in pre-commit — **not yet in CI** | not measured |
 | Type checker | n/a — none configured; scripts use type hints only | — | — |
-| New suppressions | justification + tracking link required | review | 2 existing `noqa: E402`, justified inline |
-| Skill description length | 80–500 chars (hard); ≤ 320 (target) | `make validate` enforces 80–500 | 217–311 |
+| New suppressions | justification + tracking link required | review | 3 existing `noqa: E402`, justified inline |
+| Skill description length | 80–500 chars (hard); ≤ 320 (target) | `make validate`: error outside 80–500, warning above 320 | 217–311 |
 | Skill catalog size | ≤ 3,800 tokens (hard); warn above 3,200 | `make validate` (CI) | ≈ 2,808 |
 | Skill body length | ≥ 350 words (hard); warn above 1,600 | `make validate` (CI) | 666–1,086 |
 | Script file length | ≤ 400 lines (soft) | review | max 357 |
