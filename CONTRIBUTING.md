@@ -27,7 +27,9 @@ Then:
    sees. Format: one English sentence saying what it does and when to use it,
    followed by concrete trigger phrases. Aim for ≤ 320 characters: every
    description is injected into every session, and Codex drops all of them
-   when the catalog exceeds its budget (`make validate` enforces it).
+   when the catalog exceeds its budget. `make validate` fails above 500
+   characters or when the catalog exceeds its token budget, and warns above
+   320.
 3. **Body: 400–1400 words.** Longer content belongs in
    `skills/<name>/references/*.md`, loaded on demand.
 4. **Stack-agnostic.** No skill assumes a language or framework. Show the
