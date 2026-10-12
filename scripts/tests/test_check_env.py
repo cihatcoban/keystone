@@ -4,6 +4,7 @@ Fake credentials are assembled at runtime so this file never contains a string
 that matches a credential format — otherwise check_env would flag Keystone's
 own test suite.
 """
+
 from __future__ import annotations
 
 import io
@@ -100,7 +101,10 @@ class CheckEnvTest(unittest.TestCase):
         self.assertIn("src/app.py:1", self.repo.output())
 
     def test_allow_marker_suppresses_a_reviewed_line(self):
-        self.repo.write("docs/x.md", f"{FAKE_GOOGLE}  <!-- keystone:allow-secret revoked sample -->\n")
+        self.repo.write(
+            "docs/x.md",
+            f"{FAKE_GOOGLE}  <!-- keystone:allow-secret revoked sample -->\n",
+        )
         self.repo.track("docs/x.md")
         self.assertNotIn("E4", self.repo.codes())
 
@@ -114,7 +118,9 @@ class CheckEnvTest(unittest.TestCase):
         self.assertIn("W2", self.repo.codes())
 
     def test_documented_variables_read_by_code_are_fine(self):
-        self.repo.write("src/settings.py", 'import os\nX = os.getenv("OPENAI_API_KEY")\n')
+        self.repo.write(
+            "src/settings.py", 'import os\nX = os.getenv("OPENAI_API_KEY")\n'
+        )
         self.assertNotIn("W2", self.repo.codes())
 
     def test_reads_in_several_languages_are_detected(self):
@@ -142,9 +148,13 @@ class CheckEnvTest(unittest.TestCase):
     def test_exit_code_strict_mode(self):
         self.repo.write("src/settings.py", 'import os\nX = os.environ["A_VAR"]\n')
         script = Path(check_env.__file__)
-        lenient = subprocess.run([sys.executable, script, "--root", self.repo.root], capture_output=True)
-        strict = subprocess.run([sys.executable, script, "--root", self.repo.root, "--strict"],
-                                capture_output=True)
+        lenient = subprocess.run(
+            [sys.executable, script, "--root", self.repo.root], capture_output=True
+        )
+        strict = subprocess.run(
+            [sys.executable, script, "--root", self.repo.root, "--strict"],
+            capture_output=True,
+        )
         self.assertEqual(lenient.returncode, 0)
         self.assertEqual(strict.returncode, 1)
 

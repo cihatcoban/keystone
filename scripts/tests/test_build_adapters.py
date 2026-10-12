@@ -1,4 +1,5 @@
 """Tests for scripts/build_adapters.py."""
+
 from __future__ import annotations
 
 import sys
@@ -51,7 +52,9 @@ class RenderTest(unittest.TestCase):
         self.assertNotIn("`CLAUDE.md`", prompt)
 
     def test_preamble_tells_the_agent_to_activate_skills(self):
-        self.assertTrue(self.render()["prompt"].startswith("This is a Keystone command."))
+        self.assertTrue(
+            self.render()["prompt"].startswith("This is a Keystone command.")
+        )
 
     def test_triple_quotes_and_backslashes_round_trip(self):
         tricky = SOURCE + "\nRegex: '''a\\d+''' and \"\"\"b\"\"\"\n"
@@ -74,7 +77,11 @@ class CheckModeTest(unittest.TestCase):
         (root / "commands").mkdir()
         (root / "commands" / "review.md").write_text(SOURCE, encoding="utf-8")
         self._saved = (ba.ROOT, ba.SOURCE_DIR, ba.GEMINI_DIR, sys.argv)
-        ba.ROOT, ba.SOURCE_DIR, ba.GEMINI_DIR = root, root / "commands", root / "commands" / "keystone"
+        ba.ROOT, ba.SOURCE_DIR, ba.GEMINI_DIR = (
+            root,
+            root / "commands",
+            root / "commands" / "keystone",
+        )
 
     def tearDown(self) -> None:
         ba.ROOT, ba.SOURCE_DIR, ba.GEMINI_DIR, sys.argv = self._saved
@@ -91,7 +98,9 @@ class CheckModeTest(unittest.TestCase):
 
     def test_editing_the_source_makes_the_adapter_stale(self):
         self.run_main()
-        (ba.SOURCE_DIR / "review.md").write_text(SOURCE + "\n2. New step.\n", encoding="utf-8")
+        (ba.SOURCE_DIR / "review.md").write_text(
+            SOURCE + "\n2. New step.\n", encoding="utf-8"
+        )
         self.assertEqual(self.run_main("--check"), 1)
 
     def test_hand_edited_adapter_is_detected(self):

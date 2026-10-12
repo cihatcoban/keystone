@@ -12,6 +12,7 @@ Scoring is deliberately crude (stemmed token overlap). It catches the common
 failure — a trigger phrase nobody put in the description — without pretending
 to model the router.
 """
+
 from __future__ import annotations
 
 import json
@@ -20,9 +21,11 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-STOP = set("""a an and are as at be by can do does for from how i if in into is it
+STOP = set(
+    """a an and are as at be by can do does for from how i if in into is it
 its me my not of on or our should so that the then there these this to us we what
-when where which who why will with you your use used using need needs""".split())
+when where which who why will with you your use used using need needs""".split()
+)
 
 
 def stem(w: str) -> str:
@@ -33,8 +36,11 @@ def stem(w: str) -> str:
 
 
 def tokens(s: str) -> set[str]:
-    return {stem(w) for w in re.findall(r"[a-zA-Z][\w-]+", s.lower())
-            if len(w) > 2 and w not in STOP}
+    return {
+        stem(w)
+        for w in re.findall(r"[a-zA-Z][\w-]+", s.lower())
+        if len(w) > 2 and w not in STOP
+    }
 
 
 def descriptions() -> dict[str, set[str]]:
@@ -66,12 +72,16 @@ def main() -> int:
         for n in case["trigger"]["negative"]:
             t = tokens(n["prompt"])
             mine = len(t & own)
-            best = max(((len(t & d), s) for s, d in desc.items() if s != name),
-                       default=(0, "-"))
+            best = max(
+                ((len(t & d), s) for s, d in desc.items() if s != name),
+                default=(0, "-"),
+            )
             if mine and mine >= best[0]:
                 collisions += 1
-                print(f"COLLISION {name}: negative prompt '{n['prompt']}' "
-                      f"matches it ({mine}) >= best other {best[1]} ({best[0]})")
+                print(
+                    f"COLLISION {name}: negative prompt '{n['prompt']}' "
+                    f"matches it ({mine}) >= best other {best[1]} ({best[0]})"
+                )
 
     print(f"\n{total} positive prompts · {weak} weak · {collisions} collisions")
     return 1 if (weak or collisions) else 0

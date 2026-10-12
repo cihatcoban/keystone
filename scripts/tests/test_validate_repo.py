@@ -1,4 +1,5 @@
 """Tests for scripts/validate_repo.py."""
+
 from __future__ import annotations
 
 import sys
@@ -33,7 +34,8 @@ class DescriptionTargetTest(unittest.TestCase):
         d = self.base / "skills" / "example-skill"
         d.mkdir(parents=True)
         (d / "SKILL.md").write_text(
-            f"---\nname: example-skill\ndescription: {desc}\n---\n{BODY}", encoding="utf-8"
+            f"---\nname: example-skill\ndescription: {desc}\n---\n{BODY}",
+            encoding="utf-8",
         )
 
     def desc_findings(self) -> list[str]:

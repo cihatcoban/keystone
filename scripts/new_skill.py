@@ -6,6 +6,7 @@
 Creates skills/<name>/SKILL.md and evals/cases/<name>.json, then tells you what
 to fill in. Refuses to overwrite.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -41,19 +42,33 @@ def main() -> int:
     sdir.mkdir(parents=True)
     (sdir / "SKILL.md").write_text(body, encoding="utf-8")
 
-    case.write_text(json.dumps({
-        "skill_name": name,
-        "trigger": {
-            "positive": [{"prompt": "TODO: a phrase a person would actually type",
-                          "top_k": 3} for _ in range(3)],
-            "negative": [{"prompt": "TODO: a prompt another skill should own"}
-                         for _ in range(2)],
-        },
-        "expectations": [
-            f"'{name}' is selected among the top candidate skills",
-            "The skill's exit checklist items are addressed in the response",
-        ],
-    }, indent=2) + "\n", encoding="utf-8")
+    case.write_text(
+        json.dumps(
+            {
+                "skill_name": name,
+                "trigger": {
+                    "positive": [
+                        {
+                            "prompt": "TODO: a phrase a person would actually type",
+                            "top_k": 3,
+                        }
+                        for _ in range(3)
+                    ],
+                    "negative": [
+                        {"prompt": "TODO: a prompt another skill should own"}
+                        for _ in range(2)
+                    ],
+                },
+                "expectations": [
+                    f"'{name}' is selected among the top candidate skills",
+                    "The skill's exit checklist items are addressed in the response",
+                ],
+            },
+            indent=2,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
 
     print(f"""created
   skills/{name}/SKILL.md

@@ -17,6 +17,7 @@ Usage:
     python3 scripts/build_adapters.py           write adapters
     python3 scripts/build_adapters.py --check   exit 1 if adapters are stale
 """
+
 from __future__ import annotations
 
 import argparse
@@ -87,13 +88,17 @@ def expected_outputs() -> dict[Path, str]:
     outputs: dict[Path, str] = {}
     for src in sorted(SOURCE_DIR.glob("*.md")):
         description, body = parse_command(src)
-        outputs[GEMINI_DIR / f"{src.stem}.toml"] = render_gemini(src.stem, description, body)
+        outputs[GEMINI_DIR / f"{src.stem}.toml"] = render_gemini(
+            src.stem, description, body
+        )
     return outputs
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--check", action="store_true", help="fail if adapters are stale")
+    parser.add_argument(
+        "--check", action="store_true", help="fail if adapters are stale"
+    )
     args = parser.parse_args()
 
     try:
@@ -103,7 +108,11 @@ def main() -> int:
         return 1
 
     existing = set(GEMINI_DIR.glob("*.toml")) if GEMINI_DIR.is_dir() else set()
-    stale = [p for p, c in expected.items() if not p.exists() or p.read_text(encoding="utf-8") != c]
+    stale = [
+        p
+        for p, c in expected.items()
+        if not p.exists() or p.read_text(encoding="utf-8") != c
+    ]
     orphans = sorted(existing - set(expected))
 
     if args.check:
@@ -111,7 +120,9 @@ def main() -> int:
             print(f"STALE  {p.relative_to(ROOT)} (run: make adapters)")
         for p in orphans:
             print(f"ORPHAN {p.relative_to(ROOT)} has no commands/*.md source")
-        print(f"adapters: {len(expected)} expected · {len(stale)} stale · {len(orphans)} orphaned")
+        print(
+            f"adapters: {len(expected)} expected · {len(stale)} stale · {len(orphans)} orphaned"
+        )
         return 1 if stale or orphans else 0
 
     GEMINI_DIR.mkdir(parents=True, exist_ok=True)
@@ -119,7 +130,9 @@ def main() -> int:
         path.write_text(expected[path], encoding="utf-8")
     for path in orphans:
         path.unlink()
-    print(f"adapters: wrote {len(stale)}, removed {len(orphans)}, {len(expected)} total")
+    print(
+        f"adapters: wrote {len(stale)}, removed {len(orphans)}, {len(expected)} total"
+    )
     return 0
 
 

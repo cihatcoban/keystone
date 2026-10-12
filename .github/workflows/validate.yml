@@ -33,6 +33,12 @@ jobs:
       - name: Secret and .env hygiene
         run: python3 scripts/check_env.py --strict
 
+      - name: Python lint and format
+        run: |
+          python3 -m pip install --quiet ruff==0.6.9   # pinned: same version as .pre-commit-config.yaml
+          ruff check .
+          ruff format --check .
+
       - name: Markdown lint
         run: npx --yes markdownlint-cli2@0.22.1   # pinned: lint rules change between versions
 

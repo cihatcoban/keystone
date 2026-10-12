@@ -29,7 +29,7 @@ with its own justification. It never rides along inside a feature change.
 | Check | Threshold | Measured by | Current |
 |---|---|---|---|
 | Markdown lint | 0 errors | `make lint`, pinned `markdownlint-cli2@0.22.1` (CI) | 0 |
-| Python lint and format | 0 findings, 0 diffs | `ruff` in pre-commit — **not yet in CI** | not measured |
+| Python lint and format | 0 findings, 0 diffs | `ruff check` + `ruff format --check`, pinned `ruff==0.6.9` (CI + pre-commit) | 0 / 0 |
 | Type checker | n/a — none configured; scripts use type hints only | — | — |
 | New suppressions | justification + tracking link required | review | 3 existing `noqa: E402`, justified inline |
 | Skill description length | 80–500 chars (hard); ≤ 320 (target) | `make validate`: error outside 80–500, warning above 320 | 217–311 |
