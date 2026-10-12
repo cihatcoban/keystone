@@ -5,6 +5,31 @@ Versioning: [Semantic Versioning](https://semver.org/) applied to skill
 behavior — a MAJOR bump means a skill's rules changed in a way that would
 change an agent's output on the same input.
 
+## [Unreleased]
+
+Tooling, CI and documentation only; no skill behavior changed, so no version
+bump.
+
+### Added
+
+- `CONSTRAINTS.md`: Keystone's own quality contract, with measured thresholds
+  and the check that enforces each one.
+- `validate_repo.py` warns when a skill description exceeds the 320-character
+  target; the hard limit stays 80–500. Covered by `test_validate_repo.py`.
+- CI runs `ruff check` and `ruff format --check`, pinned to the pre-commit
+  version (0.6.9).
+
+### Changed
+
+- Scripts reformatted with `ruff format`; no logic change.
+- GitHub Actions upgraded to Node 24 runtimes: `actions/checkout@v7`,
+  `actions/setup-python@v7`, `gitleaks/gitleaks-action@v3`.
+
+### Fixed
+
+- `CONTRIBUTING.md` claimed `make validate` enforced the 320-character
+  description target; it now states what the validator actually checks.
+
 ## [1.2.0] — 2026-10-01
 
 ### Added
