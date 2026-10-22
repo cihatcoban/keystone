@@ -52,6 +52,8 @@ The axis most reviews skip entirely.
 - Partial failure: can this leave the system in a half-updated state?
 - Is the failure observable — logged with context, counted, alertable?
 - Is the change reversible? If it migrates or deletes data, what is the undo?
+- Error kinds, where to handle them, and the silent-failure patterns to block:
+  `references/error-handling.md`.
 
 ### 5. Design
 
