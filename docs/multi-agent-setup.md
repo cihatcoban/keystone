@@ -118,9 +118,26 @@ python3 ~/dev/keystone/scripts/install_agents.py cursor --uninstall
 ```
 
 Skills are symlinked, so `git pull` in Keystone updates them; `--copy` copies
-instead (always on Windows). Generated commands and agents carry a marker, are
-regenerated on every install, and are the only files `--uninstall` removes;
-anything you wrote is reported as "kept yours" and left alone.
+instead (always on Windows). Every generated command, agent and copied skill
+records a hash of what was written. A reinstall replaces it, and `--uninstall`
+removes it, only while it still matches. Files you wrote are reported as
+"kept yours", files of ours you have edited as "edited since install", and
+neither is touched. Links left behind when Keystone moves are repaired by the
+next install.
+
+A project install points at your Keystone checkout by absolute path (the skill
+links, and the script paths inside generated commands). Keep it out of version
+control:
+
+```gitignore
+.agents/skills/
+.opencode/commands/keystone-*
+.opencode/agents/
+.github/prompts/keystone-*
+.github/agents/
+```
+
+Leave out the last two lines if your team keeps its own Copilot agents there.
 
 Live checks after installing:
 
