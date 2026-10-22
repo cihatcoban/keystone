@@ -73,16 +73,134 @@
       }
     }
   },
-  "hooks": [],
+  "hooks": [
+    {
+      "id": "bar.constraints-lowered",
+      "trigger": [
+        "edit"
+      ],
+      "invariants": [
+        4,
+        5
+      ],
+      "warn": "warn",
+      "strict": "block",
+      "summary": "A number in CONSTRAINTS.md moves in the permissive direction."
+    },
+    {
+      "id": "bar.check-config",
+      "trigger": [
+        "edit"
+      ],
+      "invariants": [
+        5
+      ],
+      "warn": "warn",
+      "strict": "block",
+      "summary": "A config file of a tool named in CONSTRAINTS.md, or a protected path, is edited."
+    },
+    {
+      "id": "bar.suppression",
+      "trigger": [
+        "edit"
+      ],
+      "invariants": [
+        5
+      ],
+      "warn": "warn",
+      "strict": "block",
+      "summary": "A new lint or type suppression without a justification and a tracking link."
+    },
+    {
+      "id": "bar.test-weakened",
+      "trigger": [
+        "edit",
+        "shell"
+      ],
+      "invariants": [
+        5
+      ],
+      "warn": "warn",
+      "strict": "block",
+      "summary": "A test is skipped, focused, removed or deleted."
+    },
+    {
+      "id": "git.no-verify",
+      "trigger": [
+        "shell"
+      ],
+      "invariants": [
+        5
+      ],
+      "warn": "warn",
+      "strict": "block",
+      "summary": "A git command bypasses or redirects the repository's own hooks."
+    },
+    {
+      "id": "git.force-push",
+      "trigger": [
+        "shell"
+      ],
+      "invariants": [
+        3
+      ],
+      "warn": "ask",
+      "strict": "block",
+      "summary": "A force push, or a history rewrite, targets a protected branch."
+    },
+    {
+      "id": "secret.staged",
+      "trigger": [
+        "shell"
+      ],
+      "invariants": [
+        8
+      ],
+      "warn": "ask",
+      "strict": "block",
+      "summary": "A git commit would record a credential-shaped string."
+    },
+    {
+      "id": "secret.write",
+      "trigger": [
+        "edit"
+      ],
+      "invariants": [
+        8
+      ],
+      "warn": "ask",
+      "strict": "block",
+      "summary": "A file write contains a credential-shaped string."
+    },
+    {
+      "id": "irreversible.command",
+      "trigger": [
+        "shell"
+      ],
+      "invariants": [
+        3
+      ],
+      "warn": "ask",
+      "strict": "ask",
+      "summary": "A command deletes data, discards work, destroys infrastructure or publishes."
+    },
+    {
+      "id": "rules.project",
+      "trigger": [
+        "shell",
+        "edit"
+      ],
+      "invariants": [],
+      "warn": "rule",
+      "strict": "rule",
+      "summary": "A project rule in .keystone/rules/*.md matches; the rule sets its own action."
+    }
+  ],
   "review_only_invariants": {
     "1": "Runtime check arrives with verify.stop (WP2).",
     "2": "Discovery is a reading habit; no tool call reveals that a command was invented rather than found.",
-    "3": "Runtime checks arrive with git.force-push and irreversible.command (WP1).",
-    "4": "Runtime check arrives with bar.constraints-lowered (WP1).",
-    "5": "Runtime checks arrive with the bar.* and git.no-verify hooks (WP1).",
     "6": "Runtime check arrives with git.commit-message (WP9).",
     "7": "Boundary rules are project-specific; mechanical checks arrive with the 1.4.0 traceability graph.",
-    "8": "Runtime checks arrive with secret.staged and secret.write (WP1).",
     "9": "Whether a model decides in a production path is a property of the design, judged in review.",
     "10": "Runtime checks arrive with the session.* hooks (WP5)."
   }

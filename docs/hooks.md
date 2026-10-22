@@ -70,6 +70,38 @@ so there *ask* becomes a warning under `warn` and a block under `strict`.
 
 | ID | Trigger | Invariants | `warn` | `strict` | Fires when |
 |---|---|---|---|---|---|
+| `bar.constraints-lowered` | edit | 4, 5 | warn | block | A threshold in `CONSTRAINTS.md` moves in the permissive direction, a row is removed, or the file is deleted |
+| `bar.check-config` | edit | 5 | warn | block | A config file of a tool named in `CONSTRAINTS.md` (its "Measured by" column or verification commands), or a `protected_paths` match, is edited |
+| `bar.suppression` | edit | 5 | warn | block | A new lint or type suppression has no tracking link on the same line; documentation files are exempt |
+| `bar.test-weakened` | edit, shell | 5 | warn | block | A test gets a skip or focus marker, loses tests or assertions, or a test file is deleted |
+| `git.no-verify` | shell | 5 | warn | block | `--no-verify`, `git commit -n`, `core.hooksPath`, `HUSKY=0` or `SKIP=` on a git command that runs hooks |
+| `git.force-push` | shell | 3 | ask | block | A force push, `+refspec`, `--mirror` or remote delete targets a protected branch |
+| `secret.staged` | shell | 8 | ask | block | `git commit` would record a credential-shaped string (patterns shared with `check_env.py`) |
+| `secret.write` | edit | 8 | ask | block | A file write adds a credential-shaped string; lines marked `keystone:allow-secret` are exempt |
+| `irreversible.command` | shell | 3 | ask | ask | A recursive delete outside build output, `git reset --hard`, `git clean -f`, destructive SQL, infrastructure destroy, or a publish |
+| `rules.project` | edit, shell | — | rule | rule | A rule in `.keystone/rules/*.md` matches; the rule sets its own action |
+
+## Project rules
+
+A team turns its own prohibitions into hooks without writing code: one markdown
+file per rule in `.keystone/rules/`.
+
+```markdown
+---
+name: no-raw-sql
+trigger: edit                 # shell | edit | any
+pattern: \bdb\.raw\(
+paths: src/**, !src/db/**     # edit only; '!' excludes
+action: block                 # warn | ask | block (default warn)
+---
+Raw SQL bypasses the repository layer. Use the query builder in src/db.
+```
+
+The pattern is a Python regular expression, matched against the lines an edit
+adds or against a shell command. A rule is the team's explicit decision, so its
+action holds under both `warn` and `strict`; `off` and
+`KEYSTONE_DISABLED_HOOKS=rules.project/no-raw-sql` switch it off. A rule that
+does not parse is skipped and reported, never applied halfway.
 
 ## Invariants and their enforcement
 
@@ -80,12 +112,12 @@ reviewer can judge it. `make validate` fails when one has neither.
 |---|---|
 | 1. Evidence over assertion | review only — not enforced at runtime yet |
 | 2. Discover, don't assume | review only — no tool call shows whether a command was found or invented |
-| 3. Reversibility first | review only — not enforced at runtime yet |
-| 4. The quality bar is written | review only — not enforced at runtime yet |
-| 5. Never lower the bar | review only — not enforced at runtime yet |
+| 3. Reversibility first | `git.force-push`, `irreversible.command` |
+| 4. The quality bar is written | `bar.constraints-lowered` |
+| 5. Never lower the bar | `bar.*`, `git.no-verify` |
 | 6. One logical change per commit | review only — not enforced at runtime yet |
 | 7. Boundaries are real | review only — mechanical checks arrive with the 1.4.0 traceability graph |
-| 8. Security and privacy | review only — not enforced at runtime yet |
+| 8. Security and privacy | `secret.staged`, `secret.write` |
 | 9. An AI model is never the decision maker | review only — a property of the design, judged in review |
 | 10. Say what you did not do | review only — not enforced at runtime yet |
 
@@ -96,7 +128,8 @@ reviewer can judge it. `make validate` fails when one has neither.
 - **No network, no writes outside `.keystone/`.** Guards read the repository
   and run read-only `git` commands.
 - **One process per event.** The dispatcher runs every guard for a trigger in
-  one Python process; a typical check finishes in tens of milliseconds.
+  one Python process: about 0.1 s per call, measured on Linux with a commit
+  command (which also reads the staged diff).
 - **No Python, no hooks.** `hooks/run.sh` exits quietly when no Python 3.9+ is
   on `PATH`.
 - **Codex on Windows** runs hook commands through `cmd.exe`, which cannot

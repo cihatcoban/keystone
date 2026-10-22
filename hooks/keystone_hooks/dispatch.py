@@ -27,7 +27,13 @@ from .core import (
 from .events import normalize
 
 # Each module exports GUARDS: {hook_id: function(event, ctx) -> list[Finding]}.
-GUARD_MODULES: list[str] = []
+GUARD_MODULES: list[str] = [
+    "guards_bar",
+    "guards_git",
+    "guards_secret",
+    "guards_irreversible",
+    "guards_rules",
+]
 
 Guard = Callable[..., list]
 
