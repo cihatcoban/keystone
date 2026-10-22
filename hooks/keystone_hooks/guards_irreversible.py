@@ -40,6 +40,13 @@ SQL_DESTRUCTIVE = re.compile(
     re.IGNORECASE,
 )
 # (program, pattern over the rest of the command line, label)
+
+
+def _verb(alternatives: str) -> str:
+    """Match a whole argument, so a verb inside a path or value does not count."""
+    return rf"(?<!\S)({alternatives})(?!\S)"
+
+
 PROGRAM_RULES: list[tuple[str, re.Pattern[str], str]] = [
     (
         "terraform",
@@ -67,12 +74,12 @@ PROGRAM_RULES: list[tuple[str, re.Pattern[str], str]] = [
     ),
     (
         "aws",
-        re.compile(r"\b(rm|rb|delete-\S+|terminate-instances)\b"),
+        re.compile(_verb(r"rm|rb|delete-\S+|terminate-instances")),
         "cloud resource",
     ),
-    ("gcloud", re.compile(r"\bdelete\b"), "cloud resource"),
-    ("gsutil", re.compile(r"\b(rm|rb)\b"), "cloud resource"),
-    ("az", re.compile(r"\bdelete\b"), "cloud resource"),
+    ("gcloud", re.compile(_verb("delete")), "cloud resource"),
+    ("gsutil", re.compile(_verb("rm|rb")), "cloud resource"),
+    ("az", re.compile(_verb("delete")), "cloud resource"),
     ("dropdb", re.compile(r""), "database"),
     ("redis-cli", re.compile(r"\bflush(all|db)\b", re.IGNORECASE), "database"),
     ("npm", re.compile(r"\b(publish|unpublish|deprecate)\b"), "publication"),
