@@ -47,6 +47,7 @@ process produces confident, wrong-shaped work.
 | Production is on fire, or just stopped being | `incident-response` |
 | Adding a library, model, dataset or copied snippet | `dependency-and-license-policy` |
 | A config value, API key, `.env` file or leaked secret | `configuration-and-secrets` |
+| Adding or trusting an MCP server, plugin, hook or agent permission | `agent-and-toolchain-security` |
 | Writing docs a future person will rely on | `documentation-and-knowledge` |
 | Putting a model in the product | `ai-integration-guardrails` |
 | Setting or enforcing the quality bar | `constraint-driven-development` |
