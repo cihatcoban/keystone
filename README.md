@@ -248,5 +248,5 @@ Licensed under the [Apache License 2.0](LICENSE). See [NOTICE](NOTICE).
 [license-badge]: https://img.shields.io/badge/license-Apache%202.0-blue.svg
 [ci-badge]: https://github.com/cihatcoban/keystone/actions/workflows/validate.yml/badge.svg
 [ci]: https://github.com/cihatcoban/keystone/actions/workflows/validate.yml
-[version-badge]: https://img.shields.io/badge/version-1.3.0-informational
+[version-badge]: https://img.shields.io/badge/version-2.0.0-informational
 [skills-badge]: https://img.shields.io/badge/skills-34-success

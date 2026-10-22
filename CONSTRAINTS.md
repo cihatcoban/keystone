@@ -5,7 +5,7 @@ Keystone's own quality contract. Projects that install Keystone start from
 this repository only.
 
 Every row names the check that enforces it. "Current" was measured on
-2026-10-22 against `release/1.3.0` at `ed14215`. `n/a` rows state why the dimension
+2026-10-22 against `release/2.0.0` at `ed14215`. `n/a` rows state why the dimension
 does not apply to a repository of process documentation and stdlib-only
 tooling.
 
