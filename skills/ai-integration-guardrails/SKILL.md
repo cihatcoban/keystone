@@ -97,6 +97,9 @@ a console. A prompt change is a behavior change and needs the same gates.
 - Track acceptance rate in production: how often does the human accept the
   draft unchanged? Falling acceptance is the earliest signal of drift
 
+Dataset shape, graders, judge calibration and the CI regression gate:
+`references/llm-eval-harness.md`.
+
 ## Being honest with users
 
 Label model-generated content. Show sources for claims. Make correction easy

@@ -13,6 +13,10 @@
       {
         "prompt": "We need a rollback plan",
         "top_k": 3
+      },
+      {
+        "prompt": "What should we check right after the deploy before calling it done?",
+        "top_k": 3
       }
     ],
     "negative": [

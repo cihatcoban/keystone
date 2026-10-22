@@ -90,6 +90,24 @@ moment it matters.
 - Record what you learned if anything surprised you. Two surprises in the same
   area is a pattern worth fixing in the pipeline.
 
+## Post-release verification
+
+"Watch the signals" becomes a checklist you run, at fixed times, against
+production — not against staging and not against a health endpoint alone:
+
+| When | Check | Passes when |
+|---|---|---|
+| Immediately | The new version is what is serving | Build id or version endpoint matches the release, on every instance or region |
+| Immediately | Critical user journeys, run as synthetic requests | Each journey succeeds end to end (sign in, the main write path, the main read path) |
+| First 15 minutes | Error rate, latency p95/p99, saturation | Within the rollback threshold, compared with the same window a day or a week earlier |
+| First 15 minutes | Logs | No new error signatures; the expected new log lines appear |
+| First hour | One business signal (orders, sign-ups, messages sent) | Inside its normal band for the time of day |
+| End of the window | Flags, migrations, background jobs | Flag states as planned; migrations done; queues draining |
+
+Write the list into the release plan before deploying, with an owner and the
+rollback trigger for each numeric row. If a check cannot be run, the release
+is not verified — say so in the release notes instead of declaring success.
+
 ## Exit checklist
 
 - [ ] Gates green; build versioned and reproducible
