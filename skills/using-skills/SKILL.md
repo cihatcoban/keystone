@@ -52,6 +52,7 @@ process produces confident, wrong-shaped work.
 | Putting a model in the product | `ai-integration-guardrails` |
 | Setting or enforcing the quality bar | `constraint-driven-development` |
 | Configuring what the agent knows about this repo | `context-engineering` |
+| Several agents on one task, parallel work, or a loop that will not stop | `agent-orchestration` |
 | Adding to Keystone itself | `skill-authoring` |
 
 ## Chains
