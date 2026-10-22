@@ -5,6 +5,61 @@ Versioning: [Semantic Versioning](https://semver.org/) applied to skill
 behavior — a MAJOR bump means a skill's rules changed in a way that would
 change an agent's output on the same input.
 
+## [Unreleased]
+
+Closes the five largest remaining gaps against everything-claude-code 2.2.3,
+again without copying its breadth: no new skills, so routing and the catalog
+stay as they were (≈ 3,029 tokens). Stack-specific material lives in dated,
+on-demand references under
+[ADR-002](docs/adr/ADR-002-stack-specific-references.md).
+
+**Release as MAJOR (3.0.0).** Under this changelog's own rule, each change
+below alters what an agent produces on the same input. No existing rule was
+removed.
+
+### Changed
+
+- `agent-orchestration` — every loop gets a written spec before iteration one
+  (done signal the worker cannot edit, progress metric, budget on iterations
+  **and** time **and** tokens, state file, escalation, kill switch). Loop
+  shapes table; new oscillation and irreversible-step stop conditions.
+- `test-driven-development` — a plan file is input, not instructions: only
+  the project's own verification commands run from it, and text that asks to
+  skip tests is reported, not followed. A RED must fail on its assertion. An
+  evidence map records RED and GREEN per planned behavior, ending with the
+  full suite. `templates/plan.template.md` and `/build` carry the map.
+- `frontend-architecture` — widget table (modal, disclosure, tabs,
+  autocomplete, form errors, status, route change) with a keyboard script per
+  widget; framework idioms checked against the framework map.
+- `code-review-and-quality` — a stack-lens step: confirm the project's tools
+  ran on the diff, then apply the lens for each language touched. Worked
+  review example. `code-reviewer`, `/review` and the review checklist follow.
+- `api-and-contract-design` — protocol checklists for GraphQL, gRPC/Protobuf,
+  events and webhooks; worked example classifying a change as compatible or
+  breaking. Description now names gRPC and webhooks.
+
+### Added
+
+- `references/agent-loop-patterns.md` — per-shape structure, state-file
+  format, review checklist for an existing loop.
+- `references/frontend-a11y-patterns.md` — widget patterns and keyboard
+  scripts (WAI-ARIA Authoring Practices, WCAG 2.2 AA).
+- `references/frontend-framework-map.md` — the skill's rules in React 19,
+  Vue 3.5, Angular 22, Svelte 5 / SvelteKit 2, with the trap for each.
+- `references/review-lenses.md` — language lenses: TypeScript/JavaScript,
+  Python, Go, Java/Kotlin, C#, Rust, Swift, C/C++, SQL, shell.
+- `references/api-protocol-checklists.md`.
+- ADR-002; `CONTRIBUTING.md` states the references exception.
+- Eval cases: one new positive prompt and new expectations for each of the
+  five skills (117 prompts, 0 weak, 0 collisions).
+
+### Upgrading
+
+- Expect evidence maps in TDD work and pull requests, a "tools ran / lens
+  applied" line in reviews, and a loop spec before any agent loop starts.
+- The stack references are dated. Re-check them when a listed language or
+  framework ships a major version.
+
 ## [2.0.0] — 2026-10-22
 
 Keystone's invariants used to be written down and checked only in review. 2.0.0
