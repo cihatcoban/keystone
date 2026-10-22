@@ -13,9 +13,13 @@ everything-claude-code 2.2.3 without copying its breadth: two new skills, so
 the skill catalog grows from ≈ 2,800 to ≈ 3,000 tokens.
 
 **Why MINOR, not MAJOR.** Existing skills gained new sections and pointer
-lines; no existing rule was changed or removed (`git diff 1.2.0` on
-`skills/*/SKILL.md` has 177 additions and 0 deletions). Hooks default to the
-`warn` profile, so nothing blocks unless a project opts into `strict`.
+lines; no existing rule was changed or removed (against 1.2.0, the modified
+`skills/*/SKILL.md` files have 177 added lines and 0 deleted). Hooks default to
+the `warn` profile: findings are reported, not blocked. The exceptions are
+`git.force-push`, `secret.*` and `irreversible.command`, which ask for
+approval even under `warn` in Claude Code and Gemini CLI (Codex has no hook
+approval prompt and warns instead). Unattended runs should plan for those
+prompts.
 
 ### Added
 
@@ -63,7 +67,9 @@ lines; no existing rule was changed or removed (`git diff 1.2.0` on
   never by suppressing or weakening checks).
 - **Cursor, opencode and GitHub Copilot**: `scripts/install_agents.py` installs
   the skills into `.agents/skills/` plus the commands and subagents each tool
-  supports; `--uninstall` removes only what it generated.
+  supports. Everything it writes records a hash; it replaces or removes only
+  files that still match, so neither your files nor your edits to its files
+  are ever lost.
 - `make evals-live` (`scripts/evals_live.py`): optional, outside CI. Sends eval
   prompts to a real agent CLI and grades answers against the skill's exit
   checklist, so "selected" and "followed" are measured separately.
@@ -84,6 +90,8 @@ lines; no existing rule was changed or removed (`git diff 1.2.0` on
   agent cost rows.
 - `CONSTRAINTS.md`: Keystone's own quality contract, with measured thresholds
   and the check that enforces each one.
+- `SECURITY.md` lists which scripts write outside the repository, run
+  project commands or reach the network, instead of claiming none do.
 - `validate_repo.py` warns when a skill description exceeds the 320-character
   target; the hard limit stays 80–500. Covered by `test_validate_repo.py`.
 - CI runs `ruff check` and `ruff format --check`, pinned to the pre-commit
