@@ -49,14 +49,13 @@ class Repo:
         self._tmp = tempfile.TemporaryDirectory()
         self.root = Path(self._tmp.name)
         self.git("init", "-q", "-b", branch)
-        self.git("config", "user.email", "t@example.com")
-        self.git("config", "user.name", "t")
         if constraints:
             self.write("CONSTRAINTS.md", constraints)
 
     def git(self, *args: str) -> str:
+        identity = ["-c", "user.name=t", "-c", "user.email=t@example.com"]
         return subprocess.run(
-            ["git", "-C", str(self.root), *args],
+            ["git", "-C", str(self.root), *identity, *args],
             capture_output=True,
             text=True,
             check=True,

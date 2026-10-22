@@ -14,6 +14,20 @@
 **Change rule:** lowering any number in this file is a standalone pull request
 with its own justification. It never rides along inside a feature change.
 
+## Verification commands
+
+The commands `/verify` runs, in phase order, from the project root. Use the
+project's own wrappers (`make`, `./gradlew`, package scripts), not global tools.
+A phase that does not apply gets `n/a` and a reason instead of a command.
+
+| Phase | Command |
+|---|---|
+| build | `______` |
+| types | `______` |
+| lint | `______` |
+| test | `______` |
+| security | `______` |
+
 ## 1. Correctness
 
 | Dimension | Threshold | Measured by | Status |

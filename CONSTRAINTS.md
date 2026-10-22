@@ -12,6 +12,19 @@ tooling.
 **Change rule:** lowering any number in this file is a standalone pull request
 with its own justification. It never rides along inside a feature change.
 
+## Verification commands
+
+What `/verify` runs, in phase order. `make all` is what CI runs; the rows split
+it so a failure names its phase.
+
+| Phase | Command |
+|---|---|
+| build | `make adapters-check` |
+| types | n/a — no type checker configured; see §2 |
+| lint | `make validate` `make triggers` `ruff check .` `ruff format --check .` `make lint` |
+| test | `make test` |
+| security | `make env-check` |
+
 ## 1. Correctness
 
 | Dimension | Threshold | Measured by | Current |

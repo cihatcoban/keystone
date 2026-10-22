@@ -33,6 +33,7 @@ GUARD_MODULES: list[str] = [
     "guards_secret",
     "guards_irreversible",
     "guards_rules",
+    "guards_verify",
 ]
 
 Guard = Callable[..., list]

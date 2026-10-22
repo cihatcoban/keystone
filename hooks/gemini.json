@@ -24,6 +24,18 @@
           }
         ]
       }
+    ],
+    "AfterAgent": [
+      {
+        "hooks": [
+          {
+            "name": "keystone-stop",
+            "type": "command",
+            "command": "sh \"<keystone-root>\"/hooks/run.sh --harness gemini --trigger stop",
+            "timeout": 30000
+          }
+        ]
+      }
     ]
   }
 }
