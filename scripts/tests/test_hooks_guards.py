@@ -489,6 +489,73 @@ class IrreversibleTest(GuardCase):
                 )
 
 
+class CommitMessageTest(GuardCase):
+    def history(self, subjects: list[str]) -> None:
+        """Create commits in one `git fast-import` call (one process, not 2N)."""
+        stream = "".join(
+            f"commit refs/heads/main\ncommitter t <t@example.com> {1_700_000_000 + i} +0000\n"
+            f"data {len(subject.encode())}\n{subject}\n"
+            for i, subject in enumerate(subjects)
+        )
+        subprocess.run(
+            ["git", "-C", str(self.repo.root), "fast-import", "--quiet"],
+            input=stream,
+            text=True,
+            check=True,
+            capture_output=True,
+        )
+
+    def fire(self, command: str, **config) -> list[str]:
+        return [
+            f.message
+            for f in guards_git.commit_message_guard(
+                self.repo.shell(command), self.repo.ctx(**config)
+            )
+        ]
+
+    def test_detected_convention_is_enforced(self):
+        self.history([f"feat(core): add part {i}" for i in range(6)])
+        self.assertTrue(self.fire('git commit -m "updated stuff"'))
+        self.assertTrue(self.fire('git commit -m "feat: add parser and fix lexer"'))
+        self.assertTrue(self.fire('git commit -am "fix(api): Added retries."'))
+        [message] = self.fire('git commit -m "wip"')
+        self.assertIn("6 of the last 6 commits", message)
+
+    def test_good_and_generated_messages_pass(self):
+        self.history([f"fix(io): handle case {i}" for i in range(6)])
+        for command in (
+            'git commit -m "feat(hooks): add commit message guard" -m "Body explains why."',
+            'git commit -m "docs: add tests and docs"',
+            "git commit -m 'Revert \"feat: x\"'",
+            "git commit --amend --no-edit",
+            "git commit",
+        ):
+            with self.subTest(command=command):
+                self.assertEqual(self.fire(command), [])
+
+    def test_no_convention_means_no_check(self):
+        self.history(
+            ["Initial import", "Tweak things", "More work", "Fix it", "Done", "Again"]
+        )
+        self.assertEqual(self.fire('git commit -m "whatever I like"'), [])
+        self.assertTrue(
+            self.fire(
+                'git commit -m "whatever I like"', commit_convention="conventional"
+            )
+        )
+
+    def test_commitlint_config_and_message_file(self):
+        self.repo.write("commitlint.config.js", "module.exports = {}\n")
+        self.repo.write("msg.txt", "feat: add thing\nno blank line\n")
+        [message] = self.fire("git commit -F msg.txt")
+        self.assertIn("commitlint", message)
+        self.assertIn("blank line", message)
+
+    def test_disabled_by_setting(self):
+        self.history([f"feat: add part {i}" for i in range(6)])
+        self.assertEqual(self.fire('git commit -m "wip"', commit_convention="none"), [])
+
+
 RULE = """---
 name: no-raw-sql
 trigger: edit

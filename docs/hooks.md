@@ -76,6 +76,7 @@ so there *ask* becomes a warning under `warn` and a block under `strict`.
 | `bar.test-weakened` | edit, shell | 5 | warn | block | A test gets a skip or focus marker, loses tests or assertions, or a test file is deleted |
 | `git.no-verify` | shell | 5 | warn | block | `--no-verify`, `git commit -n`, `core.hooksPath`, `HUSKY=0` or `SKIP=` on a git command that runs hooks |
 | `git.force-push` | shell | 3 | ask | block | A force push, `+refspec`, `--mirror` or remote delete targets a protected branch |
+| `git.commit-message` | shell | 6 | warn | block | `git commit -m/-F` breaks the project's convention — wrong shape or type, header over 72 characters, trailing period, non-imperative summary, or two actions joined by "and". Only where a convention exists (config, commitlint, or 70% of the last 20 commits) |
 | `secret.staged` | shell | 8 | ask | block | `git commit` would record a credential-shaped string (patterns shared with `check_env.py`) |
 | `secret.write` | edit | 8 | ask | block | A file write adds a credential-shaped string; lines marked `keystone:allow-secret` are exempt |
 | `irreversible.command` | shell | 3 | ask | ask | A recursive delete outside build output, `git reset --hard`, `git clean -f`, destructive SQL, infrastructure destroy, or a publish |
@@ -115,7 +116,7 @@ reviewer can judge it. `make validate` fails when one has neither.
 | 3. Reversibility first | `git.force-push`, `irreversible.command` |
 | 4. The quality bar is written | `bar.constraints-lowered` |
 | 5. Never lower the bar | `bar.*`, `git.no-verify` |
-| 6. One logical change per commit | review only — not enforced at runtime yet |
+| 6. One logical change per commit | `git.commit-message` (flags summaries that join two actions) |
 | 7. Boundaries are real | review only — mechanical checks arrive with the 1.4.0 traceability graph |
 | 8. Security and privacy | `secret.staged`, `secret.write` |
 | 9. An AI model is never the decision maker | review only — a property of the design, judged in review |

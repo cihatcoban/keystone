@@ -13,6 +13,10 @@
       {
         "prompt": "How do I find the commit that broke this?",
         "top_k": 3
+      },
+      {
+        "prompt": "Does this commit message follow our conventional commit format?",
+        "top_k": 3
       }
     ],
     "negative": [
