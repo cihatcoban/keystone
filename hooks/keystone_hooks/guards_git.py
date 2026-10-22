@@ -140,7 +140,189 @@ def force_push(event: Event, ctx: dict) -> list[Finding]:
     return findings
 
 
+# --- git.commit-message ------------------------------------------------------
+
+CONVENTIONAL = re.compile(
+    r"^(?P<type>[a-z]+)(\((?P<scope>[^()\n]+)\))?(?P<bang>!)?: (?P<subject>\S.*)$"
+)
+STANDARD_TYPES = {
+    "feat",
+    "fix",
+    "docs",
+    "style",
+    "refactor",
+    "perf",
+    "test",
+    "build",
+    "ci",
+    "chore",
+    "revert",
+}
+COMMITLINT_FILES = (
+    "commitlint.config.js",
+    "commitlint.config.cjs",
+    "commitlint.config.mjs",
+    "commitlint.config.ts",
+    ".commitlintrc",
+    ".commitlintrc.json",
+    ".commitlintrc.yaml",
+    ".commitlintrc.yml",
+    ".commitlintrc.js",
+    ".commitlintrc.cjs",
+)
+GENERATED_MESSAGE = re.compile(r'^(Merge |Revert "|fixup! |squash! |amend! )')
+NOT_PAST_TENSE = {
+    "need",
+    "embed",
+    "feed",
+    "seed",
+    "speed",
+    "proceed",
+    "exceed",
+    "succeed",
+    "shred",
+}
+NOT_GERUND = {
+    "bring",
+    "string",
+    "ping",
+    "ring",
+    "thing",
+    "spring",
+    "swing",
+    "sting",
+    "ding",
+    "wing",
+}
+HEADER_MAX = 72
+# "add parser and fix lexer" is two changes; "add tests and docs" is one.
+SECOND_VERB = re.compile(
+    r"\band (?:also )?(add|fix|remove|update|refactor|rename|move|bump|drop|change|"
+    r"improve|use|make|support|handle|introduce|delete|replace|clean|document|"
+    r"implement|enable|disable|migrate|upgrade|revert)\b"
+)
+
+
+def commit_message(args: list[str], cwd: Path) -> str | None:
+    """The message a `git commit` will record, or None when git writes it."""
+    if any(
+        a in args for a in ("--no-edit", "--fixup", "--squash", "-C", "--reuse-message")
+    ):
+        return None
+    if any(a.startswith(("--fixup=", "--squash=", "--reuse-message=")) for a in args):
+        return None
+    parts: list[str] = []
+    i = 0
+    while i < len(args):
+        token = args[i]
+        value = None
+        if token in ("-m", "--message", "-F", "--file") and i + 1 < len(args):
+            value, i = args[i + 1], i + 1
+            if token in ("-F", "--file"):
+                value = _read_message_file(value, cwd)
+        elif token.startswith("--message="):
+            value = token.split("=", 1)[1]
+        elif token.startswith("--file="):
+            value = _read_message_file(token.split("=", 1)[1], cwd)
+        elif re.fullmatch(r"-[A-Za-z]*m.+", token):  # -m"msg" or -amfoo
+            value = token[token.index("m") + 1 :]
+        elif re.fullmatch(r"-[A-Za-z]*m", token) and i + 1 < len(args):  # -am "msg"
+            value, i = args[i + 1], i + 1
+        if value is not None:
+            parts.append(value)
+        i += 1
+    return "\n\n".join(parts) if parts else None
+
+
+def _read_message_file(name: str, cwd: Path) -> str | None:
+    if name == "-":
+        return None
+    path = Path(name) if Path(name).is_absolute() else cwd / name
+    try:
+        return path.read_text(encoding="utf-8")
+    except OSError:
+        return None
+
+
+def convention(root: Path, setting: str) -> tuple[str, set[str]]:
+    """('' when no convention applies, else where it came from), allowed types."""
+    if setting == "none":
+        return "", set()
+    history = git(root, "log", "-n", "20", "--no-merges", "--format=%s").splitlines()
+    matches = [m for m in map(CONVENTIONAL.match, history) if m]
+    types = STANDARD_TYPES | {m.group("type") for m in matches}
+    if setting == "conventional":
+        return "configured in .keystone/config.json", types
+    if any((root / name).is_file() for name in COMMITLINT_FILES):
+        return "commitlint is configured", types
+    if len(history) >= 5 and len(matches) >= 0.7 * len(history):
+        return f"{len(matches)} of the last {len(history)} commits follow it", types
+    return "", set()
+
+
+def message_problems(message: str, types: set[str]) -> list[str]:
+    lines = message.strip("\n").splitlines()
+    header = lines[0].strip() if lines else ""
+    if GENERATED_MESSAGE.match(header):
+        return []
+    match = CONVENTIONAL.match(header)
+    if not match:
+        return [f"header '{header[:60]}' is not `type(scope): summary`"]
+    problems = []
+    if match.group("type") not in types:
+        problems.append(
+            f"type '{match.group('type')}' is not one of {', '.join(sorted(types))}"
+        )
+    if len(header) > HEADER_MAX:
+        problems.append(f"header is {len(header)} characters, limit {HEADER_MAX}")
+    subject = match.group("subject")
+    if subject.endswith("."):
+        problems.append("summary ends with a period")
+    first = subject.split()[0].lower()
+    if (first.endswith("ed") and len(first) > 4 and first not in NOT_PAST_TENSE) or (
+        first.endswith("ing") and len(first) > 5 and first not in NOT_GERUND
+    ):
+        problems.append(
+            f"summary starts with '{first}'; use the imperative ('add', not 'added')"
+        )
+    second = SECOND_VERB.search(subject)
+    if second:
+        problems.append(
+            f"summary joins two actions ('and {second.group(1)}') — if they are "
+            "separate changes, split the commit (invariant 6)"
+        )
+    if len(lines) > 1 and lines[1].strip():
+        problems.append("no blank line between header and body")
+    return problems
+
+
+def commit_message_guard(event: Event, ctx: dict) -> list[Finding]:
+    findings = []
+    for seg in segments(event.command):
+        parsed = git_args(seg)
+        if parsed is None or parsed[0] != "commit":
+            continue
+        message = commit_message(parsed[1], event.cwd)
+        if message is None:
+            continue
+        source, types = convention(event.root, ctx["config"].commit_convention)
+        if not source:
+            continue
+        problems = message_problems(message, types)
+        if problems:
+            findings.append(
+                Finding(
+                    "git.commit-message",
+                    f"commit message breaks the project's convention ({source}): "
+                    f"{'; '.join(problems)}. See skills/git-workflow, 'Conventional "
+                    "Commits in practice'.",
+                )
+            )
+    return findings
+
+
 GUARDS = {
     "git.no-verify": no_verify,
     "git.force-push": force_push,
+    "git.commit-message": commit_message_guard,
 }

@@ -149,6 +149,18 @@
       "summary": "A force push, or a history rewrite, targets a protected branch."
     },
     {
+      "id": "git.commit-message",
+      "trigger": [
+        "shell"
+      ],
+      "invariants": [
+        6
+      ],
+      "warn": "warn",
+      "strict": "block",
+      "summary": "A commit message breaks the project's own commit convention."
+    },
+    {
       "id": "secret.staged",
       "trigger": [
         "shell"
@@ -199,7 +211,6 @@
   "review_only_invariants": {
     "1": "Runtime check arrives with verify.stop (WP2).",
     "2": "Discovery is a reading habit; no tool call reveals that a command was invented rather than found.",
-    "6": "Runtime check arrives with git.commit-message (WP9).",
     "7": "Boundary rules are project-specific; mechanical checks arrive with the 1.4.0 traceability graph.",
     "9": "Whether a model decides in a production path is a property of the design, judged in review.",
     "10": "Runtime checks arrive with the session.* hooks (WP5)."

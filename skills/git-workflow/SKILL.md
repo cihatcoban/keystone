@@ -40,6 +40,30 @@ Mark breaking changes explicitly (`feat(api)!:` plus a `BREAKING CHANGE:` note)
 **The message answers "why".** In six months you will have the diff and not the
 context; write the sentence you will want then.
 
+### Conventional Commits in practice
+
+The template above is the default for a repository with no convention yet. In
+an existing repository, **the repository's convention wins**: look for a
+commitlint config, then read the last twenty commit subjects. If they do not
+use `type(scope):`, neither do you.
+
+| Part | Rule | Failure it prevents |
+|---|---|---|
+| `type` | One of the project's types; `chore` only for work no user or developer would notice | `chore` becomes a junk drawer that hides real changes from the changelog |
+| `(scope)` | A module or area a reader would search for; reuse existing scopes; omit when cross-cutting | Twelve spellings of one area make `git log --grep` useless |
+| `!` / `BREAKING CHANGE:` | `!` in the header; the footer says what breaks and what to do | Release tooling misses a major bump; users find out in production |
+| Summary | Imperative, no period, ≤ 72 characters, one action | "fix: fix bug" says nothing; "add X and fix Y" is two commits |
+| Revert | `revert: <original header>` plus `This reverts commit <sha>.` | A revert nobody can trace to what it undid |
+| Trailers | `Refs: #123`, `Co-authored-by:` at the end, one per line | Tools cannot parse trailers buried in prose |
+
+With squash merges the PR title becomes the commit header, so the title follows
+the same rules.
+
+Keystone's `git.commit-message` hook checks these rules when the agent runs
+`git commit -m` or `-F`, but only where a convention exists: configured in
+`.keystone/config.json`, a commitlint config, or 70% of recent commits. Merge,
+revert, fixup and editor-written messages are left alone (`docs/hooks.md`).
+
 ## Branching
 
 Prefer **trunk-based**: short-lived branches (hours to two days), merged behind
