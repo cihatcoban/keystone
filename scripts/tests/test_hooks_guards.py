@@ -457,6 +457,13 @@ class IrreversibleTest(GuardCase):
             "kubectl delete pod web-1",
             "npm publish",
             "cd app && rm -r uploads",
+            "aws s3 rm s3://bucket/key",
+            "aws s3 rb s3://bucket --force",
+            "aws ec2 terminate-instances --instance-ids i-1",
+            "aws dynamodb delete-table --table-name t",
+            "gsutil rm gs://bucket/x",
+            "gcloud compute instances delete vm-1",
+            "az group delete --name rg",
         ):
             with self.subTest(command=command):
                 self.assertEqual(
@@ -478,6 +485,12 @@ class IrreversibleTest(GuardCase):
             "psql -c 'DELETE FROM users WHERE id = 1'",
             "terraform plan",
             "npm install",
+            # the verb appears only inside a path or a value
+            "aws s3 cp report.txt s3://bucket/rm-logs/",
+            "aws s3 ls s3://bucket/delete-me/",
+            "gsutil cp a.txt gs://bucket/rm/a.txt",
+            "gcloud compute instances list --filter=name~delete",
+            "az vm list --query \"[?name=='delete']\"",
         ):
             with self.subTest(command=command):
                 self.assertEqual(
