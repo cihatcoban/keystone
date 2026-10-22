@@ -13,7 +13,7 @@ lookup was missing.
 
 ## GraphQL
 
-**Compatibility traps**
+### Compatibility traps
 
 - Output field non-null → nullable is **breaking** (clients did not handle
   null); nullable → non-null is safe. For inputs it is the reverse: a new
@@ -23,7 +23,7 @@ lookup was missing.
 - Remove nothing without `@deprecated(reason: "…")`, a published date, and
   field-level usage data showing it is unused.
 
-**Errors**
+### Errors
 
 - Expected domain failures belong **in the schema**: a result union or a
   payload with typed `userErrors` carrying stable codes. The top-level
@@ -31,7 +31,7 @@ lookup was missing.
 - Partial results are normal; document which fields may be null because a
   sibling resolver failed.
 
-**Shape and limits**
+### Shape and limits
 
 - Mutations take one input object and return a payload type, so both can grow.
 - Lists are connections with cursors and a capped `first`.
@@ -43,13 +43,14 @@ lookup was missing.
 - Authorize per object in resolvers or the data layer, not only on the root
   field — nested fields are reachable from many roots.
 
-**Mechanical check:** schema diff in CI against the deployed schema, failing on
-breaking changes; operation validation of known client queries against the
-new schema.
+### Mechanical check
+
+Schema diff in CI against the deployed schema, failing on breaking changes;
+known client operations validated against the new schema.
 
 ## gRPC / Protocol Buffers
 
-**Compatibility traps**
+### Compatibility traps
 
 - Field **numbers** are the contract. Never reuse or renumber one; mark removed
   numbers and names `reserved`.
@@ -61,7 +62,7 @@ new schema.
   wrapper type) — otherwise `0`, `""` and "not sent" are indistinguishable.
 - Version by package (`acme.billing.v1`); a breaking change is a new package.
 
-**Errors and calls**
+### Errors and calls
 
 - Map domain failures to canonical status codes — `INVALID_ARGUMENT`,
   `NOT_FOUND`, `ALREADY_EXISTS`, `FAILED_PRECONDITION`, `PERMISSION_DENIED` —
@@ -74,12 +75,14 @@ new schema.
 - Streams: cap message size, define what a client does after a mid-stream
   failure (resume token or restart), and respect flow control.
 
-**Mechanical check:** a breaking-change checker on `.proto` files in CI
-against the last released version; lint for naming and the zero enum value.
+### Mechanical check
+
+A breaking-change checker on `.proto` files in CI against the last released
+version; lint for naming and the zero enum value.
 
 ## Events and messages
 
-**Contract**
+### Contract
 
 - Schema in a registry or in the repository, with a declared compatibility
   mode (backward, forward or full) enforced on every publish or in CI.
@@ -88,7 +91,7 @@ against the last released version; lint for naming and the zero enum value.
 - Document channels, keys and payloads (AsyncAPI) — consumers are often
   unknown to the producer.
 
-**Delivery**
+### Delivery
 
 - Assume at-least-once: consumers deduplicate on `event_id`; producers write
   the event and the state change atomically (outbox,
@@ -104,7 +107,7 @@ against the last released version; lint for naming and the zero enum value.
 
 ## Webhooks
 
-**Sending**
+### Sending
 
 - Sign every delivery: HMAC over a timestamp and the raw body, with a
   documented verification recipe and key rotation.
@@ -116,7 +119,7 @@ against the last released version; lint for naming and the zero enum value.
 - Validate registered URLs against SSRF: no private, link-local or internal
   ranges, re-checked at delivery time (`references/threat-model-checklist.md`).
 
-**Receiving**
+### Receiving
 
 - Verify the signature over the **raw** body before parsing, with a
   constant-time comparison; reject timestamps older than the stated window
