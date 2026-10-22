@@ -94,7 +94,7 @@ The parent integrates, and owns the outcome:
 
 ## Exit checklist
 
-- [ ] Split only where parts are independent, searches are broad, or review needs fresh context
+- [ ] Split only for independent parts, broad searches, or fresh-context review
 - [ ] Interfaces fixed before fan-out; each file has exactly one owner
 - [ ] Every brief self-contained, with a defined return shape
 - [ ] Stop conditions and budget set before starting
