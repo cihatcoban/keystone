@@ -3,7 +3,7 @@
 
 # Adoption Path
 
-Adopting 32 skills at once produces ceremony, not quality. Adopt in the order
+Adopting 34 skills at once produces ceremony, not quality. Adopt in the order
 that removes the most risk per unit of effort.
 
 ## Level 0 → 1: Make the bar visible
