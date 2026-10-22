@@ -179,7 +179,8 @@ def looks_like_secret(value: str) -> bool:
     """A literal value, not a reference: no path, variable name or placeholder."""
     if len(value) < 12 or " " in value or check_env.PLACEHOLDER.match(value):
         return False
-    if re.search(r"\$\{?\w+\}?|^env:|^\{env:", value):  # a variable reference, not a value
+    # A variable reference, not a value.
+    if re.search(r"\$\{?\w+\}?|^env:|^\{env:", value):
         return False
     if value.startswith(("/", "./", "~", "http")) or re.fullmatch(
         r"[A-Z][A-Z0-9_]*", value
