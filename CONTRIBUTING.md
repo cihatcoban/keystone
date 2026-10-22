@@ -34,7 +34,10 @@ Then:
    `skills/<name>/references/*.md`, loaded on demand.
 4. **Stack-agnostic.** No skill assumes a language or framework. Show the
    principle; use pseudocode or two short contrasting examples where a concrete
-   form helps.
+   form helps. Stack-specific lookups (a language's review traps, a
+   framework's idioms) go in a dated `references/*.md` file the body points to,
+   never in the body — see
+   [ADR-002](docs/adr/ADR-002-stack-specific-references.md).
 5. **Every skill ends with an exit checklist** of verifiable statements.
 6. **Add an eval case**: `evals/cases/<name>.json`, at least 3 positive and
    2 negative trigger prompts.
