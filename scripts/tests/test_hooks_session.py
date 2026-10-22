@@ -85,6 +85,13 @@ class SessionTest(unittest.TestCase):
         self.assertIn("1 changed file(s)", self.load("compact"))
         self.assertNotIn("before the last compaction", self.load("startup"))
 
+    def test_lessons_are_counted(self):
+        self.write(
+            "LESSONS.md",
+            "# Lessons\n\n## 2026-10-01 Pin MCP servers\n\n## 2026-10-02 Rotate first\n",
+        )
+        self.assertIn("2 reviewed lesson(s)", self.load())
+
     def test_dispatch_renders_context_per_harness_and_respects_off(self):
         raw = {"cwd": str(self.root), "source": "startup"}
         for harness in core.HARNESSES:

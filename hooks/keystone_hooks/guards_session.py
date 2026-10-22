@@ -112,6 +112,19 @@ def handoff_load(event: Event, ctx: dict) -> list[Finding]:
             f"{session.get('changed_count', 0)} changed file(s); last /verify: "
             f"{v.get('result', 'never run')} ({verified})."
         )
+    lessons = root / "LESSONS.md"
+    if lessons.is_file():
+        count = sum(
+            1
+            for line in lessons.read_text(
+                encoding="utf-8", errors="replace"
+            ).splitlines()
+            if line.startswith("## ")
+        )
+        parts.append(
+            f"LESSONS.md holds {count} reviewed lesson(s) from past sessions. Before "
+            "changing an area, read the lessons tagged with it."
+        )
     return [Finding("session.handoff-load", "\n\n".join(parts), "context")]
 
 
