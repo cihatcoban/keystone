@@ -1,0 +1,89 @@
+{
+  "$comment": "Source of truth for Keystone hooks. Manifests in hooks/*.json are generated from this file by scripts/build_adapters.py. Hook IDs are a public interface: renaming one is a MAJOR change (ADR-001).",
+  "triggers": {
+    "shell": {
+      "description": "before the agent runs a shell command",
+      "timeout_s": 10,
+      "claude-code": {
+        "event": "PreToolUse",
+        "matcher": "Bash"
+      },
+      "codex": {
+        "event": "PreToolUse",
+        "matcher": "^(Bash|exec_command)$"
+      },
+      "gemini": {
+        "event": "BeforeTool",
+        "matcher": "^run_shell_command$"
+      }
+    },
+    "edit": {
+      "description": "before the agent writes or edits a file",
+      "timeout_s": 10,
+      "claude-code": {
+        "event": "PreToolUse",
+        "matcher": "Write|Edit|MultiEdit"
+      },
+      "codex": {
+        "event": "PreToolUse",
+        "matcher": "^apply_patch$"
+      },
+      "gemini": {
+        "event": "BeforeTool",
+        "matcher": "^(write_file|replace)$"
+      }
+    },
+    "stop": {
+      "description": "when the agent is about to end its turn",
+      "timeout_s": 30,
+      "claude-code": {
+        "event": "Stop"
+      },
+      "codex": {
+        "event": "Stop"
+      },
+      "gemini": {
+        "event": "AfterAgent"
+      }
+    },
+    "pre-compact": {
+      "description": "before the conversation is compacted",
+      "timeout_s": 10,
+      "claude-code": {
+        "event": "PreCompact"
+      },
+      "codex": {
+        "event": "PreCompact"
+      },
+      "gemini": {
+        "event": "PreCompress"
+      }
+    },
+    "session-start": {
+      "description": "when a session starts, resumes or is compacted",
+      "timeout_s": 10,
+      "claude-code": {
+        "event": "SessionStart"
+      },
+      "codex": {
+        "event": "SessionStart"
+      },
+      "gemini": {
+        "event": "SessionStart"
+      }
+    }
+  },
+  "hooks": [],
+  "review_only_invariants": {
+    "1": "Runtime check arrives with verify.stop (WP2).",
+    "2": "Discovery is a reading habit; no tool call reveals that a command was invented rather than found.",
+    "3": "Runtime checks arrive with git.force-push and irreversible.command (WP1).",
+    "4": "Runtime check arrives with bar.constraints-lowered (WP1).",
+    "5": "Runtime checks arrive with the bar.* and git.no-verify hooks (WP1).",
+    "6": "Runtime check arrives with git.commit-message (WP9).",
+    "7": "Boundary rules are project-specific; mechanical checks arrive with the 1.4.0 traceability graph.",
+    "8": "Runtime checks arrive with secret.staged and secret.write (WP1).",
+    "9": "Whether a model decides in a production path is a property of the design, judged in review.",
+    "10": "Runtime checks arrive with the session.* hooks (WP5)."
+  }
+}

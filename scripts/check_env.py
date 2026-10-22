@@ -135,6 +135,9 @@ AMBIENT = {
     "PYTHONPATH",
     "JAVA_HOME",
     "GITHUB_ACTIONS",
+    # Set by the agent harness for plugin hooks, never by the project.
+    "CLAUDE_PLUGIN_ROOT",
+    "PLUGIN_ROOT",
 }
 
 
