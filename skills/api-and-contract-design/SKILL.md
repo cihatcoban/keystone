@@ -1,6 +1,6 @@
 ---
 name: api-and-contract-design
-description: Designs interfaces other systems depend on - REST, GraphQL, RPC, events - with versioning, compatibility and error contracts. Use when creating or changing a public surface. Triggers - design REST endpoints, breaking change, API versioning, what should this return on error, event schema, contract test.
+description: Designs interfaces other systems depend on - REST, GraphQL, gRPC, events, webhooks - with versioning, compatibility and error contracts. Use when creating or changing a public surface. Triggers - design REST endpoints, breaking change, API versioning, what should this return on error, event schema, contract test.
 ---
 
 # API and Contract Design
@@ -104,6 +104,31 @@ Events are harder than APIs: consumers are unknown, and history is often replaye
   survive independently. Thin for internal, fat for cross-boundary, usually.
 - Never publish an event containing a field you are not committed to keeping.
 
+## Per protocol
+
+The rules above hold for every protocol; each protocol breaks them in its own
+quiet way — a GraphQL field made nullable, a reused Protobuf field number, an
+unsigned webhook. Before designing or reviewing a surface, read its section:
+HTTP defaults in `references/http-api-conventions.md`; GraphQL, gRPC and
+Protobuf, events and webhooks in `references/api-protocol-checklists.md`.
+
+## Worked example: classifying a change
+
+`GET /v1/invoices/{id}` is public. Its contract says consumers must ignore
+unknown fields; it says nothing about enums. A pull request proposes three
+changes:
+
+| Change | Class | Why | Ship as |
+|---|---|---|---|
+| Add optional `?expand=lines` | Compatible | New optional input; old requests behave identically | Ship |
+| Add `PARTIALLY_PAID` to `status` | **Breaking** | The enum was never declared open; a client switching on `status` hits an unknown value — and nothing fails loudly | Declare `status` open in the contract now; ship the value after the notice period, with consumers told |
+| Rename `total` to `amount_due` | **Breaking** | Removal plus addition | Add `amount_due`, keep `total` with the same value, mark `total` deprecated with a sunset date, measure its use, remove in `/v2` or after the date |
+
+The review output names each change's class and reason, and the CI schema
+diff confirms it: the diff must flag the rename and pass the query parameter.
+If the diff passes the rename, the check is misconfigured — fix the check
+before trusting it on the next change.
+
 ## Contract testing
 
 Hand-checked compatibility fails silently. Make it mechanical:
@@ -122,7 +147,10 @@ Hand-checked compatibility fails silently. Make it mechanical:
 - [ ] Every write operation is idempotent or documents why it cannot be
 - [ ] All list endpoints are paginated with a bounded maximum
 - [ ] Error contract: stable codes, field attribution, retryability, correlation id
-- [ ] Compatibility class of every change assessed (compatible vs breaking)
+- [ ] Compatibility class of every change assessed (compatible vs breaking),
+      with the reason, as in the worked example
+- [ ] The protocol's checklist applied (HTTP, GraphQL, gRPC/Protobuf, events,
+      webhooks), or the missing lookup reported
 - [ ] Schema checked into the repo; CI diffs it for breaking changes
 - [ ] Deprecation path and sunset date published with any replacement
 - [ ] Events are past tense, versioned, idempotently consumable
