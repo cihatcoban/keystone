@@ -219,6 +219,30 @@
       "warn": "warn",
       "strict": "block",
       "summary": "The turn ends with changes that /verify has not passed."
+    },
+    {
+      "id": "session.handoff-save",
+      "trigger": [
+        "pre-compact"
+      ],
+      "invariants": [
+        10
+      ],
+      "warn": "info",
+      "strict": "info",
+      "summary": "Records branch, changed files and verification state before compaction."
+    },
+    {
+      "id": "session.handoff-load",
+      "trigger": [
+        "session-start"
+      ],
+      "invariants": [
+        10
+      ],
+      "warn": "info",
+      "strict": "info",
+      "summary": "Loads .keystone/handoff.md and the recorded state into a new or compacted session."
     }
   ],
   "review_only_invariants": {
