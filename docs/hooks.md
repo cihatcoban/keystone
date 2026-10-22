@@ -81,7 +81,7 @@ so there *ask* becomes a warning under `warn` and a block under `strict`.
 | `secret.write` | edit | 8 | ask | block | A file write adds a credential-shaped string; lines marked `keystone:allow-secret` are exempt |
 | `irreversible.command` | shell | 3 | ask | ask | A recursive delete outside build output, `git reset --hard`, `git clean -f`, destructive SQL, infrastructure destroy, or a publish |
 | `session.handoff-save` | pre-compact | 10 | info | info | Before compaction: records branch, head, changed files and the last `/verify` result in `.keystone/state/session.json`; never blocks |
-| `session.handoff-load` | session-start | 10 | info | info | At session start: adds the Keystone root, `.keystone/handoff.md` (capped near 1,000 tokens, marked as a note to check) and the recorded state to context |
+| `session.handoff-load` | session-start | 10 | info | info | At session start: adds the Keystone root, `.keystone/handoff.md` (capped near 1,000 tokens, marked as a note to check), the recorded state, and how many reviewed lessons `LESSONS.md` holds |
 | `verify.stop` | stop | 1, 10 | warn | block | The turn ends with uncommitted changes whose fingerprint has no passing `/verify` (`scripts/verify.py`); only in repositories with a `CONSTRAINTS.md`. A repeated stop is never blocked twice |
 | `rules.project` | edit, shell | — | rule | rule | A rule in `.keystone/rules/*.md` matches; the rule sets its own action |
 
