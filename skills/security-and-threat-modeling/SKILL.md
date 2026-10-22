@@ -103,6 +103,53 @@ Scanners are necessary and insufficient. Add:
 - A test that malformed input is rejected with a safe error
 - A test that the error path leaks nothing (no stack trace, no internal ids)
 
+## Verification recipes
+
+Each class of flaw has a cheap test shape that fails when the defense is
+missing. Write the negative case; the happy path already has tests.
+
+| Flaw | Test shape |
+|---|---|
+| Object-level authorization (IDOR) | Create a record as user A; request it as user B → 403/404, and the response body holds none of A's fields |
+| Mass assignment | Send a field the caller must not set (`role`, `owner_id`, `price`) → ignored or rejected; read back to prove it |
+| Injection | Send `'`, `"`, `;`, `--`, `$(`, `{{`, `../` through every input of the endpoint → safe error, no change in stored data |
+| Path traversal | Ask for `../../etc/passwd` and an absolute path → refused before any file is opened |
+| SSRF | Make the server fetch `http://169.254.169.254/` and `http://localhost` → refused |
+| Authentication | Expired, malformed, wrong-audience and unsigned tokens → 401; no endpoint reachable without one unless listed as public |
+| Rate and size limits | Exceed the limit → 429 or 413, and the service still serves others |
+| Output encoding | Store `<script>` and `"><img onerror=…>`; render it → shown as text |
+
+Run these at the API boundary, not against an inner function: a defense that
+lives one layer too deep is the usual bug.
+
+## Tool discovery
+
+Use the scanners the project already has before proposing new ones. Look in
+CI config, `Makefile`, package scripts and pre-commit for: a secret scanner
+(gitleaks, trufflehog), a dependency scanner (osv-scanner, `npm audit`,
+pip-audit, `cargo audit`, govulncheck, trivy), and a static analyzer (semgrep,
+CodeQL, the language's security linter). Run what exists, report what is
+missing, and record the commands in the `security` row of `CONSTRAINTS.md`'s
+verification table so `/verify` runs them. A scanner nobody runs is a claim.
+
+## OWASP ASVS mapping
+
+ASVS 5.0 is the checklist to grade against when a customer or auditor asks.
+This skill's sections map onto it:
+
+| This skill | ASVS 5.0 chapters |
+|---|---|
+| Input | V1 Encoding and Sanitization, V2 Validation and Business Logic, V5 File Handling |
+| Authorization | V8 Authorization, V4 API and Web Service |
+| Authentication and sessions | V6 Authentication, V7 Session Management, V9 Self-contained Tokens, V10 OAuth and OIDC |
+| Secrets, supply chain | V13 Configuration, V15 Secure Coding and Architecture |
+| Personal data | V14 Data Protection, with `references/privacy-compliance.md` |
+| Errors and logging | V16 Security Logging and Error Handling |
+| Transport, crypto | V12 Secure Communication, V11 Cryptography |
+
+Pick the level deliberately: L1 for most internet-facing services, L2 for
+anything holding personal or financial data, L3 for high-assurance systems.
+
 ## Exit checklist
 
 - [ ] Trust boundaries identified; STRIDE prompts answered in writing

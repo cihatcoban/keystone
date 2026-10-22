@@ -13,6 +13,14 @@
       {
         "prompt": "We are storing personal data here",
         "top_k": 3
+      },
+      {
+        "prompt": "Check this API against OWASP ASVS and write the vulnerability tests",
+        "top_k": 3
+      },
+      {
+        "prompt": "We are storing personal data under KVKK and GDPR - what must the system do?",
+        "top_k": 3
       }
     ],
     "negative": [
