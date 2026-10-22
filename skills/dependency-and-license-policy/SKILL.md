@@ -26,6 +26,38 @@ Ask in order, and stop at the first yes:
 
 Never write your own cryptography, TLS, password hashing, or timezone database.
 
+## Search before you write
+
+The cheapest dependency is code that already exists in this repository. Agents
+in particular write a fresh helper because writing is faster than finding — and
+the codebase grows a second date formatter, a third retry loop, a fourth way to
+read config, each with its own bugs.
+
+Before writing anything that sounds generic (parsing, formatting, retrying,
+validation, pagination, a client for an internal service), spend a few minutes
+looking, in this order:
+
+| Where | How to look |
+|---|---|
+| This repository | Search by **behavior**, not by the name you would give it: the literal it must handle (a date format string, an error code, an endpoint path), the library it would call, a test that describes it. Check `utils`, `common`, `shared`, `lib` |
+| Sibling packages the team owns | The organization's internal packages and the services this one already calls |
+| The standard library | Then the necessity questions above |
+| The ecosystem | Only now — and the result goes through the health and license gates |
+
+What to do with what you find:
+
+- **Fits:** reuse it, even if you would have named it differently.
+- **Almost fits:** extend or fix it in place, with tests, as its own commit. A
+  near-copy beside the original is two implementations to keep in sync.
+- **Wrong:** fix it or replace it everywhere, with a deprecation path
+  (`deprecation-and-migration`); never add a parallel one silently.
+- **Found in another repository:** that is copying — the rules under "Copied
+  code" apply.
+
+Say what you searched in the pull request: "searched for X, reused Y" or
+"searched for X, nothing found". A reviewer can then check the search instead of
+rediscovering the duplicate.
+
 ## Health check
 
 | Criterion | Green | Red |
