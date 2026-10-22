@@ -87,8 +87,15 @@ In Claude Code and Gemini CLI the commands are namespaced: `/keystone:review`,
 directly, for example `$code-review-and-quality`. The full guide is
 [Multi-agent setup](docs/multi-agent-setup.md).
 
-**Other agents** (Cursor, opencode, Aider) — `AGENTS.md` sits at the root. Copy
-or symlink `skills/` into the directory your tool reads. Hosts without native
+**Cursor, opencode, GitHub Copilot** — installed into the project's
+`.agents/skills/`, with the commands and subagents each tool supports:
+
+```bash
+python3 ./keystone/scripts/install_agents.py opencode   # or cursor, copilot
+```
+
+**Other agents** (Aider and the like) — `AGENTS.md` sits at the root. Copy or
+symlink `skills/` into the directory your tool reads. Hosts without native
 skill routing can wire `hooks/session-start.sh` as a session-start hook.
 
 ### 2. Verify

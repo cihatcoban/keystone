@@ -1,4 +1,4 @@
-# Multi-agent setup — Claude Code, Gemini CLI, Codex
+# Multi-agent setup — Claude Code, Gemini CLI, Codex, Cursor, opencode, Copilot
 
 Keystone is one source of truth packaged three ways. The skills, the operating
 contract and the subagents are shared; each agent gets the manifest its loader
@@ -9,10 +9,11 @@ expects. Nothing is maintained twice by hand.
 | | Claude Code | Gemini CLI | Codex (ChatGPT) |
 |---|---|---|---|
 | Manifest | `.claude-plugin/plugin.json` | `gemini-extension.json` | `plugin.json` (Agent Plugins schema) |
-| 32 skills (`skills/*/SKILL.md`) | native | native | native |
+| 34 skills (`skills/*/SKILL.md`) | native | native | native |
 | Operating contract | via the project's `CLAUDE.md` | **loaded automatically** (`contextFileName: AGENTS.md`) | via the project's `AGENTS.md` |
-| 16 commands | `/keystone:<name>` from `commands/*.md` | `/keystone:<name>` from generated `commands/keystone/*.toml` | no plugin commands — invoke the skill: `$code-review-and-quality` |
-| 6 subagents (`agents/*.md`) | native | native | not supported by Codex plugins |
+| 18 commands | `/keystone:<name>` from `commands/*.md` | `/keystone:<name>` from generated `commands/keystone/*.toml` | no plugin commands — invoke the skill: `$code-review-and-quality` |
+| 8 subagents (`agents/*.md`) | native | native | not supported by Codex plugins |
+| Runtime hooks (`docs/hooks.md`) | automatic, from `hooks/claude-code.json` | opt-in: `scripts/install_hooks.py gemini` | automatic, from `hooks/codex.json`, after you trust them in `/hooks` |
 | Local install | `--plugin-dir` | `gemini extensions link` | `.agents/plugins/marketplace.json` |
 
 Every manifest carries the same version. `make validate` fails if they diverge,
@@ -26,7 +27,8 @@ claude plugin validate ~/dev/keystone        # must pass
 claude --plugin-dir ~/dev/keystone           # this session only
 ```
 
-Check: `/plugin` → **Errors (0)**; type `/keystone:` and the 16 commands appear.
+Check: `/plugin` → **Errors (0)**; type `/keystone:` and the 18 commands appear;
+`/hooks` lists the Keystone hooks.
 
 ## Gemini CLI
 
@@ -40,7 +42,7 @@ Inside a session:
 
 - `/keystone:review`, `/keystone:spec` … — same names as in Claude Code.
   Gemini renames an extension command only if it collides with another one.
-- `/skills` lists the 32 skills; Gemini activates them on demand and asks
+- `/skills` lists the 34 skills; Gemini activates them on demand and asks
   before loading one.
 - `AGENTS.md` is loaded as context for every session with the extension
   enabled, so the invariants and bar-protection rules apply without setup.
@@ -85,7 +87,7 @@ budget of 2% of the model's context window (8,000 characters when the window is
 unknown). **When the catalog exceeds the budget, Codex removes all descriptions
 at once**, and implicit routing stops working.
 
-Keystone keeps its catalog near 2,800 tokens and `make validate` fails above
+Keystone keeps its catalog near 3,000 tokens and `make validate` fails above
 3,800. If you install other skill packs alongside it and Codex warns
 `Exceeded skills context budget`, raise the budget in `~/.codex/config.toml`:
 
@@ -93,6 +95,44 @@ Keystone keeps its catalog near 2,800 tokens and `make validate` fails above
 [skills]
 max_context_tokens = 8000   # capped at 10000
 ```
+
+## Cursor, opencode and GitHub Copilot
+
+All three read Agent Skills from `.agents/skills/` in the project and
+`~/.agents/skills/` for the user, so Keystone's skills work unchanged.
+`scripts/install_agents.py` links them there and adds what each tool supports:
+
+| | Cursor | opencode | GitHub Copilot |
+|---|---|---|---|
+| Skills | `.agents/skills/` | `.agents/skills/` | `.agents/skills/` |
+| Commands | none needed — skills are invoked with `/` | `.opencode/commands/keystone-*.md` | `.github/prompts/keystone-*.prompt.md` (VS Code, project only) |
+| Subagents | not generated in 1.3.0 | `.opencode/agents/*.md` (`mode: subagent`) | `.github/agents/*.md` (project only) |
+| Operating contract | `AGENTS.md` | `AGENTS.md`, else `CLAUDE.md` | `AGENTS.md` |
+| Runtime hooks | not in 1.3.0 | not in 1.3.0 | not in 1.3.0 |
+
+```bash
+python3 ~/dev/keystone/scripts/install_agents.py opencode            # this project
+python3 ~/dev/keystone/scripts/install_agents.py opencode --scope user
+python3 ~/dev/keystone/scripts/install_agents.py copilot --contract  # adds AGENTS.md if absent
+python3 ~/dev/keystone/scripts/install_agents.py cursor --uninstall
+```
+
+Skills are symlinked, so `git pull` in Keystone updates them; `--copy` copies
+instead (always on Windows). Generated commands and agents carry a marker, are
+regenerated on every install, and are the only files `--uninstall` removes;
+anything you wrote is reported as "kept yours" and left alone.
+
+Live checks after installing:
+
+| Tool | Check |
+|---|---|
+| Cursor | Customize lists the Keystone skills; typing `/git-workflow` in Agent chat offers the skill |
+| opencode | `/` shows the `keystone-*` commands; asking for a review offers the `code-reviewer` subagent |
+| Copilot (VS Code) | Typing `/` in chat lists the skills and the `keystone-*` prompts |
+
+These locations were checked against each tool's documentation on 2026-10-22.
+Cursor's command and subagent folders and Copilot's hook format were not
+verified for this release, so the installer does not write them.
 
 ## The operating contract in your own projects
 
@@ -112,7 +152,10 @@ the same rule Keystone enforces on itself.
 
 All three agents can read files in your project. Before using any of them in a
 repository with real credentials, apply `templates/agent-secret-guards.md` and
-run `python3 ~/dev/keystone/scripts/check_env.py`. Prefer each CLI's login flow
+run `python3 ~/dev/keystone/scripts/check_env.py`. Audit the agents' own
+configuration — permissions, MCP servers, hooks — with
+`python3 ~/dev/keystone/scripts/audit_agent_config.py` (see
+`skills/agent-and-toolchain-security`). Prefer each CLI's login flow
 over API keys in files; see `skills/configuration-and-secrets`.
 
 ## Keeping adapters in sync
@@ -136,6 +179,8 @@ or hand-edited adapter.
 | Codex: plugin not listed | marketplace not added | `codex plugin marketplace list` |
 | Codex: skills ignored | catalog over budget | see the budget section |
 | Any agent: wrong skill fires | description overlap | fix the description, add the prompt to `evals/cases`, `make triggers` |
+| Hooks never fire | profile `off`, hook disabled, or (Codex) not trusted | `KEYSTONE_HOOK_DEBUG=1`; `/hooks`; see `docs/hooks.md` |
+| Cursor/opencode/Copilot: skills missing | not installed in this project | `install_agents.py <tool>`; check `.agents/skills/` |
 
 These manifests were checked against the agents' own loaders (Gemini CLI and
 Codex source as of 2026-09-30) rather than only their documentation. Agent CLIs
