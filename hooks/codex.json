@@ -22,6 +22,17 @@
           }
         ]
       }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh \"${PLUGIN_ROOT}\"/hooks/run.sh --harness codex --trigger stop",
+            "timeout": 30
+          }
+        ]
+      }
     ]
   }
 }

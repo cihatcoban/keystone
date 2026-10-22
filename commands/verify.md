@@ -1,0 +1,25 @@
+---
+description: Verify the work against CONSTRAINTS.md - build, types, lint, test, security and diff phases
+---
+
+Apply `constraint-driven-development`; follow `references/verification-loop.md`.
+
+Input: $ARGUMENTS (passed to the script, e.g. `--fail-fast` or `--plan`)
+
+1. Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/verify.py" $ARGUMENTS` from the
+   project root. If that path does not exist, use the Keystone root announced at
+   session start. The script reads the `## Verification commands` table in
+   `CONSTRAINTS.md` and records the result for the `verify.stop` hook.
+2. No `CONSTRAINTS.md`: stop and offer `/constraints`. No verification table:
+   show the runnable commands the script found, propose the table from
+   `templates/CONSTRAINTS.template.md`, and run `--inferred` only after the
+   user confirms the commands.
+3. A failing phase: find the root cause with `debugging-and-root-cause` and fix
+   it. Never reach green by editing a threshold, a check's configuration or a
+   test (`CLAUDE.md` §4); the hooks will flag it and so will the diff phase.
+4. Result `review`: the commands passed but the diff holds bar-protection
+   findings. Fix them, or ask the user; rerun with `--acknowledge "<reason>"`
+   only with their explicit approval, quoting their reason.
+5. Report each phase with its command and outcome, the diff findings, and the
+   final result. A phase that could not run (missing tool, no network) is
+   reported as not run, never as passed.

@@ -206,13 +206,24 @@
       "warn": "rule",
       "strict": "rule",
       "summary": "A project rule in .keystone/rules/*.md matches; the rule sets its own action."
+    },
+    {
+      "id": "verify.stop",
+      "trigger": [
+        "stop"
+      ],
+      "invariants": [
+        1,
+        10
+      ],
+      "warn": "warn",
+      "strict": "block",
+      "summary": "The turn ends with changes that /verify has not passed."
     }
   ],
   "review_only_invariants": {
-    "1": "Runtime check arrives with verify.stop (WP2).",
     "2": "Discovery is a reading habit; no tool call reveals that a command was invented rather than found.",
     "7": "Boundary rules are project-specific; mechanical checks arrive with the 1.4.0 traceability graph.",
-    "9": "Whether a model decides in a production path is a property of the design, judged in review.",
-    "10": "Runtime checks arrive with the session.* hooks (WP5)."
+    "9": "Whether a model decides in a production path is a property of the design, judged in review."
   }
 }

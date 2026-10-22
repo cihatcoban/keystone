@@ -80,6 +80,7 @@ so there *ask* becomes a warning under `warn` and a block under `strict`.
 | `secret.staged` | shell | 8 | ask | block | `git commit` would record a credential-shaped string (patterns shared with `check_env.py`) |
 | `secret.write` | edit | 8 | ask | block | A file write adds a credential-shaped string; lines marked `keystone:allow-secret` are exempt |
 | `irreversible.command` | shell | 3 | ask | ask | A recursive delete outside build output, `git reset --hard`, `git clean -f`, destructive SQL, infrastructure destroy, or a publish |
+| `verify.stop` | stop | 1, 10 | warn | block | The turn ends with uncommitted changes whose fingerprint has no passing `/verify` (`scripts/verify.py`); only in repositories with a `CONSTRAINTS.md`. A repeated stop is never blocked twice |
 | `rules.project` | edit, shell | — | rule | rule | A rule in `.keystone/rules/*.md` matches; the rule sets its own action |
 
 ## Project rules
@@ -111,7 +112,7 @@ reviewer can judge it. `make validate` fails when one has neither.
 
 | Invariant | Enforced by |
 |---|---|
-| 1. Evidence over assertion | review only — not enforced at runtime yet |
+| 1. Evidence over assertion | `verify.stop` |
 | 2. Discover, don't assume | review only — no tool call shows whether a command was found or invented |
 | 3. Reversibility first | `git.force-push`, `irreversible.command` |
 | 4. The quality bar is written | `bar.constraints-lowered` |
@@ -120,7 +121,7 @@ reviewer can judge it. `make validate` fails when one has neither.
 | 7. Boundaries are real | review only — mechanical checks arrive with the 1.4.0 traceability graph |
 | 8. Security and privacy | `secret.staged`, `secret.write` |
 | 9. An AI model is never the decision maker | review only — a property of the design, judged in review |
-| 10. Say what you did not do | review only — not enforced at runtime yet |
+| 10. Say what you did not do | `verify.stop` (changed but unverified work is named at the end of the turn) |
 
 ## How a hook behaves
 
