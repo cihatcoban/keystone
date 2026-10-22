@@ -38,6 +38,27 @@ observe which skill fires. Wrong skill → the two descriptions overlap; sharpen
 both and state the boundary in each. No skill → vocabulary is missing from the
 description.
 
+**Compliance (manual, calls a model):** routing proves a skill is *selected*;
+`make evals-live` measures whether it is *followed*. For each positive prompt it
+asks a real agent CLI twice — as written, and prefixed with "Use the <skill>
+skill" — then has the same CLI grade each answer against the skill's exit
+checklist.
+
+```bash
+make evals-live ARGS="--cli claude --skills git-workflow --limit 2"
+python3 scripts/evals_live.py --command 'my-agent --print {prompt}' --out live.json
+```
+
+| Result | Reading |
+|---|---|
+| Explicit high, implicit low | The skill works but is not picked up — fix the description |
+| Explicit low | The skill is picked up but not followed — fix the body or the checklist |
+| Applied rate low | The grader rarely sees the skill's method in the answer at all |
+
+The default CLI flags are assumptions about current versions; pass `--command`
+when yours differ. Results vary between runs and models: compare trends, keep
+the `--out` files, and never gate CI on them.
+
 ## When a skill does not trigger
 
 Fix the **description**, never the body. The body is invisible until the skill

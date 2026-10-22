@@ -1,6 +1,6 @@
 PYTHON ?= python3
 
-.PHONY: help validate triggers test adapters adapters-check env-check lint all new stats hooks agents-doctor
+.PHONY: help validate triggers test adapters adapters-check env-check lint all new stats hooks agents-doctor evals-live
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
@@ -28,6 +28,9 @@ lint: ## Markdown lint
 	@npx --yes markdownlint-cli2@0.22.1
 
 all: validate triggers test adapters-check env-check ## Everything CI runs
+
+evals-live: ## Optional, calls a model: skill compliance via a real CLI (ARGS="--cli claude --limit 1")
+	@$(PYTHON) scripts/evals_live.py $(or $(ARGS),--cli claude)
 
 agents-doctor: ## Which agent CLIs are installed, and their versions
 	@for c in claude gemini codex; do \
