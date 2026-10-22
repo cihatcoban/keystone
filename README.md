@@ -13,7 +13,8 @@ written quality contract the agent cannot quietly lower.
 ![Skills][skills-badge]
 
 [Quick start](#quick-start) · [Commands](#commands) · [Skills](#skills) ·
-[How it works](#how-it-works) · [Contributing](CONTRIBUTING.md)
+[How it works](#how-it-works) · [Runtime hooks](docs/hooks.md) ·
+[Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md)
 
 </div>
 
@@ -54,7 +55,11 @@ starts by discovering how *this* repository actually builds, tests and ships.
 
 One repository, six agents. Skills, the operating contract and the subagents
 are shared; each agent gets the manifest or install layout its own loader
-expects.
+expects. The scripts and runtime hooks need Python 3.9 or later and nothing
+else; without Python the skills still work and the hooks stay silent.
+
+Upgrading from 1.x? 2.0.0 changes three skills' output and adds runtime hooks;
+see [Upgrading from 1.x](CHANGELOG.md#200--2026-10-22).
 
 **Claude Code** — from the marketplace:
 
@@ -100,6 +105,21 @@ python3 ./keystone/scripts/install_agents.py opencode   # or cursor, copilot
 symlink `skills/` into the directory your tool reads. Hosts without native
 skill routing can wire `hooks/session-start.sh` as a session-start hook.
 
+**Runtime hooks** — on in Claude Code with the plugin, and in Codex once you
+trust them in `/hooks`. Gemini CLI is opt-in:
+`python3 ~/.gemini/extensions/keystone/scripts/install_hooks.py gemini` inside
+the project. Cursor, opencode and Copilot have no Keystone hooks yet. The
+default `warn` profile reports and does not block, except force pushes to
+protected branches, credentials and irreversible commands, which ask first:
+
+```bash
+export KEYSTONE_HOOK_PROFILE=strict                  # block instead of warn; off disables all
+export KEYSTONE_DISABLED_HOOKS="git.commit-message"  # switch off one hook or family
+```
+
+Per-project settings live in `.keystone/config.json`; see
+[Runtime hooks](docs/hooks.md).
+
 ### 2. Verify
 
 In a new session, ask:
@@ -121,7 +141,7 @@ Run these inside the project you work on, not inside Keystone:
 Then work the loop:
 
 ```text
-/spec → /design (only for costly-to-reverse choices) → /plan → /build → /review → /ship
+/spec → /design (only for costly-to-reverse choices) → /plan → /build → /verify → /review → /ship
 ```
 
 Commands are optional — skills also trigger from how you describe the work. See
@@ -202,19 +222,23 @@ docs/          getting started, multi-agent setup, hooks, ADRs, principles
 ## Quality control on the skills themselves
 
 ```bash
-make all                                # everything CI runs except lint and secret scan
+make all                                # what CI runs, except ruff, markdown lint and secret scan
 make lint                               # markdown lint, pinned version
 make stats                              # skill sizes
 make new NAME=my-skill CAT=architect    # scaffold a new skill
+make evals-live ARGS="--cli claude"     # optional: is each skill followed, not only selected (calls a model)
 ```
 
 `scripts/validate_repo.py` checks frontmatter, name/directory agreement,
 description bounds, body size, exit checklists, broken links, unknown skill
-references, `CLAUDE.md`/`AGENTS.md` parity and eval coverage.
+references, `CLAUDE.md`/`AGENTS.md` parity, eval coverage, the skill catalog
+budget, every manifest against its loader's rules and their version agreement,
+generated adapters, and the hook registry (a guard per hook ID, every
+invariant mapped to a hook, `docs/hooks.md` in sync).
 `scripts/check_triggers.py` catches the two routing failures that matter: a
 trigger phrase missing from a description, and two descriptions competing for
-the same prompt. CI runs both — plus markdown lint and a secret scan — with no
-model calls.
+the same prompt. CI runs both, plus the unit tests, adapter freshness, `.env`
+hygiene, ruff, markdown lint and a secret scan — with no model calls.
 
 `scripts/build_adapters.py` generates the Gemini CLI commands from
 `commands/*.md`; `--check` fails CI when they drift. `scripts/check_env.py` is a
