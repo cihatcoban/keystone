@@ -5,13 +5,83 @@ Versioning: [Semantic Versioning](https://semver.org/) applied to skill
 behavior — a MAJOR bump means a skill's rules changed in a way that would
 change an agent's output on the same input.
 
-## [Unreleased]
+## [1.3.0] — 2026-10-22
 
-Tooling, CI and documentation only; no skill behavior changed, so no version
-bump.
+Keystone's invariants used to be written down and checked only in review. 1.3.0
+enforces them while the agent works, and closes the gaps found against
+everything-claude-code 2.2.3 without copying its breadth: two new skills, so
+the skill catalog grows from ≈ 2,800 to ≈ 3,000 tokens.
+
+**Why MINOR, not MAJOR.** Existing skills gained new sections and pointer
+lines; no existing rule was changed or removed (`git diff 1.2.0` on
+`skills/*/SKILL.md` has 177 additions and 0 deletions). Hooks default to the
+`warn` profile, so nothing blocks unless a project opts into `strict`.
 
 ### Added
 
+- **Runtime hooks** (`hooks/`, [docs/hooks.md](docs/hooks.md),
+  [ADR-001](docs/adr/ADR-001-hook-layer.md)). One stdlib dispatcher serves
+  every harness; a manifest per harness is generated from
+  `hooks/registry.json`. Profiles `off` / `warn` (default) / `strict` via
+  `KEYSTONE_HOOK_PROFILE` or `.keystone/config.json`; any hook or family can be
+  switched off with `KEYSTONE_DISABLED_HOOKS`. Hooks fail open. Claude Code and
+  Codex wire them through their manifests; Gemini CLI and plugin-less installs
+  use `scripts/install_hooks.py`.
+  - `bar.*`: lowered `CONSTRAINTS.md` thresholds, edited lint/test config,
+    unjustified suppressions, weakened or skipped tests. Protected tools are
+    read from the project's `CONSTRAINTS.md`, not a fixed list.
+  - `git.*`: `--no-verify`, force push to protected branches, and commit
+    messages checked against the project's own convention when it has one.
+  - `secret.*`: credentials in staged changes and in files being written.
+  - `irreversible.command`: asks before deletes, resets, destructive SQL,
+    infrastructure destroys and publishes.
+  - `rules.project`: `.keystone/rules/*.md` turns a team's own prohibitions
+    into hooks without code.
+  - `session.*`: handoff state saved before compaction and loaded at session
+    start.
+  - `verify.stop`: warns (or, under `strict`, blocks once) when the agent ends
+    its turn with unverified changes.
+- **`/verify`** and `scripts/verify.py`: runs the commands in the new
+  "Verification commands" table of `CONSTRAINTS.md` in phase order, then scans
+  the diff for bar-protection triggers. Findings need an explicit
+  `--acknowledge "<reason>"`, which is recorded. `references/verification-loop.md`.
+- **`/handoff`** and `templates/handoff.template.md`: `.keystone/handoff.md`
+  carries goal, evidence, next steps and rejected approaches across compaction
+  and restarts.
+- **`/retro`** and `templates/LESSONS.template.md`: lessons from a session are
+  proposed, reviewed and only then added to the project's `LESSONS.md`; a
+  lesson that can become a check is turned into one.
+- **`agent-and-toolchain-security`** skill and `scripts/audit_agent_config.py`:
+  the agent's own MCP servers, plugins, hooks, approval modes and reachable
+  credentials, across Claude Code, Gemini CLI, Codex, Cursor and VS Code.
+  Read-only; never prints a secret value.
+- **`agent-orchestration`** skill: when several agents pay off, contracts
+  before fan-out, verification by an agent that did not do the work, and stop
+  conditions for loops, budgets and disagreement.
+- **Subagents** `silent-failure-hunter` (reports code that fails without
+  telling anyone) and `build-error-resolver` (fixes a red build at the cause,
+  never by suppressing or weakening checks).
+- **Cursor, opencode and GitHub Copilot**: `scripts/install_agents.py` installs
+  the skills into `.agents/skills/` plus the commands and subagents each tool
+  supports; `--uninstall` removes only what it generated.
+- `make evals-live` (`scripts/evals_live.py`): optional, outside CI. Sends eval
+  prompts to a real agent CLI and grades answers against the skill's exit
+  checklist, so "selected" and "followed" are measured separately.
+- References: `privacy-compliance.md` (KVKK and GDPR mapped to system
+  mechanisms; engineering guidance, not legal advice), `llm-eval-harness.md`,
+  `error-handling.md`.
+- New sections in existing skills, no rule changed:
+  `security-and-threat-modeling` (verification recipes, scanner discovery,
+  OWASP ASVS 5.0 mapping); `context-engineering` (handoffs, context and cost
+  budget); `git-workflow` (Conventional Commits in practice);
+  `dependency-and-license-policy` (search before you write);
+  `release-engineering` (post-release verification; `/ship` writes the canary
+  list). Pointer lines in `ai-integration-guardrails`,
+  `code-review-and-quality` and `using-skills`.
+- `validate_repo.py` checks the hook registry, a guard per hook ID, the
+  invariant-to-hook mapping, `docs/hooks.md` parity and manifest wiring.
+- `CONSTRAINTS.template.md`: verification commands table; agent context and
+  agent cost rows.
 - `CONSTRAINTS.md`: Keystone's own quality contract, with measured thresholds
   and the check that enforces each one.
 - `validate_repo.py` warns when a skill description exceeds the 320-character
@@ -29,6 +99,15 @@ bump.
 
 - `CONTRIBUTING.md` claimed `make validate` enforced the 320-character
   description target; it now states what the validator actually checks.
+
+### Verification note
+
+`make all` passes: 34 skills, 112 positive eval prompts with 0 weak and 0
+collisions, 138 unit tests. Every guard has true- and false-positive tests.
+Harness hook formats were checked against Gemini CLI and Codex source, not
+run live. Not yet done in a real CLI: a live hook session in each harness,
+`make evals-live` against a real model, and the Cursor, opencode and Copilot
+checks listed in `docs/multi-agent-setup.md`.
 
 ## [1.2.0] — 2026-10-01
 
