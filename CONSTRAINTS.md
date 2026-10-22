@@ -5,7 +5,7 @@ Keystone's own quality contract. Projects that install Keystone start from
 this repository only.
 
 Every row names the check that enforces it. "Current" was measured on
-2026-10-12 against `main` at `ef8b35b`. `n/a` rows state why the dimension
+2026-10-22 against `release/1.3.0` at `ed14215`. `n/a` rows state why the dimension
 does not apply to a repository of process documentation and stdlib-only
 tooling.
 
@@ -30,11 +30,11 @@ it so a failure names its phase.
 | Dimension | Threshold | Measured by | Current |
 |---|---|---|---|
 | Repository validation | 0 errors, 0 warnings | `make validate` (CI) | 0 / 0 |
-| Skill routing | 0 weak prompts, 0 collisions | `make triggers` (CI) | 0 / 0 across 97 prompts |
-| Eval coverage | 1 case file per skill; ≥ 3 positive and ≥ 2 negative prompts | `make validate` (CI) | 32 / 32 |
-| Tooling unit tests | 100% passing | `make test` (CI) | 28 / 28 |
+| Skill routing | 0 weak prompts, 0 collisions | `make triggers` (CI) | 0 / 0 across 112 prompts |
+| Eval coverage | 1 case file per skill; ≥ 3 positive and ≥ 2 negative prompts | `make validate` (CI) | 34 / 34 |
+| Tooling unit tests | 100% passing | `make test` (CI) | 138 / 138 |
 | Skipped or quarantined tests | 0 | review | 0 |
-| Line coverage, `scripts/` | n/a — no coverage tool; tooling is stdlib-only by rule. Revisit if `scripts/` exceeds 1,500 lines | — | 892 lines |
+| Line coverage, `scripts/` | n/a — no coverage tool; tooling is stdlib-only by rule. Revisit if `scripts/` exceeds 1,500 lines | — | **revisit due:** `scripts/` 2,616 lines, `hooks/` 2,142; 85.7% lines covered, measured once with stdlib `trace` (no gate yet) |
 | Bug fixes | reproduction test first | PR shows red-then-green | — |
 
 ## 2. Static analysis
@@ -44,11 +44,11 @@ it so a failure names its phase.
 | Markdown lint | 0 errors | `make lint`, pinned `markdownlint-cli2@0.22.1` (CI) | 0 |
 | Python lint and format | 0 findings, 0 diffs | `ruff check` + `ruff format --check`, pinned `ruff==0.6.9` (CI + pre-commit) | 0 / 0 |
 | Type checker | n/a — none configured; scripts use type hints only | — | — |
-| New suppressions | justification + tracking link required | review | 3 existing `noqa: E402`, justified inline |
+| New suppressions | justification + tracking link required | review | 21 `noqa: E402` (sys.path imports in scripts, hooks and tests), justified inline |
 | Skill description length | 80–500 chars (hard); ≤ 320 (target) | `make validate`: error outside 80–500, warning above 320 | 217–311 |
-| Skill catalog size | ≤ 3,800 tokens (hard); warn above 3,200 | `make validate` (CI) | ≈ 2,808 |
-| Skill body length | ≥ 350 words (hard); warn above 1,600 | `make validate` (CI) | 666–1,086 |
-| Script file length | ≤ 400 lines (soft) | review | max 357 |
+| Skill catalog size | ≤ 3,800 tokens (hard); warn above 3,200 | `make validate` (CI) | ≈ 3,001 |
+| Skill body length | ≥ 350 words (hard); warn above 1,600 | `make validate` (CI) | 650–1,312 |
+| Script file length | ≤ 400 lines (soft) | review | max 413 (`validate_repo.py`) |
 
 ## 3. Architecture
 
@@ -65,8 +65,8 @@ it so a failure names its phase.
 
 | Path | Budget | Measured by | Current |
 |---|---|---|---|
-| `make all` locally | ≤ 10 s | `time make all` | 1.1 s |
-| Tooling unit tests | ≤ 5 s | `make test` | 0.9 s |
+| `make all` locally | ≤ 10 s | `time make all` | 4.1 s |
+| Tooling unit tests | ≤ 5 s | `make test` | 3.6 s |
 | CI `validate` workflow | ≤ 3 min | GitHub Actions run time | 20–35 s |
 | Request latency, frontend vitals | n/a — Keystone ships no service or UI | — | — |
 

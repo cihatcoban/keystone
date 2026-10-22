@@ -11,7 +11,7 @@ expects. Nothing is maintained twice by hand.
 | Manifest | `.claude-plugin/plugin.json` | `gemini-extension.json` | `plugin.json` (Agent Plugins schema) |
 | 34 skills (`skills/*/SKILL.md`) | native | native | native |
 | Operating contract | via the project's `CLAUDE.md` | **loaded automatically** (`contextFileName: AGENTS.md`) | via the project's `AGENTS.md` |
-| 18 commands | `/keystone:<name>` from `commands/*.md` | `/keystone:<name>` from generated `commands/keystone/*.toml` | no plugin commands — invoke the skill: `$code-review-and-quality` |
+| 19 commands | `/keystone:<name>` from `commands/*.md` | `/keystone:<name>` from generated `commands/keystone/*.toml` | no plugin commands — invoke the skill: `$code-review-and-quality` |
 | 8 subagents (`agents/*.md`) | native | native | not supported by Codex plugins |
 | Runtime hooks (`docs/hooks.md`) | automatic, from `hooks/claude-code.json` | opt-in: `scripts/install_hooks.py gemini` | automatic, from `hooks/codex.json`, after you trust them in `/hooks` |
 | Local install | `--plugin-dir` | `gemini extensions link` | `.agents/plugins/marketplace.json` |
@@ -27,7 +27,7 @@ claude plugin validate ~/dev/keystone        # must pass
 claude --plugin-dir ~/dev/keystone           # this session only
 ```
 
-Check: `/plugin` → **Errors (0)**; type `/keystone:` and the 18 commands appear;
+Check: `/plugin` → **Errors (0)**; type `/keystone:` and the 19 commands appear;
 `/hooks` lists the Keystone hooks.
 
 ## Gemini CLI

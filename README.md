@@ -36,13 +36,14 @@ project with a green pipeline and no standards.
 
 Keystone gives the agent three things it otherwise lacks:
 
-- **A procedure for each kind of work** — 32 skills, each describing what good
+- **A procedure for each kind of work** — 34 skills, each describing what good
   looks like and ending in a verifiable exit checklist.
 - **A quality bar written as numbers** — thresholds and the commands that check
   them, kept in your project rather than in the agent's memory.
 - **Tripwires against erosion** — suppressions, skipped tests, weakened
   assertions and lowered thresholds stop the agent instead of turning red into
-  green.
+  green. Runtime hooks catch them as the agent works, not only in review
+  ([Runtime hooks](docs/hooks.md)).
 
 Every skill is **stack-agnostic**. None assumes a language or framework; each
 starts by discovering how *this* repository actually builds, tests and ships.
@@ -51,8 +52,9 @@ starts by discovering how *this* repository actually builds, tests and ships.
 
 ### 1. Install
 
-One repository, three agents. Skills, the operating contract and the subagents
-are shared; each agent gets the manifest its own loader expects.
+One repository, six agents. Skills, the operating contract and the subagents
+are shared; each agent gets the manifest or install layout its own loader
+expects.
 
 **Claude Code** — from the marketplace:
 
@@ -132,7 +134,8 @@ Commands are optional — skills also trigger from how you describe the work. Se
 | **Invariants** | `CLAUDE.md` / `AGENTS.md` | Ten non-negotiables and the bar-protection triggers that halt the agent |
 | **Numbers** | `templates/CONSTRAINTS.template.md` → your project | The quality bar as a contract: thresholds plus the commands that check them |
 | **Procedure** | `skills/` | How each kind of work is done well, with exit checklists |
-| **Specialists** | `agents/` | Fresh-context subagents for review, architecture, security, performance and testing |
+| **Specialists** | `agents/` | Fresh-context subagents for review, architecture, security, performance, testing, silent failures and red builds |
+| **Enforcement** | `hooks/` | Runtime guards for the invariants, with `off` / `warn` / `strict` profiles and per-hook switches |
 
 The layers rank in that order: a skill never overrides the operating contract,
 your project's `CONSTRAINTS.md`, or an accepted ADR.
@@ -157,20 +160,24 @@ your project's `CONSTRAINTS.md`, or an accepted ADR.
 | `/incident` | Run an incident, or write the postmortem |
 | `/audit` | Dependencies, licenses, personal data |
 | `/env` | `.env` hygiene, config drift, agent access to secrets, provider keys |
+| `/verify` | Run the project's verification commands in phase order and scan the diff for bar-protection triggers |
+| `/handoff` | Write `.keystone/handoff.md` so the next session or compaction continues the work |
+| `/retro` | Turn what a session learned into reviewed `LESSONS.md` entries |
 
 ## Skills
 
 | Phase | Skills |
 |---|---|
-| **Meta** | `using-skills` · `skill-authoring` · `context-engineering` · `constraint-driven-development` |
+| **Meta** | `using-skills` · `skill-authoring` · `context-engineering` · `constraint-driven-development` · `agent-orchestration` |
 | **Define** | `requirements-interrogation` · `spec-driven-development` · `planning-and-task-breakdown` |
 | **Architect** | `architecture-decisions` · `domain-modeling` · `boundaries-and-dependencies` · `api-and-contract-design` · `data-modeling-and-storage` · `distributed-systems-and-resilience` · `concurrency-and-consistency` · `frontend-architecture` |
 | **Build** | `incremental-delivery` · `test-driven-development` · `testing-strategy` · `refactoring-and-simplification` · `git-workflow` |
-| **Verify** | `code-review-and-quality` · `debugging-and-root-cause` · `performance-engineering` · `security-and-threat-modeling` |
+| **Verify** | `code-review-and-quality` · `debugging-and-root-cause` · `performance-engineering` · `security-and-threat-modeling` · `agent-and-toolchain-security` |
 | **Operate** | `observability-and-slos` · `release-engineering` · `configuration-and-secrets` · `deprecation-and-migration` · `incident-response` · `dependency-and-license-policy` · `documentation-and-knowledge` · `ai-integration-guardrails` |
 
 **Subagents:** `architect` · `code-reviewer` · `adversarial-reviewer` ·
-`test-engineer` · `security-auditor` · `performance-auditor`
+`test-engineer` · `security-auditor` · `performance-auditor` ·
+`silent-failure-hunter` · `build-error-resolver`
 
 Not sure where to start? `using-skills` maps a situation to the right skill and
 the chain of skills around it.
@@ -178,16 +185,18 @@ the chain of skills around it.
 ## Repository layout
 
 ```text
-skills/        32 skills, one directory each (SKILL.md + optional references/)
+skills/        34 skills, one directory each (SKILL.md + optional references/)
 commands/      slash commands that apply a skill chain deliberately
 agents/        subagent definitions
 references/    checklists and catalogs the skills load on demand
-templates/     CONSTRAINTS, spec, plan, ADR, design doc, runbook, postmortem
+templates/     CONSTRAINTS, spec, plan, ADR, design doc, runbook, postmortem,
+               handoff, lessons
 evals/         trigger cases per skill, checked statically in CI
 examples/      a worked domain pack
-scripts/       validators, adapter generator, env check and the skill scaffolder
-hooks/         optional session-start router for hosts without skill routing
-docs/          getting started, multi-agent setup, principles, glossary
+scripts/       validators, adapter generator, env check, /verify runner, agent
+               config audit, hook and agent installers, skill scaffolder
+hooks/         runtime guards (one stdlib dispatcher, a manifest per harness)
+docs/          getting started, multi-agent setup, hooks, ADRs, principles
 ```
 
 ## Quality control on the skills themselves
@@ -211,7 +220,9 @@ model calls.
 `commands/*.md`; `--check` fails CI when they drift. `scripts/check_env.py` is a
 stack-agnostic, standard-library-only secret and `.env` hygiene check you can
 run in **any** project: `python3 path/to/keystone/scripts/check_env.py`.
-Keystone's own tooling has a unit-test suite: `make test`.
+`scripts/audit_agent_config.py` checks the agents' own configuration —
+approval modes, MCP servers, hooks, credentials — the same way. Keystone's own
+tooling has a unit-test suite: `make test`.
 
 **VS Code:** open `keystone.code-workspace` for validation tasks, launch
 configurations, snippets (`skill`, `adr`, `exit`, `table`) and a devcontainer.
@@ -237,5 +248,5 @@ Licensed under the [Apache License 2.0](LICENSE). See [NOTICE](NOTICE).
 [license-badge]: https://img.shields.io/badge/license-Apache%202.0-blue.svg
 [ci-badge]: https://github.com/cihatcoban/keystone/actions/workflows/validate.yml/badge.svg
 [ci]: https://github.com/cihatcoban/keystone/actions/workflows/validate.yml
-[version-badge]: https://img.shields.io/badge/version-1.2.0-informational
-[skills-badge]: https://img.shields.io/badge/skills-32-success
+[version-badge]: https://img.shields.io/badge/version-1.3.0-informational
+[skills-badge]: https://img.shields.io/badge/skills-34-success
