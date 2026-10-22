@@ -1,6 +1,6 @@
 ---
 name: frontend-architecture
-description: Structures UI for correctness, accessibility and performance - state ownership, data fetching, components, rendering budgets. Triggers - build the settings page, where should this component state live, page feels slow or jumps while loading, accessibility, WCAG, form handling.
+description: Structures UI for correctness, accessibility and performance - state ownership, data fetching, components, accessible widgets, rendering budgets. Triggers - build the settings page, where should this component state live, page feels slow or jumps while loading, make this modal accessible, WCAG, form handling.
 ---
 
 # Frontend Architecture
@@ -67,6 +67,31 @@ Not a polish phase. Non-negotiable baseline:
 - Automated checks (axe) catch roughly a third of issues. A keyboard-only pass
   catches most of the rest.
 
+Widgets fail in predictable ways. Before building one, look it up:
+
+| Widget | Start from | Must hold |
+|---|---|---|
+| Modal | Native `dialog`, opened modally | Named by its heading; focus in on open, back to the trigger on close; Escape closes |
+| Show/hide | `details`, or a button with `aria-expanded` | State announced; content follows the button |
+| Tabs | `tablist` / `tab` / `tabpanel` | Arrow keys between tabs, one tab stop, panel labelled by its tab |
+| Autocomplete | Native `select` / `datalist` first | Focus stays in the input; result count announced |
+| Form errors | Field + linked message | `aria-invalid`, message via `aria-describedby`, summary focused on failed submit |
+| Toast / status | A live region present before the message | Polite by default; no action that exists only in an auto-dismissing toast |
+| Route change | — | Title updated; focus to the new page's heading |
+
+Each row's structure and keyboard script: `references/frontend-a11y-patterns.md`.
+Run the keyboard script for every widget you build or change.
+
+## In a specific framework
+
+The rules above are framework-independent; where they live is not. After stack
+discovery, read the project's framework section in
+`references/frontend-framework-map.md` — it maps each rule here (state kinds,
+cancellation, error states, focus, forms, code splitting) to that framework's
+idiom and the trap that breaks it there. Check the versions it was written
+against; if the project's framework is not listed, apply this skill as written
+and say the lookup was missing.
+
 ## Performance budgets
 
 Set them, put them in CI, and measure on a mid-range device on a throttled
@@ -105,6 +130,10 @@ system — do not fork it locally.
 - [ ] Loading, empty, error and stale states are all implemented and reviewable
 - [ ] Out-of-order responses and double submits are handled
 - [ ] Keyboard-only pass completed; focus visible and managed
+- [ ] Every widget built or changed matches its pattern and passed its keyboard
+      script; native elements used where they exist
+- [ ] Framework idioms checked against the map for this project's framework
+      and version, or the missing lookup reported
 - [ ] Labels associated; errors announced; contrast checked
 - [ ] Performance budget defined and enforced in CI, measured throttled
 - [ ] Design tokens used; no one-off values
