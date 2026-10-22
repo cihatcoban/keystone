@@ -1,0 +1,19 @@
+---
+description: Write the session handoff note so the next session or compaction resumes cleanly
+---
+
+Apply `context-engineering`, section "Handoffs that survive compaction".
+
+Input: $ARGUMENTS (optional focus for the note)
+
+1. Write `.keystone/handoff.md` in the shape of `templates/handoff.template.md`,
+   replacing the previous note rather than appending to it.
+2. Every "Done" line names its evidence: a command that ran, a test, a commit.
+   Work without evidence goes under "In progress".
+3. Record rejected approaches with the observed reason, so the next session
+   does not repeat them.
+4. Move durable knowledge out: a stack or command fact into the project
+   profile, a costly decision into an ADR, a reusable lesson into `/retro`.
+5. Keep it under ~60 lines; it is loaded into every new or compacted session.
+6. Report the path and a three-line summary. Do not commit the note unless the
+   team keeps handoffs in version control.

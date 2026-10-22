@@ -13,6 +13,10 @@
       {
         "prompt": "Output quality has dropped over this long session",
         "top_k": 3
+      },
+      {
+        "prompt": "Write a handoff so the next session survives context compaction",
+        "top_k": 3
       }
     ],
     "negative": [

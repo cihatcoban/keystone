@@ -36,6 +36,30 @@
           }
         ]
       }
+    ],
+    "PreCompress": [
+      {
+        "hooks": [
+          {
+            "name": "keystone-pre-compact",
+            "type": "command",
+            "command": "sh \"<keystone-root>\"/hooks/run.sh --harness gemini --trigger pre-compact",
+            "timeout": 10000
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "name": "keystone-session-start",
+            "type": "command",
+            "command": "sh \"<keystone-root>\"/hooks/run.sh --harness gemini --trigger session-start",
+            "timeout": 10000
+          }
+        ]
+      }
     ]
   }
 }

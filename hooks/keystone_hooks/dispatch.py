@@ -34,6 +34,7 @@ GUARD_MODULES: list[str] = [
     "guards_irreversible",
     "guards_rules",
     "guards_verify",
+    "guards_session",
 ]
 
 Guard = Callable[..., list]

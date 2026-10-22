@@ -72,6 +72,8 @@ A phase that does not apply gets `n/a` and a reason instead of a command.
 | Test suite (fast tier) | `___` min | |
 | Frontend LCP / INP / CLS | `___` / `___` / `___` | |
 | Unbounded query or allocation | not permitted | review + profiling |
+| Agent context loaded at session start | ≤ `____` tokens | contract + profile + skill catalog |
+| Agent cost per task (median) | ≤ `____` tokens or currency | the harness's usage report |
 
 ## 5. Reliability
 
