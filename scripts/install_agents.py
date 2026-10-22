@@ -20,11 +20,11 @@ subagents each one supports:
 
 Skills are symlinked so `git pull` in Keystone updates them (`--copy` to copy).
 
-Ownership: a symlink into a Keystone `skills/` directory is Keystone's. A
+Ownership: a symlink into this checkout's `skills/` is Keystone's. A
 generated file or a copied skill records a SHA-256 of what was written; it is
 replaced or removed only while it still matches. Anything else — a file the
-user wrote, or one of ours the user has since edited — is reported and left
-alone.
+user wrote, one of ours the user has since edited, or a link to a missing or
+different Keystone checkout — is reported and left alone.
 """
 
 from __future__ import annotations
@@ -63,8 +63,20 @@ COPILOT_PREAMBLE = (
     "it may be empty.\n\n"
 )
 
-# Ownership states
-ABSENT, CLEAN, MODIFIED, FOREIGN = "absent", "clean", "modified", "foreign"
+# Ownership states. Only CLEAN items are ever replaced or removed.
+ABSENT, CLEAN, MODIFIED, FOREIGN, OTHER_LINK = (
+    "absent",
+    "clean",
+    "modified",
+    "foreign",
+    "other-link",
+)
+KEPT_MESSAGE = {
+    FOREIGN: "kept yours",
+    MODIFIED: "kept, edited since install (delete it to reinstall)",
+    OTHER_LINK: "kept, links to a missing or different Keystone checkout"
+    " (delete the link to reinstall from this one)",
+}
 
 
 def targets(harness: str, scope: str, root: Path) -> dict[str, Path | None]:
@@ -158,26 +170,36 @@ def rendered(harness: str) -> tuple[dict[str, str], dict[str, str]]:
     return commands, agents
 
 
-def link_is_ours(path: Path) -> bool:
-    """A symlink to <a Keystone checkout>/skills/<same name>, even if it dangles."""
+def link_state(path: Path) -> str:
+    """CLEAN only for a link into this checkout's skills/; never guess beyond it.
+
+    A link that dangles, or points at another Keystone checkout, may be the
+    user's (a fork, an unmounted drive), so it is reported, not replaced.
+    """
     try:
         target = Path(os.readlink(path))
     except OSError:
-        return False
+        return FOREIGN
     if not target.is_absolute():
         target = path.parent / target
+    try:
+        if target.resolve() == (ROOT / "skills" / path.name).resolve():
+            return CLEAN
+    except OSError:
+        pass
     if target.name != path.name or target.parent.name != "skills":
-        return False
+        return FOREIGN
     if not target.exists():
-        return True  # dangling: Keystone was moved or deleted; removing loses nothing
-    checkout = target.parent.parent
+        return OTHER_LINK
     try:
         manifest = json.loads(
-            (checkout / ".claude-plugin" / "plugin.json").read_text(encoding="utf-8")
+            (target.parent.parent / ".claude-plugin" / "plugin.json").read_text(
+                encoding="utf-8"
+            )
         )
     except (OSError, ValueError):
-        return False
-    return manifest.get("name") == "keystone"
+        return FOREIGN
+    return OTHER_LINK if manifest.get("name") == "keystone" else FOREIGN
 
 
 def tree_hashes(directory: Path) -> dict[str, str]:
@@ -190,7 +212,7 @@ def tree_hashes(directory: Path) -> dict[str, str]:
 
 def state(path: Path) -> str:
     if path.is_symlink():
-        return CLEAN if link_is_ours(path) else FOREIGN
+        return link_state(path)
     if not path.exists():
         return ABSENT
     if path.is_dir():
@@ -201,7 +223,10 @@ def state(path: Path) -> str:
             recorded = json.loads(marker.read_text(encoding="utf-8"))["files"]
         except (OSError, ValueError, KeyError, TypeError):
             return MODIFIED
-        return CLEAN if tree_hashes(path) == recorded else MODIFIED
+        try:
+            return CLEAN if tree_hashes(path) == recorded else MODIFIED
+        except OSError:  # unreadable content: not provably ours, so keep it
+            return MODIFIED
     try:
         text = path.read_text(encoding="utf-8")
     except (OSError, UnicodeDecodeError):
@@ -249,15 +274,12 @@ def install_copy(source: Path, dest: Path) -> None:
 
 def apply(
     items: list[tuple[Path, object]], copy: bool, dry_run: bool
-) -> tuple[int, list[str], list[str]]:
-    written, foreign, modified = 0, [], []
+) -> tuple[int, list[tuple[str, str]]]:
+    written, kept = 0, []
     for dest, source in items:
         current = state(dest)
-        if current == FOREIGN:
-            foreign.append(str(dest))
-            continue
-        if current == MODIFIED:
-            modified.append(str(dest))
+        if current in KEPT_MESSAGE:
+            kept.append((current, str(dest)))
             continue
         if dry_run:
             written += 1
@@ -273,14 +295,12 @@ def apply(
         else:
             dest.write_text(str(source), encoding="utf-8")
         written += 1
-    return written, foreign, modified
+    return written, kept
 
 
-def report(foreign: list[str], modified: list[str]) -> None:
-    for path in foreign:
-        print(f"  kept yours: {path}")
-    for path in modified:
-        print(f"  kept, edited since install: {path} (delete it to reinstall)")
+def report(kept: list[tuple[str, str]]) -> None:
+    for why, path in kept:
+        print(f"  {KEPT_MESSAGE[why]}: {path}")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -303,25 +323,25 @@ def main(argv: list[str] | None = None) -> int:
     items = plan(args.harness, args.scope, root)
 
     if args.uninstall:
-        gone, modified = [], []
+        gone, kept = [], []
         for dest, _ in items:
             current = state(dest)
             if current == CLEAN:
                 gone.append(dest)
-            elif current == MODIFIED:
-                modified.append(str(dest))
+            elif current in (MODIFIED, OTHER_LINK):
+                kept.append((current, str(dest)))
         for dest in gone:
             if not args.dry_run:
                 remove(dest)
         verb = "would remove" if args.dry_run else "removed"
         print(f"{args.harness}: {verb} {len(gone)} Keystone item(s)")
-        report([], modified)
+        report(kept)
         return 0
 
-    written, foreign, modified = apply(items, args.copy, args.dry_run)
+    written, kept = apply(items, args.copy, args.dry_run)
     verb = "would install" if args.dry_run else "installed"
     print(f"{args.harness}: {verb} {written} item(s) ({args.scope} scope)")
-    report(foreign, modified)
+    report(kept)
     if args.contract:
         contract = root / "AGENTS.md"
         if contract.exists():
