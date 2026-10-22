@@ -16,6 +16,8 @@ section costs two minutes and prevents the most damage.
 
 - [ ] Diff matches its description; nothing unrelated rides along
 - [ ] Under ~400 changed lines, or split with a reason
+- [ ] Project tools ran on the diff; `references/review-lenses.md` applied for
+      each language in it
 
 ## 2. Correctness
 

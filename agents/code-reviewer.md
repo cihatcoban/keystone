@@ -16,6 +16,8 @@ Invariants: `CLAUDE.md`.
 
 1. **Bar protection** (`CLAUDE.md` §4) before reading logic. Report hits first.
 2. Scope: does the diff match its description and nothing else?
+   Then the stack lens: confirm the project's tools ran on the diff, and apply
+   `references/review-lenses.md` for each language it touches.
 3. Correctness — boundaries, nothing-cases, error paths, idempotency, races.
 4. Failure behavior — timeouts, partial failure, observability, reversibility.
 5. Design — boundary crossings, earned abstractions, rule leakage, naming.

@@ -13,6 +13,10 @@
       {
         "prompt": "Look over my changes before I push",
         "top_k": 3
+      },
+      {
+        "prompt": "Review this Go and SQL change before I merge it",
+        "top_k": 3
       }
     ],
     "negative": [
@@ -26,6 +30,8 @@
   },
   "expectations": [
     "'code-review-and-quality' is selected among the top candidate skills",
+    "The review confirms the project's tools ran on the diff and applies the review-lenses section for each language touched, or reports the lens as missing",
+    "Every finding has a location, an impact and a fix direction, as in the skill's worked example",
     "The skill's exit checklist items are addressed in the response",
     "No CONSTRAINTS.md threshold is lowered to complete the work"
   ]
