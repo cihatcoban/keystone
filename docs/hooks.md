@@ -1,7 +1,7 @@
 # Runtime hooks
 
 Keystone's invariants (`CLAUDE.md` §1) used to be enforced only when someone
-read a diff. From 1.3.0 the agent's own harness checks them as the agent works:
+read a diff. From 2.0.0 the agent's own harness checks them as the agent works:
 before a shell command runs, before a file is written, when the agent ends its
 turn, and around context compaction. Why the layer is built this way, and the
 harness facts it rests on, are in [ADR-001](adr/ADR-001-hook-layer.md).

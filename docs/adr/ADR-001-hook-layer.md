@@ -8,7 +8,7 @@
 ## Context
 
 Keystone 1.2.0 states its invariants but enforces them only at review time.
-1.3.0 adds a runtime hook layer. Three harnesses load Keystone, and each reads
+2.0.0 adds a runtime hook layer. Three harnesses load Keystone, and each reads
 hooks differently. Every fact below was checked against the loader's source on
 2026-10-22 (Gemini CLI `09d81bf`, Codex `86e17e9`) or Claude Code's published
 plugin reference.
@@ -78,4 +78,4 @@ harness's plugin reference changes how it discovers hooks.
   hook IDs against `docs/hooks.md`, and every invariant against a hook or a
   stated review-only reason
 - [ ] Live check in each harness once the CLIs can be installed (see
-  CHANGELOG 1.3.0, verification note)
+  CHANGELOG 2.0.0, verification note)

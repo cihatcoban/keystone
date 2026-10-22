@@ -5,21 +5,43 @@ Versioning: [Semantic Versioning](https://semver.org/) applied to skill
 behavior — a MAJOR bump means a skill's rules changed in a way that would
 change an agent's output on the same input.
 
-## [1.3.0] — 2026-10-22
+## [2.0.0] — 2026-10-22
 
-Keystone's invariants used to be written down and checked only in review. 1.3.0
+Keystone's invariants used to be written down and checked only in review. 2.0.0
 enforces them while the agent works, and closes the gaps found against
 everything-claude-code 2.2.3 without copying its breadth: two new skills, so
 the skill catalog grows from ≈ 2,800 to ≈ 3,000 tokens.
 
-**Why MINOR, not MAJOR.** Existing skills gained new sections and pointer
-lines; no existing rule was changed or removed (against 1.2.0, the modified
-`skills/*/SKILL.md` files have 177 added lines and 0 deleted). Hooks default to
-the `warn` profile: findings are reported, not blocked. The exceptions are
-`git.force-push`, `secret.*` and `irreversible.command`, which ask for
-approval even under `warn` in Claude Code and Gemini CLI (Codex has no hook
-approval prompt and warns instead). Unattended runs should plan for those
-prompts.
+**Why MAJOR.** Under this changelog's own rule, a skill rule that changes an
+agent's output on the same input is a major change. No existing line was
+removed, but three additions change what an agent does:
+
+- `dependency-and-license-policy` — "Search before you write": before the
+  necessity questions, the agent searches this repository and the team's own
+  packages, and every pull request says what was searched ("searched for X,
+  reused Y" or "nothing found").
+- `release-engineering` — "Post-release verification": the timed canary
+  checklist is written into the release plan before deploying, and a check
+  that cannot run makes the release notes say "not verified" instead of
+  declaring success.
+- `git-workflow` — "Conventional Commits in practice": in a repository whose
+  commits do not use `type(scope):`, the agent follows the repository's
+  convention instead of the template. `CLAUDE.md` §3 already ranked repository
+  conventions above a skill; the skill now says so.
+
+### Upgrading from 1.x
+
+- Expect the three changes above in agent output: a search line in PR
+  descriptions, a post-release checklist in release plans, and commit messages
+  that follow your repository's existing style.
+- Runtime hooks are on in Claude Code and Codex as soon as the plugin updates.
+  The default `warn` profile reports and does not block, except
+  `git.force-push`, `secret.*` and `irreversible.command`, which ask for
+  approval in Claude Code and Gemini CLI (Codex has no hook approval prompt
+  and warns instead). Plan for those prompts in unattended runs. Turn hooks
+  off with `KEYSTONE_HOOK_PROFILE=off`, or one at a time with
+  `KEYSTONE_DISABLED_HOOKS` ([docs/hooks.md](docs/hooks.md)).
+- Gemini CLI hooks are opt-in: `scripts/install_hooks.py gemini`.
 
 ### Added
 
