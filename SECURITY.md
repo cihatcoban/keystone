@@ -6,8 +6,8 @@ This repository contains process documentation and tooling scripts. It holds
 no production code and no credentials. The security surface is:
 
 - `scripts/*.py` — run locally and in CI
-- `hooks/*.sh` — optional, run at agent session start on hosts without native
-  skill routing
+- `hooks/` — runtime guards the agent's harness runs on shell commands, file
+  writes, turn end and compaction (`docs/hooks.md`); stdlib only, fail open
 - Anything a consumer copies out of `templates/`
 
 ## Reporting
@@ -19,8 +19,21 @@ public issue for anything exploitable.
 
 - No secret values anywhere, including examples. `.env.example` files list key
   names only.
-- Scripts read files and print findings; they do not execute repository
-  content, make network calls, or write outside the repository.
+- Validators, checks and audits (`validate_repo.py`, `check_triggers.py`,
+  `check_env.py`, `audit_agent_config.py`, `build_adapters.py`) read files and
+  print findings or write only inside this repository. They do not execute
+  repository content or make network calls.
+- These scripts go further, by design, and only when you run them:
+  - `install_agents.py` and `install_hooks.py` write into the project you
+    name and, with `--scope user` or for Gemini CLI, into your home
+    directory. They never overwrite or delete a file they did not write, or
+    one you have edited since.
+  - `verify.py` runs the commands listed in that project's `CONSTRAINTS.md`.
+    Commands it only infers run after you confirm them (`--inferred`).
+  - `evals_live.py` drives an agent CLI, which calls a model over the
+    network. It is never run in CI.
+- Hooks write only under the project's `.keystone/state/` and never make
+  network calls.
 - CI runs a secret scanner on every pull request.
 
 ## For projects that install Keystone

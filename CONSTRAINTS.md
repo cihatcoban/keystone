@@ -85,7 +85,7 @@ it so a failure names its phase.
 | Secrets in repository | 0 | `gitleaks` (CI + pre-commit) | 0 |
 | Real env files tracked (`.env`, `.env.*`) | 0 | `make env-check` (CI) | 0 |
 | `.env` hygiene findings | 0 errors, 0 warnings | `check_env.py --strict` (CI) | 0 / 0 |
-| Network calls or writes outside the repo by `scripts/` | 0 | review (`SECURITY.md`) | 0 |
+| Network calls or writes outside the repo by `scripts/` | 0, except the installers, `verify.py` and `evals_live.py` as listed in `SECURITY.md` | review (`SECURITY.md`) | 0 beyond the listed exceptions |
 | Outdated GitHub Actions majors | 0 open > 30 days | Dependabot, monthly | 0 |
 | Third-party text or code copied in | listed in `NOTICE`, Apache-2.0 compatible | review | none |
 | Personal data | n/a — none collected or stored | — | — |
