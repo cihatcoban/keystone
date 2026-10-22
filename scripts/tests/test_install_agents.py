@@ -4,10 +4,12 @@ from __future__ import annotations
 
 import contextlib
 import io
+import os
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import install_agents as ia  # noqa: E402 — must follow the sys.path insert; scripts/ is not a package
@@ -128,21 +130,43 @@ class InstallAgentsTest(unittest.TestCase):
             (self.root / ".opencode" / "commands" / "keystone-plan.md").exists()
         )
 
-    def test_links_left_by_a_moved_keystone_are_repaired_and_removable(self):
+    def test_links_to_a_missing_or_other_checkout_are_reported_not_touched(self):
         skills = self.root / ".agents" / "skills"
         skills.mkdir(parents=True)
-        gone = self.root / "old-clone" / "keystone" / "skills" / "git-workflow"
-        (skills / "git-workflow").symlink_to(gone, target_is_directory=True)
-        out = self.run_cli("cursor")
-        self.assertNotIn("kept", out)
-        self.assertTrue((skills / "git-workflow" / "SKILL.md").exists())
-        (skills / "testing-strategy").unlink()
-        (skills / "testing-strategy").symlink_to(
-            self.root / "elsewhere" / "skills" / "testing-strategy",
-            target_is_directory=True,
+        gone = self.root / "old-clone" / "skills" / "git-workflow"
+        fork = self.root / "fork" / "skills" / "testing-strategy"
+        fork.mkdir(parents=True)
+        (self.root / "fork" / ".claude-plugin").mkdir()
+        (self.root / "fork" / ".claude-plugin" / "plugin.json").write_text(
+            '{"name": "keystone"}'
         )
-        self.run_cli("cursor", "--uninstall")
-        self.assertEqual(list(skills.iterdir()), [])
+        (skills / "git-workflow").symlink_to(gone, target_is_directory=True)
+        (skills / "testing-strategy").symlink_to(fork, target_is_directory=True)
+        out = self.run_cli("cursor")
+        self.assertEqual(out.count("missing or different Keystone checkout"), 2)
+        self.assertEqual(os.readlink(skills / "git-workflow"), str(gone))
+        self.assertEqual(os.readlink(skills / "testing-strategy"), str(fork))
+        out = self.run_cli("cursor", "--uninstall")
+        self.assertEqual(out.count("missing or different Keystone checkout"), 2)
+        self.assertEqual(
+            sorted(p.name for p in skills.iterdir()),
+            ["git-workflow", "testing-strategy"],
+        )
+
+    def test_unreadable_copy_is_kept_and_the_run_completes(self):
+        self.run_cli("cursor", "--copy")
+        real = Path.read_bytes
+
+        def read_bytes(path):
+            if path.name == "SKILL.md" and path.parent.name == "git-workflow":
+                raise PermissionError("unreadable")
+            return real(path)
+
+        with mock.patch.object(Path, "read_bytes", read_bytes):
+            out = self.run_cli("cursor", "--uninstall")
+        self.assertIn("edited since install", out)
+        skills = self.root / ".agents" / "skills"
+        self.assertEqual([p.name for p in skills.iterdir()], ["git-workflow"])
 
     def test_users_own_link_is_kept(self):
         mine = self.root / "my-skills" / "skills" / "git-workflow"

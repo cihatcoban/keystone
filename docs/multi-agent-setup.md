@@ -122,8 +122,8 @@ instead (always on Windows). Every generated command, agent and copied skill
 records a hash of what was written. A reinstall replaces it, and `--uninstall`
 removes it, only while it still matches. Files you wrote are reported as
 "kept yours", files of ours you have edited as "edited since install", and
-neither is touched. Links left behind when Keystone moves are repaired by the
-next install.
+neither is touched. A link to a missing or different Keystone checkout (after
+moving your clone, or from a fork) is reported too; delete it and reinstall.
 
 A project install points at your Keystone checkout by absolute path (the skill
 links, and the script paths inside generated commands). Keep it out of version
