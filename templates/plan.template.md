@@ -8,6 +8,8 @@ Spec: `docs/specs/NNN-....md`
   - Criterion: <spec §4 criterion number — reference it, do not restate it;
     two wordings of one requirement drift apart>
   - Test: <what proves it>
+  - Evidence: RED <command → failing assertion> · GREEN <command → result>
+    (filled in while building; see `test-driven-development`)
   - Size: S | M | L
   - Depends on: —
 
