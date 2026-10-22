@@ -13,6 +13,9 @@ Checks
   9  every skill has an eval case with positive and negative prompts
  10  no duplicate description opening clause (routing collision smell)
  11  templates and references referenced from skills exist
+ 12  hook layer: registry schema, a guard per hook ID, every invariant mapped
+     to a hook or a stated review-only reason, docs/hooks.md lists exactly the
+     registry's IDs, manifests wired, no hooks/hooks.json (ADR-001)
 
 Exit code 1 on any error. Warnings never fail the build.
 """
@@ -24,6 +27,8 @@ import re
 import sys
 from collections import defaultdict
 from pathlib import Path
+
+import validate_hooks
 
 ROOT = Path(__file__).resolve().parent.parent
 DESC_MIN, DESC_MAX = 80, 500
@@ -383,6 +388,7 @@ def check_catalog_budget(skills: dict[str, str]) -> None:
 def main() -> int:
     check_manifests()
     check_adapters()
+    validate_hooks.check(ROOT, err, load_json)
     skills = check_skills(ROOT)
     check_catalog_budget(skills)
     check_dir_frontmatter("commands", need_name=False)

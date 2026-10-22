@@ -25,7 +25,8 @@
         "shortDescription": "Architecture-first engineering skills: spec, design, build, verify, operate.",
         "developerName": "Cihat",
         "category": "Coding"
-      }
+      },
+      "hooks": "./hooks/codex.json"
     }
   }
 }
