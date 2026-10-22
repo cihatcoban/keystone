@@ -1,0 +1,36 @@
+{
+  "skill_name": "agent-orchestration",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "Use subagents to update these five services in parallel",
+        "top_k": 3
+      },
+      {
+        "prompt": "Split this migration across agents without them stepping on each other",
+        "top_k": 3
+      },
+      {
+        "prompt": "The agent keeps retrying the same fix, how do we stop it?",
+        "top_k": 3
+      },
+      {
+        "prompt": "Verify this work with a fresh agent before we merge",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "Set up CLAUDE.md for this repo"
+      },
+      {
+        "prompt": "Review this pull request"
+      }
+    ]
+  },
+  "expectations": [
+    "'agent-orchestration' is selected among the top candidate skills",
+    "The skill's exit checklist items are addressed in the response",
+    "No CONSTRAINTS.md threshold is lowered to complete the work"
+  ]
+}
