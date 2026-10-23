@@ -21,6 +21,10 @@
       {
         "prompt": "Design an agent loop that fixes lint errors every night unattended",
         "top_k": 3
+      },
+      {
+        "prompt": "Run three agents in parallel without them breaking each other's changes",
+        "top_k": 3
       }
     ],
     "negative": [
@@ -35,6 +39,7 @@
   "expectations": [
     "'agent-orchestration' is selected among the top candidate skills",
     "Every loop proposed has a written spec: a done signal the worker cannot edit, a budget on iterations, time and tokens, a state file, escalation and a kill switch",
+    "Each writing agent works in its own git worktree and branch on files it alone owns; the parent merges and runs /verify on the combined result",
     "The skill's exit checklist items are addressed in the response",
     "No CONSTRAINTS.md threshold is lowered to complete the work"
   ]

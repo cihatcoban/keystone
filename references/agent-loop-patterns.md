@@ -57,6 +57,11 @@ round 1..max_rounds (3–5):
 ## Fan-out / fan-in
 
 - Contracts first, one owner per path, self-contained briefs (skill body).
+- One worktree per writer, created from the same base commit:
+  `git worktree add ../wt-<task> -b <task-branch>`. The parent merges each
+  branch after its checks pass, then `git worktree remove ../wt-<task>`.
+  Shared build caches or a single local database are still shared — give each
+  worktree its own, or run those parts sequentially.
 - The parent sets a deadline per part. A part that misses it is reported as
   missing; the merge does not wait forever.
 - Fan-in = read every return, list contradictions, merge, run `/verify` on the
