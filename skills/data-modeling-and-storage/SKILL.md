@@ -62,6 +62,10 @@ to test, and a failure mode. One store with an extension usually beats two.
   tells you nothing.
 - Watch for index-defeating predicates: a function applied to the column, a
   leading wildcard, an implicit type cast.
+- Choose the index shape the plan needs: a **partial** index for a hot subset
+  (unbilled orders), a **covering** index with included columns for an
+  index-only read, an **expression** index for a computed predicate. Each one
+  only with a plan that uses it.
 
 ## Migrations: expand / contract
 
@@ -81,9 +85,20 @@ Rules:
 - Backfill in bounded batches with a sleep. One `UPDATE` over a large table
   locks it and takes the system down.
 - Add `NOT NULL` only after the backfill completes, as its own migration.
-- Every migration has a tested `down`. CI runs up → down → up.
+- **Bound every lock wait.** Run DDL with a short lock timeout and retry. A DDL
+  waiting for its lock blocks every later query on the table, so one long
+  transaction plus an unbounded wait is an outage.
+- **Schema and data changes are separate migrations**, and a migration that
+  has run anywhere shared is never edited — write a new one.
+- Every migration has a tested `down`; CI runs up → down → up. In production,
+  `down` is safe only before data is written in the new shape; after that,
+  roll back with a new forward migration.
 - Destructive changes ship alone, never inside a feature change.
-- Create indexes concurrently where the engine supports it.
+
+What rewrites a table or blocks writes differs per engine — adding a default,
+`NOT NULL`, a foreign key, an index, changing a type. Before writing the
+migration, look the operation up for the project's engine and version in
+`references/migration-engine-lookup.md` (PostgreSQL, MySQL, SQLite).
 
 ## Consistency and transactions
 
@@ -112,5 +127,9 @@ Rules:
 - [ ] Migration follows expand → migrate → contract, one phase per deploy
 - [ ] Each phase is compatible with the previous application version
 - [ ] Backfills are batched; `down` migration exists and is tested in CI
+- [ ] Each DDL runs with a lock timeout; its rewrite and lock cost was looked up
+      for this engine and version, not assumed
+- [ ] Schema and data changes are separate migrations; no applied migration
+      was edited
 - [ ] Destructive change is in its own change set
 - [ ] Retention and personal-data columns documented
