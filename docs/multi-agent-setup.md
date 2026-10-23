@@ -106,9 +106,9 @@ All three read Agent Skills from `.agents/skills/` in the project and
 |---|---|---|---|
 | Skills | `.agents/skills/` | `.agents/skills/` | `.agents/skills/` |
 | Commands | none needed — skills are invoked with `/` | `.opencode/commands/keystone-*.md` | `.github/prompts/keystone-*.prompt.md` (VS Code, project only) |
-| Subagents | not generated in 2.0.0 | `.opencode/agents/*.md` (`mode: subagent`) | `.github/agents/*.md` (project only) |
+| Subagents | not generated yet | `.opencode/agents/*.md` (`mode: subagent`) | `.github/agents/*.md` (project only) |
 | Operating contract | `AGENTS.md` | `AGENTS.md`, else `CLAUDE.md` | `AGENTS.md` |
-| Runtime hooks | not in 2.0.0 | not in 2.0.0 | not in 2.0.0 |
+| Runtime hooks | not yet | not yet | not yet |
 
 ```bash
 python3 ~/dev/keystone/scripts/install_agents.py opencode            # this project

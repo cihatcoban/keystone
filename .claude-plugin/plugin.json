@@ -1,6 +1,6 @@
 {
   "name": "keystone",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Master-level engineering skills for AI coding agents — architecture-first, stack-agnostic, from intent to operations. Works in Claude Code, Gemini CLI and Codex.",
   "author": {
     "name": "Cihat"
