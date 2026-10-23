@@ -58,5 +58,55 @@ class DescriptionTargetTest(unittest.TestCase):
         self.assertTrue(any(f"{vr.DESC_MIN}-{vr.DESC_MAX}" in m for m in vr.errors))
 
 
+class DocPointerTest(unittest.TestCase):
+    """Backticked `references/…` and `templates/…` paths must exist (check 11)."""
+
+    def setUp(self) -> None:
+        self._tmp = tempfile.TemporaryDirectory()
+        self.base = Path(self._tmp.name)
+        for sub in ("skills/example-skill", "references", "templates", "agents"):
+            (self.base / sub).mkdir(parents=True)
+        (self.base / "references" / "real.md").write_text("# Real\n", encoding="utf-8")
+        (self.base / "templates" / "plan.template.md").write_text(
+            "# P\n", encoding="utf-8"
+        )
+        vr.errors.clear()
+        vr.warnings.clear()
+
+    def tearDown(self) -> None:
+        self._tmp.cleanup()
+        vr.errors.clear()
+        vr.warnings.clear()
+
+    def write(self, rel: str, text: str) -> None:
+        (self.base / rel).write_text(text, encoding="utf-8")
+
+    def test_existing_pointers_are_clean(self) -> None:
+        self.write(
+            "skills/example-skill/SKILL.md",
+            "See `references/real.md` and `templates/plan.template.md`.\n",
+        )
+        vr.check_doc_pointers(self.base)
+        self.assertEqual(vr.errors, [])
+
+    def test_missing_reference_from_a_skill_errors(self) -> None:
+        self.write("skills/example-skill/SKILL.md", "See `references/gone.md`.\n")
+        vr.check_doc_pointers(self.base)
+        self.assertEqual(len(vr.errors), 1)
+        self.assertIn("references/gone.md", vr.errors[0])
+        self.assertIn("skills/example-skill/SKILL.md", vr.errors[0])
+
+    def test_missing_template_from_a_reference_errors(self) -> None:
+        self.write("references/real.md", "Fill `templates/nope.template.md`.\n")
+        vr.check_doc_pointers(self.base)
+        self.assertEqual(len(vr.errors), 1)
+        self.assertIn("templates/nope.template.md", vr.errors[0])
+
+    def test_agents_are_checked_too(self) -> None:
+        self.write("agents/reviewer.md", "Lens: `references/lenses.md`.\n")
+        vr.check_doc_pointers(self.base)
+        self.assertEqual(len(vr.errors), 1)
+
+
 if __name__ == "__main__":
     unittest.main()
