@@ -7,7 +7,8 @@ rules; it shows where the skill's axes usually fail in that language.
 
 **Checked against:** TypeScript 5 / ECMAScript 2024, Python 3.12, Go 1.22,
 Java 21, Kotlin 2, .NET 8, Rust (2021 and 2024 editions), Swift 6, C++20, SQL
-as implemented by PostgreSQL and MySQL, POSIX shell and bash — on 2026-10-22.
+as implemented by PostgreSQL and MySQL, POSIX shell and bash — on 2026-10-22;
+PHP 8, Ruby 3 with Rails, Dart 3 with Flutter — on 2026-10-23.
 For a language not listed, review with the skill alone and say the lens was
 missing.
 
@@ -131,6 +132,47 @@ missing.
 - **Polymorphic base without a virtual destructor.**
 - C: unchecked return values (`malloc`, `read`); unbounded `strcpy` /
   `sprintf`.
+
+## PHP
+
+- **Loose comparison** (`==`) on strings, hashes or user input — numeric
+  strings compare as numbers (`"0e1" == "0e2"` is true). Use `===`, and
+  `hash_equals()` for secrets and signatures.
+- **`unserialize()` on untrusted data** — object injection. Use JSON.
+- **`extract()`, variable variables or `include` / `require`** with a value
+  from the request.
+- **SQL built by string concatenation** instead of prepared statements (PDO,
+  or the framework's query builder with bound parameters).
+- **No `declare(strict_types=1)`** in new files where the project uses it —
+  scalar arguments are silently coerced.
+- Errors silenced with `@`.
+
+## Ruby and Rails
+
+- **Dynamic dispatch from input** — `send`, `public_send`, `constantize`,
+  `Object.const_get` with a request value calls any method or class.
+- **Mass assignment** — `params.permit!`, or a permit list that includes
+  `role`, `admin` or owner columns.
+- **Interpolated SQL** in `where("… #{x}")`, `order(params[:sort])`,
+  `find_by_sql`; use placeholders and an allow-list for sort columns.
+- **`html_safe` / `raw`** on user content.
+- **`Marshal.load` or `YAML.unsafe_load`** on untrusted input.
+- **N+1** — associations used in a loop without `includes` / `preload`.
+- **`rescue Exception`** or a bare `rescue => e` that swallows the error.
+
+## Dart and Flutter
+
+- **`!` on values that can be null** at a boundary, and **`late`** fields that
+  may be read before assignment — both are runtime crashes the type system
+  was told to ignore.
+- **Unawaited futures** — errors and ordering lost; enable the
+  `unawaited_futures` lint, and use `unawaited()` only where intended.
+- **`BuildContext` used after an `await`** without checking `mounted`
+  (`use_build_context_synchronously`), and `setState` after `dispose`.
+- **Controllers, streams and subscriptions not disposed** —
+  `TextEditingController`, `AnimationController`, `StreamSubscription`.
+- **Work in `build()`** — parsing, sorting or creating objects that should be
+  computed once; `build` runs on every frame that needs it.
 
 ## SQL and migrations
 
