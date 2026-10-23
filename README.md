@@ -18,6 +18,17 @@ written quality contract the agent cannot quietly lower.
 
 </div>
 
+<p align="center">
+  <img src="docs/assets/hooks-demo.svg" width="900"
+  alt="Keystone hooks deny a lowered threshold, a skipped test and a force push">
+</p>
+
+<p align="center"><sub>Real hook output under the <code>strict</code> profile.
+A test replays these three actions on every CI run
+(<code>scripts/tests/test_demo_asset.py</code>), so the picture cannot drift
+from the hooks. The default <code>warn</code> profile reports instead, and
+asks before force pushes, secrets and irreversible commands.</sub></p>
+
 ```text
   DEFINE            ARCHITECT              BUILD            VERIFY           OPERATE
  ┌────────┐      ┌─────────────┐       ┌──────────┐     ┌──────────┐     ┌──────────┐
@@ -51,8 +62,24 @@ starts by discovering how *this* repository actually builds, tests and ships.
 Where the language, framework, engine or protocol matters — review traps,
 framework idioms, migration locks, GraphQL or gRPC rules — the skill points to
 a dated lookup in `references/`, loaded only after stack discovery
-([ADR-002](docs/adr/ADR-002-stack-specific-references.md)). The always-loaded
-part stays small: the 34 skill descriptions are ≈ 3,050 tokens.
+([ADR-002](docs/adr/ADR-002-stack-specific-references.md)).
+
+### Small catalog, sharp skills
+
+Every skill, agent and command description is loaded into every session, so a
+pack's size is paid on every turn. Measured on 2026-10-23 with one estimator
+(characters ÷ 4 over each name and description):
+
+| | Keystone 3.0.0 | everything-claude-code 2.2.3, full install |
+|---|---|---|
+| Skills · agents · commands | 34 · 8 · 19 | 311 · 71 · 97 |
+| Descriptions loaded every session | ≈ 3,300 tokens | ≈ 33,400 tokens |
+| Stack coverage | Stack-agnostic skills plus dated per-stack lookups, loaded on demand | A skill or agent per language and framework |
+| Quality bar | Numbers in your `CONSTRAINTS.md`, defended by runtime hooks | Rules per language, plus hooks |
+
+everything-claude-code also offers smaller install profiles. Choose a broad
+pack for ready-made recipes per stack; choose Keystone for a small catalog and
+a quality bar the agent cannot quietly lower.
 
 ## Quick start
 
