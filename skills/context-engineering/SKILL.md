@@ -34,7 +34,7 @@ into the operating contract survives its own truth.
 
 Keep one contract: `AGENTS.md`, with `CLAUDE.md` either identical or importing
 it (`@AGENTS.md`), and Gemini pointed at `AGENTS.md` through `context.fileName`.
-Three hand-maintained copies drift apart within weeks. Confirm with the
+Hand-maintained copies drift apart. Confirm with the
 command in the last column — a file that does not load does not exist.
 
 ## Writing the project profile

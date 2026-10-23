@@ -45,7 +45,7 @@ describes.
 ## One owner per fact
 
 Every fact has one canonical home; everything else links to it. Two copies of a
-fact disagree within a quarter, and the reader cannot tell which one is wrong.
+fact eventually disagree, and the reader cannot tell which one is wrong.
 
 | Question | Owner | Must not hold it |
 |---|---|---|

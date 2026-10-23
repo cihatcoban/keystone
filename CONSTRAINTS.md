@@ -5,7 +5,7 @@ Keystone's own quality contract. Projects that install Keystone start from
 this repository only.
 
 Every row names the check that enforces it. "Current" was measured on
-2026-10-22 against `feat/close-ecc-gaps-core-five`. `n/a` rows state why the dimension
+2026-10-23 against `feat/close-ecc-gaps-round-3`. `n/a` rows state why the dimension
 does not apply to a repository of process documentation and stdlib-only
 tooling.
 
@@ -30,9 +30,9 @@ it so a failure names its phase.
 | Dimension | Threshold | Measured by | Current |
 |---|---|---|---|
 | Repository validation | 0 errors, 0 warnings | `make validate` (CI) | 0 / 0 |
-| Skill routing | 0 weak prompts, 0 collisions | `make triggers` (CI) | 0 / 0 across 117 prompts |
+| Skill routing | 0 weak prompts, 0 collisions | `make triggers` (CI) | 0 / 0 across 131 prompts |
 | Eval coverage | 1 case file per skill; ≥ 3 positive and ≥ 2 negative prompts | `make validate` (CI) | 34 / 34 |
-| Tooling unit tests | 100% passing | `make test` (CI) | 145 / 145 |
+| Tooling unit tests | 100% passing | `make test` (CI) | 150 / 150 |
 | Skipped or quarantined tests | 0 | review | 0 |
 | Line coverage, `scripts/` | n/a — no coverage tool; tooling is stdlib-only by rule. Revisit if `scripts/` exceeds 1,500 lines | — | **revisit due:** `scripts/` 2,616 lines, `hooks/` 2,142; 85.7% lines covered, measured once with stdlib `trace` (no gate yet) |
 | Bug fixes | reproduction test first | PR shows red-then-green | — |
@@ -46,8 +46,8 @@ it so a failure names its phase.
 | Type checker | n/a — none configured; scripts use type hints only | — | — |
 | New suppressions | justification + tracking link required | review | 21 `noqa: E402` (sys.path imports in scripts, hooks and tests), justified inline |
 | Skill description length | 80–500 chars (hard); ≤ 320 (target) | `make validate`: error outside 80–500, warning above 320 | 217–314 |
-| Skill catalog size | ≤ 3,800 tokens (hard); warn above 3,200 | `make validate` (CI) | ≈ 3,029 |
-| Skill body length | ≥ 350 words (hard); warn above 1,600 | `make validate` (CI) | 666–1,401 |
+| Skill catalog size | ≤ 3,800 tokens (hard); warn above 3,200 | `make validate` (CI) | ≈ 3,055 |
+| Skill body length | ≥ 350 words (hard); warn above 1,600 | `make validate` (CI) | 674–1,393 |
 | Script file length | ≤ 400 lines (soft) | review | max 413 (`validate_repo.py`) |
 
 ## 3. Architecture

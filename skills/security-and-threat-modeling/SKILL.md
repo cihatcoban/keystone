@@ -165,5 +165,5 @@ anything holding personal or financial data, L3 for high-assurance systems.
 - [ ] Dependencies pinned and scanned; zero known high/critical
 - [ ] Personal data minimized, inventoried, excluded from logs
 - [ ] Errors reveal nothing internal
-- [ ] Browser and authentication controls match `references/web-session-controls.md`,
-      each with its test
+- [ ] Browser and authentication controls match
+      `references/web-session-controls.md`, each with its test

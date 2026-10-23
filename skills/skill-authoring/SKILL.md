@@ -115,7 +115,7 @@ the answer against the exit checklist:
 | Result | Meaning | Fix |
 |---|---|---|
 | Explicit high, implicit low | Selected only when named | The description |
-| Explicit low | Selected but not followed | The body: vaguer steps, a missing checklist item |
+| Explicit low | Selected but not followed | The body: steps too vague, or a checklist item missing |
 | Both high | Working | Nothing — record the run |
 
 Run it on every changed skill before a release, and record the model, the
