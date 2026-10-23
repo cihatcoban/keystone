@@ -90,6 +90,25 @@ class AuditTest(unittest.TestCase):
         )
         self.assertEqual(self.codes(), ["A2", "A2", "A2", "A2"])
 
+    def test_ranges_and_partial_versions_are_not_pinned(self):
+        # npm reads @1 and @1.2 as ranges; PEP 440 reads ==2.* as a range.
+        self.write(
+            ".mcp.json",
+            {
+                "mcpServers": {
+                    "major": {"command": "npx", "args": ["-y", "@scope/pkg@1"]},
+                    "minor": {"command": "bunx", "args": ["pkg@1.2"]},
+                    "x": {"command": "npx", "args": ["pkg@1.x"]},
+                    "dlx": {"command": "pnpm", "args": ["dlx", "pkg@~1.2.0"]},
+                    "wild": {"command": "pipx", "args": ["run", "srv==2.*"]},
+                    "ok1": {"command": "npx", "args": ["pkg@1.4.2-beta.1"]},
+                    "ok2": {"command": "uvx", "args": ["tool@0.3.0"]},
+                    "ok3": {"command": "pipx", "args": ["run", "srv==2.0"]},
+                }
+            },
+        )
+        self.assertEqual(self.codes(), ["A2"] * 5)
+
     def test_literal_credentials_are_errors_and_never_printed(self):
         self.write(
             ".mcp.json",

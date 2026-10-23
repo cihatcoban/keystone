@@ -17,7 +17,8 @@ Errors (exit 1):
   A4  a hook or MCP command that pipes a downloaded script into a shell
 
 Warnings (exit 0 unless --strict):
-  A2  an MCP server launched from an unpinned package or image, or over http
+  A2  an MCP server launched from a package range, tag or image tag instead of
+      an exact version or digest, or reached over http
   A5  a .env file exists and no agent config here denies reading it
   A6  a blanket allow rule for the shell or for every tool
 
@@ -69,7 +70,12 @@ LAUNCHER_SUBCOMMANDS = {
     ("yarn", "dlx"),
     ("npm", "exec"),
 }
-PINNED = re.compile(r"@\d[\w.+-]*$|==\d|@sha256:")
+NPM_LAUNCHERS = {"npx", "bunx", "pnpx", "pnpm", "yarn", "npm"}
+# npm treats @1 and @1.2 as ranges: only a full major.minor.patch is exact.
+NPM_PINNED = re.compile(r"@\d+\.\d+\.\d+(?:-[\w.]+)?(?:\+[\w.]+)?$")
+# PEP 440 / uv: ==X or tool@X is exact unless it carries a wildcard.
+PY_PINNED = re.compile(r"(==|@)\d[\w.+!-]*$")
+DIGEST = "@sha256:"
 PIPE_TO_SHELL = re.compile(
     r"(curl|wget|iwr|invoke-webrequest)\b[^|;&]*\|\s*(sudo\s+)?(sh|bash|zsh|python3?|iex|pwsh)\b"
     r"|\beval\s+\"?\$\((curl|wget)",
@@ -127,6 +133,17 @@ def mcp_servers(data: dict) -> dict:
     return servers
 
 
+def is_pinned(program: str, package: str) -> bool:
+    """True when the selector names exactly one release or image."""
+    if DIGEST in package:
+        return True
+    if program in ("docker", "podman") or package.endswith(":latest"):
+        return False  # a tag, however version-like, can be moved
+    if program in NPM_LAUNCHERS:
+        return bool(NPM_PINNED.search(package))
+    return bool(PY_PINNED.search(package)) and "*" not in package
+
+
 def check_server(name: str, spec: dict, where: str) -> list[Finding]:
     out: list[Finding] = []
     command = str(spec.get("command", ""))
@@ -142,9 +159,7 @@ def check_server(name: str, spec: dict, where: str) -> list[Finding]:
         package = rest[0] if rest else ""
         if package and ":" not in package.split("/")[-1] and "@sha256:" not in package:
             package += ":latest"
-    if package and (
-        not PINNED.search(package) or package.endswith((":latest", "@latest"))
-    ):
+    if package and not is_pinned(program, package):
         out.append(
             Finding(
                 "warn",
