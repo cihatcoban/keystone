@@ -17,6 +17,7 @@ Checks
  12  hook layer: registry schema, a guard per hook ID, every invariant mapped
      to a hook or a stated review-only reason, docs/hooks.md lists exactly the
      registry's IDs, manifests wired, no hooks/hooks.json (ADR-001)
+ 13  skill counts stated in manifests, README and docs match the skills shipped
 
 Exit code 1 on any error. Warnings never fail the build.
 """
@@ -198,6 +199,33 @@ def check_doc_pointers(root: Path) -> None:
             for target in sorted(set(POINTER.findall(text))):
                 if not (root / target).is_file():
                     err(f"{f.relative_to(root)}: points to missing file {target}")
+
+
+COUNT_CLAIM = re.compile(r"\b(\d+) (?:[a-z-]+ )?skills\b")
+COUNT_SOURCES = (
+    "plugin.json",
+    ".claude-plugin/*.json",
+    ".agents/plugins/*.json",
+    "gemini-extension.json",
+    "README.md",
+    "docs/*.md",
+)
+OTHER_PROJECT = re.compile(r"everything-claude-code|\bECC\b")
+
+
+def check_count_claims(root: Path, count: int) -> None:
+    """A listing that says 32 skills when 34 ship is the first fact a user checks."""
+    for pattern in COUNT_SOURCES:
+        for f in sorted(root.glob(pattern)):
+            for n, line in enumerate(f.read_text(encoding="utf-8").splitlines(), 1):
+                if OTHER_PROJECT.search(line):
+                    continue
+                for claim in COUNT_CLAIM.findall(line):
+                    if int(claim) != count:
+                        err(
+                            f"{f.relative_to(root)}:{n}: says {claim} skills, "
+                            f"{count} exist"
+                        )
 
 
 def check_contract_parity() -> None:
@@ -422,6 +450,7 @@ def main() -> int:
     check_dir_frontmatter("agents", need_name=True)
     check_references(skills)
     check_doc_pointers(ROOT)
+    check_count_claims(ROOT, len(skills))
     check_contract_parity()
     check_evals(skills)
 
