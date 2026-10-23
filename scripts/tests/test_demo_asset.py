@@ -1,8 +1,9 @@
-"""docs/assets/hooks-demo.svg must show what the hooks really say.
+"""The README's hook demo must show what the hooks really say.
 
-The README's demo is a rendering of real hook output. This test replays the
-three actions it shows through the actual dispatcher and fails when a hook's
-decision or message no longer matches the picture.
+The demo image is a rendering of real hook output. This test finds it through
+the README's Markdown image, replays the three actions it shows through the
+actual dispatcher, and fails when a hook's decision or message no longer
+matches the picture.
 """
 
 from __future__ import annotations
@@ -17,7 +18,17 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent.parent
-SVG = ROOT / "docs" / "assets" / "hooks-demo.svg"
+DEMO_ALT = "Keystone hooks deny a lowered threshold, a skipped test and a force push"
+
+
+def demo_image() -> Path:
+    """The image the README shows under the demo's alt text."""
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    match = re.search(r"!\[" + re.escape(DEMO_ALT) + r"\]\(([^)\s]+)\)", readme)
+    if match is None:
+        raise AssertionError("README no longer shows the hook demo image")
+    return ROOT / match.group(1)
+
 
 CONSTRAINTS = (
     "# CONSTRAINTS.md\n\n"
@@ -30,7 +41,7 @@ TEST = "def test_refund_limit():\n    assert refund(150) == 422\n"
 
 def svg_text() -> str:
     """All text in the SVG, unescaped and joined with single spaces."""
-    raw = SVG.read_text(encoding="utf-8")
+    raw = demo_image().read_text(encoding="utf-8")
     parts = re.findall(r">([^<>]+)<", raw)
     words = (" ".join(html.unescape(p).split()) for p in parts)
     return " ".join(w for w in words if w)

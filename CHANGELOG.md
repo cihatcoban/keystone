@@ -7,16 +7,24 @@ change an agent's output on the same input.
 
 ## [Unreleased]
 
+## [3.0.1] — 2026-10-23
+
+Listing readiness for the Claude plugin directory. No skill rule changed.
+
 ### Added
 
-- `.claude-plugin/icon.png` — the listing icon; `plugin.json` gains
-  `homepage`, `repository`, `keywords` and an author URL.
+- The plugin's listing icon; `plugin.json` gains `homepage`, `repository`,
+  `keywords` and an author URL.
+- README section "What Keystone runs on your machine": what the hooks start,
+  read and write, and that they make no network calls.
 - `make validate` check 13: a skill count stated in a manifest, the README or
   the docs must match the skills shipped.
 
 ### Fixed
 
 - `.claude-plugin/marketplace.json` described 32 skills; 34 ship.
+- The README shows the hook demo with Markdown image syntax, and the demo's
+  test finds the image through the README instead of a hard-coded path.
 
 ## [3.0.0] — 2026-10-23
 

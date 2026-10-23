@@ -6,7 +6,7 @@
   "plugins": [
     {
       "name": "keystone",
-      "version": "3.0.0",
+      "version": "3.0.1",
       "description": "Master-level engineering skills for AI coding agents — architecture-first, stack-agnostic, from intent to operations. Works in Claude Code, Gemini CLI and Codex.",
       "source": {
         "source": "local",

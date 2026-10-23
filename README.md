@@ -18,10 +18,7 @@ written quality contract the agent cannot quietly lower.
 
 </div>
 
-<p align="center">
-  <img src="docs/assets/hooks-demo.svg" width="900"
-  alt="Keystone hooks deny a lowered threshold, a skipped test and a force push">
-</p>
+![Keystone hooks deny a lowered threshold, a skipped test and a force push](docs/assets/hooks-demo.svg)
 
 <p align="center"><sub>Real hook output under the <code>strict</code> profile.
 A test replays these three actions on every CI run
@@ -210,6 +207,22 @@ There is no `GEMINI.md` and no `ChatGPT.md` on purpose: no agent reads a
 point Gemini CLI at `AGENTS.md` with `context.fileName` — see
 [Multi-agent setup](docs/multi-agent-setup.md#the-operating-contract-in-your-own-projects).
 
+## What Keystone runs on your machine
+
+- **Skills, commands, subagents:** Markdown files. They run nothing.
+- **Runtime hooks:** `hooks/run.sh` starts `hooks/keystone_hook.py`, a Python
+  standard-library script, before shell and file-edit tool calls, when the
+  agent stops, before compaction and at session start. A hook reads the
+  project's files, runs read-only `git` commands (`rev-parse`, `status`,
+  `diff`, `log`), and answers the agent with a warning, a question
+  for you, or a refusal. It writes only under the project's `.keystone/state/`
+  and makes no network calls; nothing is sent anywhere and there is no
+  telemetry. `KEYSTONE_HOOK_PROFILE=off` turns every hook off.
+- **Scripts in `scripts/`:** run only when you run them. The installers write
+  where you point them; `verify.py` runs the commands listed in your
+  `CONSTRAINTS.md`; `evals_live.py` drives an agent CLI that calls a model.
+  [SECURITY.md](SECURITY.md) lists each one.
+
 ## Commands
 
 | Command | Does |
@@ -324,5 +337,5 @@ Licensed under the [Apache License 2.0](LICENSE). See [NOTICE](NOTICE).
 [license-badge]: https://img.shields.io/badge/license-Apache%202.0-blue.svg
 [ci-badge]: https://github.com/cihatcoban/keystone/actions/workflows/validate.yml/badge.svg
 [ci]: https://github.com/cihatcoban/keystone/actions/workflows/validate.yml
-[version-badge]: https://img.shields.io/badge/version-3.0.0-informational
+[version-badge]: https://img.shields.io/badge/version-3.0.1-informational
 [skills-badge]: https://img.shields.io/badge/skills-34-success
