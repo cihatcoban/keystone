@@ -3,8 +3,21 @@
   "version": "3.0.0",
   "description": "Master-level engineering skills for AI coding agents — architecture-first, stack-agnostic, from intent to operations. Works in Claude Code, Gemini CLI and Codex.",
   "author": {
-    "name": "Cihat"
+    "name": "Cihat Çoban",
+    "url": "https://github.com/cihatcoban"
   },
+  "homepage": "https://github.com/cihatcoban/keystone",
+  "repository": "https://github.com/cihatcoban/keystone",
   "license": "Apache-2.0",
+  "keywords": [
+    "engineering",
+    "skills",
+    "code-quality",
+    "tdd",
+    "code-review",
+    "architecture",
+    "hooks",
+    "agents"
+  ],
   "hooks": "./hooks/claude-code.json"
 }

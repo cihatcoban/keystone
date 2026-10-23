@@ -108,5 +108,47 @@ class DocPointerTest(unittest.TestCase):
         self.assertEqual(len(vr.errors), 1)
 
 
+class SkillCountClaimTest(unittest.TestCase):
+    """Manifests and docs must state the real number of skills."""
+
+    def setUp(self) -> None:
+        self._tmp = tempfile.TemporaryDirectory()
+        self.base = Path(self._tmp.name)
+        (self.base / ".claude-plugin").mkdir()
+        (self.base / "docs").mkdir()
+        vr.errors.clear()
+        vr.warnings.clear()
+
+    def tearDown(self) -> None:
+        self._tmp.cleanup()
+        vr.errors.clear()
+        vr.warnings.clear()
+
+    def write(self, rel: str, text: str) -> None:
+        (self.base / rel).write_text(text, encoding="utf-8")
+
+    def test_matching_counts_are_clean(self) -> None:
+        self.write(
+            ".claude-plugin/marketplace.json", '{"d": "34 stack-agnostic skills"}'
+        )
+        self.write("README.md", "Adopting 34 skills at once.\n")
+        vr.check_count_claims(self.base, 34)
+        self.assertEqual(vr.errors, [])
+
+    def test_stale_count_in_a_manifest_errors(self) -> None:
+        self.write(
+            ".claude-plugin/marketplace.json", '{"d": "32 stack-agnostic skills"}'
+        )
+        vr.check_count_claims(self.base, 34)
+        self.assertEqual(len(vr.errors), 1)
+        self.assertIn("32", vr.errors[0])
+        self.assertIn("marketplace.json", vr.errors[0])
+
+    def test_other_projects_counts_are_ignored(self) -> None:
+        self.write("docs/compare.md", "everything-claude-code ships 311 skills.\n")
+        vr.check_count_claims(self.base, 34)
+        self.assertEqual(vr.errors, [])
+
+
 if __name__ == "__main__":
     unittest.main()

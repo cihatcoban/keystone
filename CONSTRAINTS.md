@@ -32,7 +32,7 @@ it so a failure names its phase.
 | Repository validation | 0 errors, 0 warnings | `make validate` (CI) | 0 / 0 |
 | Skill routing | 0 weak prompts, 0 collisions | `make triggers` (CI) | 0 / 0 across 131 prompts |
 | Eval coverage | 1 case file per skill; ≥ 3 positive and ≥ 2 negative prompts | `make validate` (CI) | 34 / 34 |
-| Tooling unit tests | 100% passing | `make test` (CI) | 153 / 153 |
+| Tooling unit tests | 100% passing | `make test` (CI) | 156 / 156 |
 | Skipped or quarantined tests | 0 | review | 0 |
 | Line coverage, `scripts/` | n/a — no coverage tool; tooling is stdlib-only by rule. Revisit if `scripts/` exceeds 1,500 lines | — | **revisit due:** `scripts/` 2,616 lines, `hooks/` 2,142; 85.7% lines covered, measured once with stdlib `trace` (no gate yet) |
 | Bug fixes | reproduction test first | PR shows red-then-green | — |

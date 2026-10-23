@@ -13,7 +13,7 @@
         "source": "github",
         "repo": "cihatcoban/keystone"
       },
-      "description": "32 stack-agnostic skills covering intent, architecture, build, verification and operations, plus a written quality contract the agent cannot quietly lower.",
+      "description": "34 stack-agnostic skills covering intent, architecture, build, verification and operations, plus a written quality contract the agent cannot quietly lower.",
       "keywords": [
         "architecture",
         "skills",
