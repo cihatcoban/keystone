@@ -5,12 +5,10 @@ description: Coordinates several agents on one task - splitting work, parallel s
 
 # Agent Orchestration
 
-One agent with a long context is the default, and usually the right one. More
-agents pay off in three situations: work that splits into **independent** parts,
-a **broad search** whose details nobody needs to keep, and **verification by an
-agent that has not seen the work**. Everywhere else, coordination costs more
-than it saves — every subagent starts cold and re-derives context the parent
-already had.
+One agent is the default. More agents pay off for **independent** parts, a
+**broad search** whose details nobody needs to keep, and **verification by an
+agent that has not seen the work**. Elsewhere coordination costs more than it
+saves: every subagent starts cold and re-derives what the parent knew.
 
 ## When to split
 
@@ -23,21 +21,25 @@ already had.
 | Debugging an unexplained failure | No | One agent holding the whole picture (`debugging-and-root-cause`) |
 | The task is small | No | Coordination overhead exceeds the work |
 
-The test: could two agents work on this without reading each other's output?
-If not, they are one task.
+The test: can two agents work without reading each other's output? If not,
+it is one task.
 
 ## Splitting work
 
-1. **Contracts first.** If parts meet at an interface, fix the interface (types,
-   schema, API) before fanning out (`api-and-contract-design`). Parallel agents
-   negotiating an interface through code produce two interfaces.
-2. **One owner per file.** Assign files or directories, never overlap. Two
-   agents editing one file is a merge conflict scheduled in advance.
+1. **Contracts first.** Fix any shared interface (types, schema, API) before
+   fanning out (`api-and-contract-design`); agents negotiating one through code
+   produce two.
+2. **One owner per file, one worktree per writer.** Assign files or
+   directories, never overlap. Each writing agent gets its own git worktree
+   and branch, so a failed part is discarded without touching the rest; the
+   parent merges.
 3. **Self-contained briefs.** Each brief carries the goal, the files it owns,
    the contract it must honor, the constraints (`CONSTRAINTS.md`), and what to
    return. A subagent cannot ask the parent's context what was meant.
 4. **A defined return shape.** Ask for a summary, the files changed, the
    commands run with their result, and open questions — not a narrative.
+5. **Model per role.** A cheaper model for searches and mechanical edits; the
+   strongest for design, debugging and review.
 
 ## Verification by fresh context
 
@@ -108,17 +110,16 @@ The worker must not be able to edit its done signal. A generator that can
 change the rubric, or a fixer that can edit the test it is fixing, reaches
 "done" by moving the target; `CLAUDE.md` §4 applies to every iteration.
 
-`build-error-resolver` follows these limits for build failures: it fixes, it
-reruns, and after its attempts it reports what remains instead of disabling a
-check.
+`build-error-resolver` applies these limits to red builds and reports what
+remains instead of disabling a check.
 
 ## Merging results
 
 The parent integrates, and owns the outcome:
 
-1. Read every return; contradictions between them are findings, not noise.
-2. Run the full verification (`/verify`) on the combined result — parts that
-   each passed can still fail together.
+1. Read every return; contradictions between them are findings.
+2. Run `/verify` on the combined result — parts that passed alone can fail
+   together.
 3. Report which agent did what, what was verified, and what was not.
 
 ## Failure modes
