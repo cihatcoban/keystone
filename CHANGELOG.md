@@ -7,6 +7,17 @@ change an agent's output on the same input.
 
 ## [Unreleased]
 
+### Added
+
+- `.claude-plugin/icon.png` — the listing icon; `plugin.json` gains
+  `homepage`, `repository`, `keywords` and an author URL.
+- `make validate` check 13: a skill count stated in a manifest, the README or
+  the docs must match the skills shipped.
+
+### Fixed
+
+- `.claude-plugin/marketplace.json` described 32 skills; 34 ship.
+
 ## [3.0.0] — 2026-10-23
 
 Closes the remaining gaps against everything-claude-code 2.2.3 in fourteen
