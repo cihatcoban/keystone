@@ -7,6 +7,15 @@ change an agent's output on the same input.
 
 ## [Unreleased]
 
+## [3.0.2] — 2026-10-23
+
+Directory listing links. No skill rule changed.
+
+### Added
+
+- `PRIVACY.md`: Keystone collects no data; what the hooks and scripts touch.
+- `plugin.json` gains `documentationUrl`, `supportUrl` and `privacyPolicyUrl`.
+
 ## [3.0.1] — 2026-10-23
 
 Listing readiness for the Claude plugin directory. No skill rule changed.

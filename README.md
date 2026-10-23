@@ -329,6 +329,7 @@ or changing a skill: a new skill must cover work no existing skill covers, ship
 with an eval case, and pass `make validate`.
 
 Report security issues privately as described in [SECURITY.md](SECURITY.md).
+Keystone collects no data; see [PRIVACY.md](PRIVACY.md).
 
 ## License
 
@@ -337,5 +338,5 @@ Licensed under the [Apache License 2.0](LICENSE). See [NOTICE](NOTICE).
 [license-badge]: https://img.shields.io/badge/license-Apache%202.0-blue.svg
 [ci-badge]: https://github.com/cihatcoban/keystone/actions/workflows/validate.yml/badge.svg
 [ci]: https://github.com/cihatcoban/keystone/actions/workflows/validate.yml
-[version-badge]: https://img.shields.io/badge/version-3.0.1-informational
+[version-badge]: https://img.shields.io/badge/version-3.0.2-informational
 [skills-badge]: https://img.shields.io/badge/skills-34-success
