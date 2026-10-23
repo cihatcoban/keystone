@@ -17,6 +17,14 @@
       {
         "prompt": "Write a handoff so the next session survives context compaction",
         "top_k": 3
+      },
+      {
+        "prompt": "Does Gemini CLI read our AGENTS.md or do we need a GEMINI.md?",
+        "top_k": 3
+      },
+      {
+        "prompt": "Context is filling up, when should I compact?",
+        "top_k": 3
       }
     ],
     "negative": [
@@ -30,6 +38,7 @@
   },
   "expectations": [
     "'context-engineering' is selected among the top candidate skills",
+    "Names which instruction file each agent in use loads, keeps one contract (AGENTS.md, with CLAUDE.md identical or importing it, Gemini pointed at it), and confirms loading with each agent's own command",
     "The skill's exit checklist items are addressed in the response",
     "No CONSTRAINTS.md threshold is lowered to complete the work"
   ]

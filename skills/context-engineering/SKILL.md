@@ -1,6 +1,6 @@
 ---
 name: context-engineering
-description: Sets up what an agent knows about a repository - operating contract, conventions, session hygiene - and fixes degrading output. Triggers - set up CLAUDE.md or AGENTS.md, agent keeps ignoring our conventions, output quality dropped in a long session, onboard the agent, repo rules.
+description: Sets up what an agent knows about a repository - operating contract, conventions, session hygiene, compaction. Triggers - set up CLAUDE.md, AGENTS.md or GEMINI.md, agent keeps ignoring our conventions, output quality dropped in a long session, context window full, when to compact, repo rules.
 ---
 
 # Context Engineering
@@ -23,6 +23,19 @@ context that the relevant part is drowned). Both look like "the model got worse"
 
 Each layer has a home. Facts in the wrong layer rot: a stack detail written
 into the operating contract survives its own truth.
+
+## Where each agent reads instructions
+
+| Agent | Loads | See what loaded |
+|---|---|---|
+| Claude Code | `CLAUDE.md` from the working directory upward, subdirectory files on demand, `@path` imports; by default `AGENTS.md` only when no `CLAUDE.md` exists | `/context` |
+| Codex | `AGENTS.md` (or `AGENTS.override.md`) from `~/.codex`, then one per directory from the project root down to the working directory, up to 32 KiB by default | `/status` |
+| Gemini CLI | `GEMINI.md` by default; `context.fileName` in `settings.json` can list `AGENTS.md`; an extension loads the file its manifest names | `/memory show` |
+
+Keep one contract: `AGENTS.md`, with `CLAUDE.md` either identical or importing
+it (`@AGENTS.md`), and Gemini pointed at `AGENTS.md` through `context.fileName`.
+Three hand-maintained copies drift apart within weeks. Confirm with the
+command in the last column — a file that does not load does not exist.
 
 ## Writing the project profile
 
@@ -93,6 +106,11 @@ against the repository. Write the note before a long task is interrupted and
 before you expect compaction, not after: the hook can record mechanics, only
 the agent knows which approach already failed.
 
+Compact at boundaries, not mid-change: after research and before
+implementation, after an abandoned approach, between unrelated tasks — each
+time after writing the handoff. (`/compact` in Claude Code and Codex,
+`/compress` in Gemini CLI.)
+
 Three rules keep handoffs honest:
 
 1. **Evidence or it is "in progress".** "Done" without a command, test or
@@ -120,9 +138,10 @@ Cost controls that do not trade away quality:
   searches; the strongest model for design, debugging and review.
 - **Stop loops early.** An agent that fails the same check three times needs a
   different approach or a human, not a fourth attempt.
-- **Measure, then budget.** Read the harness's own usage report per task for a
-  week before setting a number; record it in `CONSTRAINTS.md` (§4 has a row for
-  agent cost) so it is defended like any other budget.
+- **Measure, then budget.** Read the harness's own meter (`/context`,
+  `/status`, `/stats model`) per task for a week before setting a number;
+  record it in `CONSTRAINTS.md` (§4 has a row for agent cost) so it is
+  defended like any other budget. An estimate is not a measurement.
 
 ## Retrieval discipline
 
@@ -140,7 +159,8 @@ the cause, and change the context only for a pattern you have seen more than onc
 ## Exit checklist
 
 - [ ] `CLAUDE.md` exists and states invariants only
-- [ ] `AGENTS.md` exists for non-Claude agents and matches
+- [ ] `AGENTS.md` exists for non-Claude agents and matches; each agent in use
+      was shown to load the contract with its own command
 - [ ] Project profile lists commands that were actually run and verified
 - [ ] Conventions point at exemplary files rather than restating them
 - [ ] `CONSTRAINTS.md` exists with real numbers
