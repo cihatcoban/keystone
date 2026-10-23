@@ -1,6 +1,6 @@
 {
   "name": "keystone",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Master-level engineering skills for AI coding agents — architecture-first, stack-agnostic, from intent to operations. Works in Claude Code, Gemini CLI and Codex.",
   "author": {
     "name": "Cihat Çoban",
@@ -8,6 +8,9 @@
   },
   "homepage": "https://github.com/cihatcoban/keystone",
   "repository": "https://github.com/cihatcoban/keystone",
+  "documentationUrl": "https://github.com/cihatcoban/keystone/blob/main/docs/getting-started.md",
+  "supportUrl": "https://github.com/cihatcoban/keystone/issues",
+  "privacyPolicyUrl": "https://github.com/cihatcoban/keystone/blob/main/PRIVACY.md",
   "license": "Apache-2.0",
   "keywords": [
     "engineering",
