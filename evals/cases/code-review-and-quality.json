@@ -17,6 +17,10 @@
       {
         "prompt": "Review this Go and SQL change before I merge it",
         "top_k": 3
+      },
+      {
+        "prompt": "Review this Rails pull request before merge",
+        "top_k": 3
       }
     ],
     "negative": [
