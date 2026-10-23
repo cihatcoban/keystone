@@ -21,6 +21,10 @@
       {
         "prompt": "We are storing personal data under KVKK and GDPR - what must the system do?",
         "top_k": 3
+      },
+      {
+        "prompt": "Is our login and session cookie setup secure?",
+        "top_k": 3
       }
     ],
     "negative": [
@@ -34,6 +38,7 @@
   },
   "expectations": [
     "'security-and-threat-modeling' is selected among the top candidate skills",
+    "Password hashing, session cookie attributes, session regeneration and server-side logout, CSRF and CORS match the web-session-controls reference, each with a failing-when-missing test",
     "The skill's exit checklist items are addressed in the response",
     "No CONSTRAINTS.md threshold is lowered to complete the work"
   ]

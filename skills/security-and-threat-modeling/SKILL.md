@@ -1,6 +1,6 @@
 ---
 name: security-and-threat-modeling
-description: Threat-models and hardens a change - untrusted input, authentication, authorization, supply chain, personal data. Triggers - is this endpoint secure, threat-model this feature, we are storing personal data here, injection, permissions, OWASP, vulnerability.
+description: Threat-models and hardens a change - untrusted input, authentication, authorization, supply chain, personal data. Triggers - is this endpoint secure, threat-model this feature, we are storing personal data here, injection, permissions, OWASP, vulnerability, login and session cookies, CSRF.
 ---
 
 # Security and Threat Modeling
@@ -122,6 +122,10 @@ missing. Write the negative case; the happy path already has tests.
 Run these at the API boundary, not against an inner function: a defense that
 lives one layer too deep is the usual bug.
 
+For anything a browser or a login touches — password hashing parameters,
+session cookies, CSRF, CORS, security headers, uploads — the values and the
+test for each are in `references/web-session-controls.md`.
+
 ## Tool discovery
 
 Use the scanners the project already has before proposing new ones. Look in
@@ -161,3 +165,5 @@ anything holding personal or financial data, L3 for high-assurance systems.
 - [ ] Dependencies pinned and scanned; zero known high/critical
 - [ ] Personal data minimized, inventoried, excluded from logs
 - [ ] Errors reveal nothing internal
+- [ ] Browser and authentication controls match `references/web-session-controls.md`,
+      each with its test
