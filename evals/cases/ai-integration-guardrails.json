@@ -17,6 +17,14 @@
       {
         "prompt": "Build an eval set and regression gate for our LLM feature",
         "top_k": 3
+      },
+      {
+        "prompt": "Our LLM bill is too high, how do we cut cost?",
+        "top_k": 3
+      },
+      {
+        "prompt": "Retrieval returns irrelevant chunks and the model hallucinates citations",
+        "top_k": 3
       }
     ],
     "negative": [
@@ -30,6 +38,8 @@
   },
   "expectations": [
     "'ai-integration-guardrails' is selected among the top candidate skills",
+    "Retrieval filters by the requesting user's permissions inside the query, abstains when context is insufficient, checks citations against the passages sent, and is evaluated separately from generation",
+    "Cost work starts with deterministic handling and the smallest model that passes the eval, a stable cacheable prompt prefix, and retries limited to transient errors",
     "The skill's exit checklist items are addressed in the response",
     "No CONSTRAINTS.md threshold is lowered to complete the work"
   ]

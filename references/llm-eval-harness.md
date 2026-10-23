@@ -36,6 +36,25 @@ for width):
 A model judging its own family's output inflates scores; prefer a different
 model or human spot checks on a sample.
 
+## Retrieval is evaluated on its own
+
+When answers come from retrieved context, a wrong answer has two possible
+causes, and one end-to-end score cannot tell them apart. Label, per case, which
+source passages answer it, then measure both stages:
+
+| Stage | Metric | Question it answers |
+|---|---|---|
+| Retrieval | Context recall | Did the passages needed for the answer reach the model? |
+| Retrieval | Context precision | How much of what reached the model was relevant? |
+| Generation | Faithfulness | Is every claim in the answer supported by the passages given? |
+| Generation | Citation validity | Does every cited source exist in the passages, and say what is claimed? |
+| Generation | Abstention | On cases the corpus cannot answer, did it say so instead of answering? |
+
+Include unanswerable cases on purpose — a pipeline that never abstains scores
+well until a user asks about something the corpus does not contain. Gate
+retrieval changes (chunking, embedding model, reranker, top-k) on the
+retrieval metrics, not only on the final answer.
+
 ## The metric matches the cost
 
 Write down what a wrong answer costs versus an abstention before choosing the
