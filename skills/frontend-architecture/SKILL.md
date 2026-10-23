@@ -86,11 +86,11 @@ Run the keyboard script for every widget you build or change.
 
 The rules above are framework-independent; where they live is not. After stack
 discovery, read the project's framework section in
-`references/frontend-framework-map.md` — it maps each rule here (state kinds,
-cancellation, error states, focus, forms, code splitting) to that framework's
-idiom and the trap that breaks it there. Check the versions it was written
-against; if the project's framework is not listed, apply this skill as written
-and say the lookup was missing.
+`references/frontend-framework-map.md` — it maps each rule here (state
+kinds, cancellation, error states, focus, forms, code splitting, rendering
+cost, component tests) to that framework's idiom and the trap that breaks it
+there. Check the versions it was written against; if the project's framework
+is not listed, apply this skill as written and say the lookup was missing.
 
 ## Performance budgets
 
@@ -109,6 +109,20 @@ size and lazy-load images correctly; reserve space for async content (CLS);
 avoid rendering large lists without virtualization; keep the main thread free
 during interaction. Micro-optimizing re-renders is far down this list —
 profile before touching it.
+
+## Verifying UI
+
+- **Query the way people do.** Component tests find elements by role, label
+  and text — the way users and assistive technology do. A test that cannot find
+  the button by its role has found an accessibility defect, not a test problem.
+- **End-to-end tests for the few journeys that matter** — sign-up, checkout,
+  the flow that would page someone — against a real build. Everything else
+  lives in the faster tiers (`testing-strategy`).
+- **Visual snapshots narrowly,** reviewed like code; a snapshot nobody reads
+  approves every regression.
+- **Profile before optimizing rendering.** The framework's profiler names the
+  component and the cause; guessing adds memoization that costs more than it
+  saves.
 
 ## Forms
 
@@ -134,6 +148,8 @@ system — do not fork it locally.
       script; native elements used where they exist
 - [ ] Framework idioms checked against the map for this project's framework
       and version, or the missing lookup reported
+- [ ] Component tests query by role and label; end-to-end tests cover the
+      critical journeys against a real build
 - [ ] Labels associated; errors announced; contrast checked
 - [ ] Performance budget defined and enforced in CI, measured throttled
 - [ ] Design tokens used; no one-off values
