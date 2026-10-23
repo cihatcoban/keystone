@@ -27,6 +27,8 @@ Read only the section for the project's framework.
 | Focus management | A ref, focused after mount; native `dialog` via the ref's `showModal()` | Calling `focus()` during render |
 | Forms | Native `form` with actions / `useActionState`, or a form library | Server errors shown as a toast instead of mapped to fields |
 | Long lists | A windowing library | Index as `key` in a list that reorders — state attaches to the wrong row |
+| Rendering cost | Profile with the React DevTools Profiler first. React Compiler memoizes automatically where the project enables it; otherwise `memo` / `useMemo` / `useCallback` only where the profile shows wasted renders | Hand-memoizing everything: cost without a measured gain, and stale closures |
+| Component tests | React Testing Library: query by role, label and text; `user-event` for interaction | Asserting on state, hooks or class names — breaks on refactor, misses accessibility regressions |
 
 ## Vue 3.5
 
@@ -43,6 +45,8 @@ Read only the section for the project's framework.
 | Focus management | Template ref; `await nextTick()` then `focus()` | Focusing before the element is rendered |
 | Forms | `v-model` with explicit validation timing | Validating on every input event, errors flashing while typing |
 | Long lists | A virtual-scroller library | `v-if` and `v-for` on the same element |
+| Rendering cost | Keep child props stable; `v-once` / `v-memo` for large subtrees that rarely change; `shallowRef` for large data replaced rather than mutated | Deep reactivity over very large structures; a computed that returns a new object every run |
+| Component tests | Vue Test Utils or Vue Testing Library: mount, interact, assert rendered output | Reaching into `wrapper.vm` internals |
 
 ## Angular 22
 
@@ -59,6 +63,8 @@ Read only the section for the project's framework.
 | Focus and announcements | CDK a11y: `cdkTrapFocus`, `FocusMonitor`, `LiveAnnouncer`; focus after render with `afterNextRender` | Focusing in the constructor |
 | Forms | Typed reactive forms; `updateOn: 'blur'` to control validation timing | Untyped form groups — field renames fail silently |
 | Long lists | CDK virtual scroll viewport | Rendering thousands of rows in one `@for` |
+| Rendering cost | `OnPush` components with signals; `@for` tracking a stable id; `@defer` for heavy content below the fold | Tracking by the item object, or by `$index` in a list that reorders — rows are re-created |
+| Component tests | `TestBed` with CDK component harnesses, or Angular Testing Library | Calling private methods or reading private fields from the test |
 
 ## Svelte 5 and SvelteKit 2
 
@@ -75,3 +81,5 @@ Read only the section for the project's framework.
 | Focus management | SvelteKit focuses `body` after navigation and announces the page `<title>`; move focus to the heading in `afterNavigate` if the design needs it | Pages sharing one `<title>` — every navigation is announced identically |
 | Forms | Form actions with `use:enhance`; return `fail(400, { … })` to map field errors | Client-only submit handlers that break without JavaScript |
 | Long lists | A virtual-list component | Rendering an unbounded `{#each}` |
+| Rendering cost | Updates are fine-grained by default; `$state.raw` for large arrays and objects replaced rather than mutated | Deep `$state` proxies over large data that is never mutated in place |
+| Component tests | Svelte Testing Library with the project's test runner; `flushSync()` or `await tick()` before asserting after a state change | Asserting before the DOM has updated |
