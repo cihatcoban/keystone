@@ -158,12 +158,31 @@ For the invariants to apply in a project, the project needs its own contract:
 
 | Agent | Reads | Do this |
 |---|---|---|
-| Claude Code | `CLAUDE.md` | `/keystone:onboard` writes it, referencing Keystone's contract |
-| Codex | `AGENTS.md` | Same content; keep both if the team uses both agents |
-| Gemini CLI | the extension's `AGENTS.md` automatically; your project's `GEMINI.md` | Nothing extra needed for Keystone's rules |
+| Claude Code | `CLAUDE.md`; reads `AGENTS.md` instead only when the project has no `CLAUDE.md` (Claude Code 2.1.277 or later) | `/keystone:onboard` writes it, referencing Keystone's contract |
+| Codex | `AGENTS.md`, one per directory from the project root down to the working directory, 32 KiB combined by default | Same content; keep both if the team uses both agents |
+| Gemini CLI | The extension's `AGENTS.md` automatically. In your project: `GEMINI.md`, unless `context.fileName` in `.gemini/settings.json` lists `AGENTS.md` | Nothing extra for Keystone's rules. To share your project's own `AGENTS.md`, list it in `context.fileName` instead of writing a `GEMINI.md` copy |
 
 A project used with several agents keeps `CLAUDE.md` and `AGENTS.md` identical —
 the same rule Keystone enforces on itself.
+
+```json
+{ "context": { "fileName": ["AGENTS.md", "GEMINI.md"] } }
+```
+
+That is the whole Gemini setup for a project that already has `AGENTS.md`.
+
+### Why Keystone ships no `GEMINI.md` or `ChatGPT.md`
+
+No agent reads a file named `ChatGPT.md`: Codex — OpenAI's coding agent, also
+available from ChatGPT — reads `AGENTS.md`. Gemini CLI loads the extension's
+`AGENTS.md` because `gemini-extension.json` names it in `contextFileName`; a
+`GEMINI.md` beside it is not the file the manifest names, and a second copy of
+the contract would only drift. One contract, two filenames (`CLAUDE.md`, `AGENTS.md`),
+checked byte-identical by `make validate`.
+
+Confirm what each agent actually loaded: `/context` in Claude Code, `/status`
+in Codex, `/memory show` in Gemini CLI. Checked against each agent's
+documentation on 2026-10-23.
 
 ## Secrets and agents
 

@@ -48,6 +48,11 @@ Keystone gives the agent three things it otherwise lacks:
 
 Every skill is **stack-agnostic**. None assumes a language or framework; each
 starts by discovering how *this* repository actually builds, tests and ships.
+Where the language, framework, engine or protocol matters — review traps,
+framework idioms, migration locks, GraphQL or gRPC rules — the skill points to
+a dated lookup in `references/`, loaded only after stack discovery
+([ADR-002](docs/adr/ADR-002-stack-specific-references.md)). The always-loaded
+part stays small: the 34 skill descriptions are ≈ 3,050 tokens.
 
 ## Quick start
 
@@ -160,6 +165,22 @@ Commands are optional — skills also trigger from how you describe the work. Se
 The layers rank in that order: a skill never overrides the operating contract,
 your project's `CONSTRAINTS.md`, or an accepted ADR.
 
+### One contract, every agent
+
+The operating contract is one text under two names, kept byte-identical by
+`make validate`:
+
+| Agent | Reads | Check with |
+|---|---|---|
+| Claude Code | `CLAUDE.md` (`AGENTS.md` only when no `CLAUDE.md` exists) | `/context` |
+| Codex (OpenAI, also in ChatGPT) | `AGENTS.md` | `/status` |
+| Gemini CLI | `AGENTS.md`, named by `contextFileName` in `gemini-extension.json` | `/memory show` |
+
+There is no `GEMINI.md` and no `ChatGPT.md` on purpose: no agent reads a
+`ChatGPT.md`, and a third copy of the contract would drift. In your own project,
+point Gemini CLI at `AGENTS.md` with `context.fileName` — see
+[Multi-agent setup](docs/multi-agent-setup.md#the-operating-contract-in-your-own-projects).
+
 ## Commands
 
 | Command | Does |
@@ -205,10 +226,11 @@ the chain of skills around it.
 ## Repository layout
 
 ```text
-skills/        34 skills, one directory each (SKILL.md + optional references/)
+skills/        34 skills, one directory each (SKILL.md)
 commands/      slash commands that apply a skill chain deliberately
 agents/        subagent definitions
-references/    checklists and catalogs the skills load on demand
+references/    checklists, catalogs and dated stack lookups the skills load
+               on demand
 templates/     CONSTRAINTS, spec, plan, ADR, design doc, runbook, postmortem,
                handoff, lessons
 evals/         trigger cases per skill, checked statically in CI
@@ -231,7 +253,8 @@ make evals-live ARGS="--cli claude"     # optional: is each skill followed, not 
 
 `scripts/validate_repo.py` checks frontmatter, name/directory agreement,
 description bounds, body size, exit checklists, broken links, unknown skill
-references, `CLAUDE.md`/`AGENTS.md` parity, eval coverage, the skill catalog
+references, pointers to `references/` and `templates/` files,
+`CLAUDE.md`/`AGENTS.md` parity, eval coverage, the skill catalog
 budget, every manifest against its loader's rules and their version agreement,
 generated adapters, and the hook registry (a guard per hook ID, every
 invariant mapped to a hook, `docs/hooks.md` in sync).
