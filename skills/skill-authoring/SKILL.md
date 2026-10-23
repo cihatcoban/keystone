@@ -1,6 +1,6 @@
 ---
 name: skill-authoring
-description: Writes or extends a Keystone skill, including product-specific domain packs. Triggers - add a new skill to this pack, this skill never triggers when I ask for it, write a domain pack for our product, skill too long, extend keystone.
+description: Writes or extends a Keystone skill, including product-specific domain packs. Triggers - add a new skill to this pack, this skill never triggers when I ask for it, write a domain pack for our product, skill too long, agent does not follow the skill, retire or merge skills, extend keystone.
 ---
 
 # Skill Authoring
@@ -20,6 +20,11 @@ Answer honestly. Any "no" means don't create the skill.
 - Can the procedure be written as concrete steps with a verifiable end state?
   Advice that cannot be checked is not a skill.
 - Has the gap been felt at least twice in real work?
+
+**Search before you write.** List the skills already installed — this pack,
+other plugins, the project's own — and read the descriptions of the nearest
+neighbors. When one half-covers the work, extend it. A second skill that
+half-answers the same prompt makes routing worse for both.
 
 ## Anatomy
 
@@ -64,6 +69,16 @@ until the skill is selected. Consequences:
 Target 400–1400 words. Beyond that, split content into `references/` — the body
 is loaded every time the skill fires; references are loaded when needed.
 
+### Portable across agents
+
+Keystone skills use the Agent Skills format. `name` (lowercase letters, digits
+and single hyphens, at most 64 characters, equal to the directory name) and
+`description` are the only fields every agent reads. Optional fields —
+`license`, `compatibility`, `metadata`, `allowed-tools` — are honored by some
+agents and ignored by others, so no rule the skill depends on may live there.
+Keep reference chains one level deep: the body points to a reference; the
+reference does not send the reader on to a third file for the rule.
+
 ## Writing rules
 
 1. **Stack-agnostic by default.** Say "the project's focused-test command", not
@@ -90,6 +105,32 @@ The body is almost never the problem.
 If a *different* skill fires instead, the two descriptions overlap — sharpen
 both, and state the boundary in each.
 
+## Measure that it is followed
+
+`make triggers` proves a prompt shares vocabulary with the right description;
+it cannot prove an agent applies the skill. `make evals-live` (optional, calls
+a model) runs each eval prompt with and without naming the skill and grades
+the answer against the exit checklist:
+
+| Result | Meaning | Fix |
+|---|---|---|
+| Explicit high, implicit low | Selected only when named | The description |
+| Explicit low | Selected but not followed | The body: vaguer steps, a missing checklist item |
+| Both high | Working | Nothing — record the run |
+
+Run it on every changed skill before a release, and record the model, the
+number of runs and the scores. When it cannot be run, say so in the release
+notes.
+
+## Retire and merge
+
+Every description is loaded into every session, so the catalog has a budget
+(`CONSTRAINTS.md`). Review it each release: a skill whose prompts keep routing
+elsewhere, that never applies in live evals, or that overlaps a neighbor gets
+merged into the neighbor or removed — and the removal is recorded
+(`documentation-and-knowledge`). Fewer, sharper skills route better than many
+adjacent ones.
+
 ## Domain packs
 
 Keystone is domain-neutral. Product-specific procedure belongs in a pack layered
@@ -112,4 +153,8 @@ on top — see `examples/domain-pack/`.
 - [ ] Ends with a verifiable exit checklist
 - [ ] Eval case added with ≥3 positive and ≥2 negative prompts
 - [ ] `make validate` and `scripts/check_triggers.py` pass
-- [ ] No overlap introduced with an existing skill's description
+- [ ] No overlap introduced with an existing skill's description; installed
+      skills searched before writing
+- [ ] Behavior depends only on `name`, `description` and the body
+- [ ] `make evals-live` run on the changed skill with the result recorded, or
+      the missing run reported
