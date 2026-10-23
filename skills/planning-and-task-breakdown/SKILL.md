@@ -54,29 +54,41 @@ Vertical slices surface them on day one.
 
 ## Plan shape
 
-`docs/plans/NNN-short-name.md`
+`docs/plans/NNN-short-name.md`, from `templates/plan.template.md`: tasks with
+criterion, test, evidence, files, brief, size and dependencies; then
+sequencing rationale, risk, rollout, a change log and cleanup.
 
-```markdown
-# Plan: <spec title>
-Spec: docs/specs/NNN-....md
+## Tasks someone else can pick up cold
 
-## Tasks
-- [ ] T1 — <imperative verb + object>
-      Criterion: <observable, from the spec>
-      Test: <what proves it>
-      Size: S | M | L
-      Depends on: —
-- [ ] T2 — ...
+A plan is executed by whoever is free — another session after compaction, a
+subagent, a teammate. Write each task so it needs nothing outside itself:
 
-## Sequencing rationale
-Why this order. Which task resolves the most uncertainty.
+- **Files** — the paths it owns. A task without them cannot be checked for
+  overlap and will collide with its neighbor.
+- **Brief** — two to four lines: the existing pattern to copy (`path:line`),
+  the contract to honor, the constraint that applies. Not the spec again;
+  only what a cold reader would otherwise have to rediscover.
+- **Test** — the exact proof, so "done" is not a judgment call.
 
-## Risk
-The task most likely to invalidate the plan, and what we do if it does.
+**Mark parallel work explicitly.** Two tasks may run in parallel only when they
+share no files and neither needs the other's output; write `Parallel with:` on
+both. Everything else is sequential by default. How to run them:
+`agent-orchestration`.
 
-## Rollout
-Flag name, who sees it first, what makes it default, when the flag is removed.
-```
+## Review the plan before T1
+
+For a plan with more than five tasks, a parallel section, or any irreversible
+step, have a fresh-context reviewer (`adversarial-reviewer`) check it against
+the spec before work starts. Give it the spec and the plan only. It answers:
+
+1. Is every acceptance criterion covered by a task — and every task by a
+   criterion?
+2. Is the riskiest task first, and is anything irreversible postponed?
+3. Do any two "parallel" tasks touch the same file or depend on each other?
+4. Are flag removal and cleanup tasks present?
+
+Fix the findings in the plan, not in a comment beside it. A plan error found
+now costs a line; found at T6 it costs the tasks built on it.
 
 ## Sizing
 
@@ -98,13 +110,20 @@ Plans are wrong on contact; that is expected, not a failure. Replan when:
 - Two tasks keep blocking each other → the boundary between them is wrong
   (`boundaries-and-dependencies`)
 
-Update the plan file. A plan that has silently diverged from reality is worse
-than none, because people still trust it.
+Update the plan file and log the change in its `Changes` section: split,
+inserted, skipped, reordered or abandoned, with the date and the reason. A
+plan that has silently diverged from reality is worse than none, because
+people still trust it.
 
 ## Exit checklist
 
 - [ ] Every task maps to a spec criterion
 - [ ] Every task is vertical and independently verifiable
+- [ ] Every task names its files and a brief a cold reader can act on
+- [ ] Parallel tasks share no files and no outputs, and are marked as such
+- [ ] Plans over five tasks, with parallel work or an irreversible step were
+      reviewed against the spec by a fresh-context reviewer before T1
+- [ ] Every change to the plan is logged with a date and reason
 - [ ] No L-sized tasks remain
 - [ ] Highest-uncertainty task is first or near-first
 - [ ] Dependencies are explicit; no hidden ordering
