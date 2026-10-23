@@ -90,8 +90,10 @@ are shared; each agent gets the manifest or install layout its own loader
 expects. The scripts and runtime hooks need Python 3.9 or later and nothing
 else; without Python the skills still work and the hooks stay silent.
 
-Upgrading from 1.x? 2.0.0 changes three skills' output and adds runtime hooks;
-see [Upgrading from 1.x](CHANGELOG.md#200--2026-10-22).
+Upgrading? 3.0.0 changes what fourteen skills produce — evidence maps in TDD,
+lock timeouts in migrations, briefs in plans, stack lenses in reviews; see
+[Upgrading](CHANGELOG.md#300--2026-10-23). From 1.x, read
+[Upgrading from 1.x](CHANGELOG.md#200--2026-10-22) first.
 
 **Claude Code** — from the marketplace:
 
@@ -322,5 +324,5 @@ Licensed under the [Apache License 2.0](LICENSE). See [NOTICE](NOTICE).
 [license-badge]: https://img.shields.io/badge/license-Apache%202.0-blue.svg
 [ci-badge]: https://github.com/cihatcoban/keystone/actions/workflows/validate.yml/badge.svg
 [ci]: https://github.com/cihatcoban/keystone/actions/workflows/validate.yml
-[version-badge]: https://img.shields.io/badge/version-2.0.0-informational
+[version-badge]: https://img.shields.io/badge/version-3.0.0-informational
 [skills-badge]: https://img.shields.io/badge/skills-34-success

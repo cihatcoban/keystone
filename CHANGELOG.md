@@ -7,16 +7,17 @@ change an agent's output on the same input.
 
 ## [Unreleased]
 
+## [3.0.0] — 2026-10-23
+
 Closes the remaining gaps against everything-claude-code 2.2.3 in fourteen
 skills, again without copying its breadth: no new skills, eight descriptions
 sharpened, and the always-loaded catalog grows by ≈ 54 tokens since 2.0.0
-(≈ 3,001 → ≈ 3,055). Stack-specific material lives in dated, on-demand references under
-[ADR-002](docs/adr/ADR-002-stack-specific-references.md); every skill body stays
-under 1,400 words.
+(≈ 3,001 → ≈ 3,055). Stack-specific material lives in dated, on-demand
+references under [ADR-002](docs/adr/ADR-002-stack-specific-references.md);
+every skill body stays under 1,400 words.
 
-**Release as MAJOR (3.0.0).** Under this changelog's own rule, each change
-below alters what an agent produces on the same input. No existing rule was
-removed.
+**Why MAJOR.** Under this changelog's own rule, each change below alters what
+an agent produces on the same input. No existing rule was removed.
 
 ### Changed
 
@@ -122,6 +123,17 @@ removed.
   `@1`, `@1.2` or `==2.*`; pin a full version.
 - The stack references are dated. Re-check them when a listed language or
   framework ships a major version.
+
+### Verification note
+
+CI passes on the release commit: repository validation, routing check (131
+prompts, 0 weak, 0 collisions), 150 tooling tests, adapter freshness, `.env`
+hygiene, ruff, markdown lint and secret scan. Engine, framework, protocol and
+agent facts in the new references were checked against primary documentation
+on 2026-10-22 and 2026-10-23; each reference names what it was checked against.
+`make evals-live` — whether agents *follow* the changed skills — was not run
+for this release: the authoring environment had no model credentials. Routing
+was verified statically only.
 
 ## [2.0.0] — 2026-10-22
 

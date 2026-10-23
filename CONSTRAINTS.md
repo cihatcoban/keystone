@@ -5,7 +5,7 @@ Keystone's own quality contract. Projects that install Keystone start from
 this repository only.
 
 Every row names the check that enforces it. "Current" was measured on
-2026-10-23 against `feat/close-ecc-gaps-round-3`. `n/a` rows state why the dimension
+2026-10-23 against `release/3.0.0`. `n/a` rows state why the dimension
 does not apply to a repository of process documentation and stdlib-only
 tooling.
 
