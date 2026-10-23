@@ -12,7 +12,8 @@ Checks
   8  CLAUDE.md and AGENTS.md bodies are identical
   9  every skill has an eval case with positive and negative prompts
  10  no duplicate description opening clause (routing collision smell)
- 11  templates and references referenced from skills exist
+ 11  backticked `references/…` and `templates/…` paths in skills, references,
+     commands, agents, templates, docs and the contract exist
  12  hook layer: registry schema, a guard per hook ID, every invariant mapped
      to a hook or a stated review-only reason, docs/hooks.md lists exactly the
      registry's IDs, manifests wired, no hooks/hooks.json (ADR-001)
@@ -171,6 +172,32 @@ def check_references(skills: dict[str, str]) -> None:
             for ref in set(re.findall(r"`references/([\w.-]+)`", text)):
                 if not (ROOT / "references" / ref).exists():
                     err(f"{rel(f)}: references missing file references/{ref}")
+
+
+POINTER = re.compile(r"`((?:references|templates)/[\w.-]+)`")
+POINTER_SOURCES = (
+    "skills/*/SKILL.md",
+    "references/*.md",
+    "commands/*.md",
+    "agents/*.md",
+    "templates/*.md",
+    "docs/**/*.md",
+    "CLAUDE.md",
+)
+
+
+def check_doc_pointers(root: Path) -> None:
+    """A pointer an agent follows must lead somewhere; a dead one invites invention."""
+    seen: set[Path] = set()
+    for pattern in POINTER_SOURCES:
+        for f in sorted(root.glob(pattern)):
+            if f in seen or not f.is_file():
+                continue
+            seen.add(f)
+            text = f.read_text(encoding="utf-8")
+            for target in sorted(set(POINTER.findall(text))):
+                if not (root / target).is_file():
+                    err(f"{f.relative_to(root)}: points to missing file {target}")
 
 
 def check_contract_parity() -> None:
@@ -394,6 +421,7 @@ def main() -> int:
     check_dir_frontmatter("commands", need_name=False)
     check_dir_frontmatter("agents", need_name=True)
     check_references(skills)
+    check_doc_pointers(ROOT)
     check_contract_parity()
     check_evals(skills)
 
