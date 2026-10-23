@@ -109,7 +109,9 @@ Always cover:
 | Regression | Every fixed bug, permanently |
 
 Where behavior is boundary-heavy, table-driven tests (one case per row) beat
-many near-identical test functions.
+many near-identical test functions. The table form, the focused-run command,
+fake time and generated inputs for the project's language:
+`references/test-idioms.md` — after copying what the existing tests do.
 
 ## Test quality
 

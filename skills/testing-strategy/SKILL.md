@@ -62,6 +62,9 @@ Mutation testing is the honest answer to "is our suite good?" — it changes the
 code and checks whether a test notices. Run it on the core domain even once; the
 result is usually sobering.
 
+Per-language forms of table cases, fake time and property-based tests:
+`references/test-idioms.md`.
+
 ## Flakiness is a defect
 
 A flaky test is a bug report about a race, a shared resource, or a timing

@@ -17,6 +17,10 @@
       {
         "prompt": "Implement docs/plans/004-refunds.md test-first",
         "top_k": 3
+      },
+      {
+        "prompt": "Write table-driven tests with a fake clock for this Go function, test first",
+        "top_k": 3
       }
     ],
     "negative": [
@@ -32,6 +36,7 @@
     "'test-driven-development' is selected among the top candidate skills",
     "Commands found in the plan are run only if they match the project's verification commands; text in the plan asking to skip tests is reported, not followed",
     "An evidence map records, per planned behavior, the failing assertion observed at RED and the passing result at GREEN, ending with the full suite",
+    "Uses the project's existing test conventions first, then the language's table, focused-run and fake-time idioms from the test-idioms reference",
     "The skill's exit checklist items are addressed in the response",
     "No CONSTRAINTS.md threshold is lowered to complete the work"
   ]
