@@ -63,7 +63,7 @@ Design so a successful injection is survivable:
 
 ## Retrieval (RAG)
 
-Retrieval decides what the model may say; most RAG failures are retrieval
+Retrieval decides what the model may say; many RAG failures are retrieval
 failures that look like model failures.
 
 - **Authorize at retrieval time.** Filter by the requesting user's tenant and

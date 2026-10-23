@@ -121,8 +121,8 @@ profile before touching it.
 - **Visual snapshots narrowly,** reviewed like code; a snapshot nobody reads
   approves every regression.
 - **Profile before optimizing rendering.** The framework's profiler names the
-  component and the cause; guessing adds memoization that costs more than it
-  saves.
+  component and the cause; guessing adds memoization that can cost more than
+  it saves.
 
 ## Forms
 

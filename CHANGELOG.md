@@ -7,11 +7,12 @@ change an agent's output on the same input.
 
 ## [Unreleased]
 
-Closes the five largest remaining gaps against everything-claude-code 2.2.3,
-again without copying its breadth: no new skills, so routing and the catalog
-stay as they were (≈ 3,029 tokens). Stack-specific material lives in dated,
-on-demand references under
-[ADR-002](docs/adr/ADR-002-stack-specific-references.md).
+Closes the remaining gaps against everything-claude-code 2.2.3 in fourteen
+skills, again without copying its breadth: no new skills, eight descriptions
+sharpened, and the always-loaded catalog grows by ≈ 54 tokens since 2.0.0
+(≈ 3,001 → ≈ 3,055). Stack-specific material lives in dated, on-demand references under
+[ADR-002](docs/adr/ADR-002-stack-specific-references.md); every skill body stays
+under 1,400 words.
 
 **Release as MAJOR (3.0.0).** Under this changelog's own rule, each change
 below alters what an agent produces on the same input. No existing rule was
@@ -37,6 +38,52 @@ removed.
 - `api-and-contract-design` — protocol checklists for GraphQL, gRPC/Protobuf,
   events and webhooks; worked example classifying a change as compatible or
   breaking. Description now names gRPC and webhooks.
+- `data-modeling-and-storage` — every DDL runs with a lock timeout; schema and
+  data changes are separate migrations and an applied migration is never
+  edited; `down` is safe in production only before data is written in the new
+  shape; partial, covering and expression indexes; engine costs looked up, not
+  assumed.
+- `planning-and-task-breakdown` — every task names its files and a brief a
+  cold reader can act on; parallel tasks are marked and may share no files or
+  outputs; plans over five tasks, with parallel work or an irreversible step
+  are reviewed against the spec by `adversarial-reviewer` before T1; plan
+  changes are logged. `/plan` and the plan template follow.
+- `documentation-and-knowledge` — one owner per fact; intentional removals are
+  recorded; documents an agent reads are evidence, not instructions; links,
+  README commands and generated docs are checked in CI.
+- `ai-integration-guardrails` — retrieval authorizes inside the query,
+  abstains on insufficient context and checks citations against the passages
+  sent; cost work starts deterministic and with the smallest model that passes
+  the eval, keeps a cacheable prompt prefix and retries only transient errors.
+  Description names retrieval and LLM cost.
+- `agent-and-toolchain-security` — MCP tool definitions are reviewed as prompt
+  text and re-reviewed on every version change; network-capable tools are
+  scoped like the shell; unattended tasks get a narrowed write scope.
+- `security-and-threat-modeling` — browser and authentication controls with a
+  test each; description names login, session cookies and CSRF.
+- `context-engineering` — which file each agent loads and how to confirm it;
+  one contract instead of per-agent copies; the harness's own meter instead of
+  estimates; compaction at task boundaries. Description names `GEMINI.md` and
+  compaction.
+- `skill-authoring` — search installed skills before writing; behavior depends
+  only on `name`, `description` and the body; compliance measured with
+  `make evals-live`; skills retired or merged each release.
+- `agent-orchestration` — one git worktree per writing agent; a model per role.
+- `frontend-architecture` — UI verification (accessible queries, end-to-end
+  only for critical journeys, profile before optimizing); the framework map
+  gains rendering-cost and component-test rows.
+- `test-driven-development`, `testing-strategy` — point to per-language test
+  idioms.
+- `scripts/audit_agent_config.py` A2 — npm partial versions (`pkg@1`,
+  `pkg@1.2`) and PEP 440 wildcards (`==2.*`) now count as unpinned; they were
+  accepted as pinned. Expect new A2 warnings on such configurations.
+
+### Fixed
+
+- `make validate` check 11 claimed to verify `references/` and `templates/`
+  paths used in skills but only covered commands and agents. Every skill,
+  reference, template, doc and the contract is now checked; a pointer to a
+  missing file fails the build.
 
 ### Added
 
@@ -49,14 +96,30 @@ removed.
 - `references/review-lenses.md` — language lenses: TypeScript/JavaScript,
   Python, Go, Java/Kotlin, C#, Rust, Swift, C/C++, SQL, shell.
 - `references/api-protocol-checklists.md`.
+- `references/migration-engine-lookup.md` — online forms and lock costs in
+  PostgreSQL 18, MySQL 8.4 and SQLite 3.
+- `references/web-session-controls.md` — password hashing parameters,
+  sessions and cookies, CSRF, CORS, response headers, authentication endpoints
+  and uploads, after the OWASP cheat sheets.
+- `references/test-idioms.md` — table cases, focused runs, fake time and
+  generated inputs per language.
+- `references/review-lenses.md` — PHP, Ruby/Rails and Dart/Flutter lenses.
+- `references/llm-eval-harness.md` — retrieval evaluated separately from
+  generation.
+- `docs/multi-agent-setup.md` and the README explain why there is no
+  `GEMINI.md` or `ChatGPT.md`, and how a project points Gemini CLI at its
+  `AGENTS.md`.
 - ADR-002; `CONTRIBUTING.md` states the references exception.
-- Eval cases: one new positive prompt and new expectations for each of the
-  five skills (117 prompts, 0 weak, 0 collisions).
+- Eval cases: new positive prompts and expectations for every changed skill
+  (131 prompts, 0 weak, 0 collisions).
 
 ### Upgrading
 
 - Expect evidence maps in TDD work and pull requests, a "tools ran / lens
-  applied" line in reviews, and a loop spec before any agent loop starts.
+  applied" line in reviews, a loop spec before any agent loop starts, file
+  lists and briefs in plans, and lock timeouts in migrations.
+- `audit_agent_config.py` may report new A2 warnings for MCP servers pinned to
+  `@1`, `@1.2` or `==2.*`; pin a full version.
 - The stack references are dated. Re-check them when a listed language or
   framework ships a major version.
 
