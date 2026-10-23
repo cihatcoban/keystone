@@ -65,6 +65,30 @@ because it executes with your identity:
 Review updates the same way: a version bump of a hook-shipping plugin is new
 code that runs unattended.
 
+## MCP: tool definitions are prompt text
+
+An MCP server's tool names, descriptions and parameter docs enter the model's
+context next to your instructions. Admission review therefore reads them as
+prompts, not as API docs:
+
+- A description that tells the model to read unrelated files, include
+  credentials, or send data to another tool is a finding — reject the server.
+- The tool list can change after approval: the protocol lets a connected server
+  announce a new tool list, and any release can ship different tools. The pin
+  freezes what you reviewed; every version change is a new review.
+- Tools that reach the network — fetch, post, create an issue — are
+  exfiltration paths. Give them the same scrutiny as the shell, and do not
+  allow-list them wholesale.
+
+## Limit what a task can write
+
+For a focused or unattended task, narrow writes to the paths the task owns:
+the harness's path rules (in Claude Code, `Edit(...)` deny rules for paths the
+task must not touch; a deny always wins over an allow), a separate worktree per
+agent, or a sandbox. Path rules cover the agent's file tools and the shell file
+commands the harness recognizes — not a script the agent runs that opens files
+itself. Only a sandbox bounds that.
+
 ## Audit mechanically
 
 `scripts/audit_agent_config.py` reads Claude Code, Gemini CLI, Codex, Cursor and
@@ -74,7 +98,7 @@ reports, without printing values:
 | Code | Finding | Level |
 |---|---|---|
 | A1 | Approvals or sandbox switched off wholesale | error |
-| A2 | MCP server from an unpinned package or image, or over plain http | warning |
+| A2 | MCP server from a version range, tag or image tag instead of an exact version or digest, or over plain http | warning |
 | A3 | A literal credential in agent configuration | error |
 | A4 | A hook or MCP command that pipes a download into a shell | error |
 | A5 | A `.env` exists and no agent config denies reading it | warning |
@@ -97,7 +121,10 @@ or `.codex/hooks.json` is code you are about to run.
 ## Exit checklist
 
 - [ ] No wholesale approval bypass, YOLO mode or `Bash(*)` outside a sandbox
-- [ ] Every MCP server, plugin and hook reviewed, pinned and switchable alone
+- [ ] Every MCP server, plugin and hook reviewed, pinned and switchable alone;
+      MCP tool descriptions read as prompts; re-reviewed on every version change
+- [ ] Network-capable tools scoped like the shell; write scope narrowed for
+      unattended tasks
 - [ ] Agent credentials are the agent's own, scoped and revocable
 - [ ] Secret files denied to file tools; the shell route considered
 - [ ] `audit_agent_config.py` reports 0 errors, warnings explained
