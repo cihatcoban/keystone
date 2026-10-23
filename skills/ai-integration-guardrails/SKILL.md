@@ -1,6 +1,6 @@
 ---
 name: ai-integration-guardrails
-description: Puts an LLM into a product safely - bounded role, schema-validated output, prompt-injection defense, cost caps, evals, human decision points. Use when a model enters a product or automated path. Triggers - add an LLM, AI feature, prompt injection, should the model decide, hallucination, RAG, structured output.
+description: Puts an LLM into a product safely - bounded role, schema-validated output, prompt-injection defense, retrieval, cost, evals, human decision points. Use when a model enters a product path. Triggers - add an LLM, AI feature, prompt injection, should the model decide, hallucination, RAG, LLM cost, structured output.
 ---
 
 # AI Integration Guardrails
@@ -61,6 +61,26 @@ Design so a successful injection is survivable:
 5. **Treat retrieved content as hostile** — RAG with untrusted sources is the
    highest-risk pattern in common use.
 
+## Retrieval (RAG)
+
+Retrieval decides what the model may say; most RAG failures are retrieval
+failures that look like model failures.
+
+- **Authorize at retrieval time.** Filter by the requesting user's tenant and
+  permissions inside the query, not after ranking. A passage the user may not
+  read must never reach the prompt; filtering the answer afterwards is too late.
+- **Send fewer, better passages.** Rerank or filter candidates before the call;
+  top-k by raw similarity carries noise that the model will cite.
+- **Make "not enough context" an answer.** When nothing relevant is retrieved,
+  return that — with what was searched — instead of letting the model answer
+  from its own memory.
+- **Cite only what was retrieved,** and check mechanically that each cited
+  source is among the passages sent.
+- **Evaluate retrieval separately** from generation — context recall and
+  precision, faithfulness, abstention (`references/llm-eval-harness.md`).
+- **Retrieved text is untrusted** (prompt injection above), including your own
+  documents once users can write to them.
+
 ## Cost, latency, availability
 
 - Hard caps per request, per user, per day. Exceeding a cap fails loudly; it
@@ -69,6 +89,20 @@ Design so a successful injection is survivable:
   worse availability than your database — `distributed-systems-and-resilience`
   applies fully.
 - Cache by normalized input where semantics allow.
+- **Deterministic first.** Where rules, parsers or regular expressions handle
+  most inputs, run them first and send only the residue to the model, with a
+  confidence check deciding which is which.
+- **Smallest model that passes the eval,** escalating to a larger one on low
+  confidence or failed validation — decided by eval results, not by habit.
+- **Keep the prompt prefix stable** — instructions, tool definitions and
+  examples first, the changing input last — so the provider's prompt caching
+  can reuse it. Confirm the hit rate in the provider's usage counters; cached
+  context still needs the same authorization as uncached.
+- **Retry only what can succeed on retry**: timeouts, rate limits, server
+  errors — with backoff and a ceiling. A validation or authentication error
+  retried is the same error, paid for again.
+- Non-interactive bulk work goes through the provider's batch interface where
+  one exists, not a loop of interactive calls.
 - Never put a model call in a hot path that must be fast unless you have
   measured its tail latency and accepted it.
 - Degrade gracefully: the feature disappears or falls back to a rule; the
@@ -114,7 +148,11 @@ failure, and they are most convincing exactly where they matter most.
 - [ ] Output never reaches an interpreter, query, or path unescaped
 - [ ] Tool access allow-listed; user's permissions enforced per call
 - [ ] Irreversible actions require human confirmation
-- [ ] Cost caps, timeout and fallback in place
+- [ ] Cost caps, timeout and fallback in place; retries limited to transient
+      errors; deterministic handling and the smallest passing model used first
+- [ ] Retrieval filters by the user's permissions in the query; insufficient
+      context returns an abstention; citations checked against the passages
+- [ ] Retrieval metrics gated separately from answer quality
 - [ ] Prompts versioned in the repository; calls logged with versions
 - [ ] Eval set exists and runs in CI, including injection and edge cases
 - [ ] Generated content is labeled and correctable
