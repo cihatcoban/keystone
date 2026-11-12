@@ -7,6 +7,22 @@ change an agent's output on the same input.
 
 ## [Unreleased]
 
+## [3.0.3] — 2026-11-12
+
+Plugin directory review fixes. No skill rule changed.
+
+### Changed
+
+- `scripts/audit_agent_config.py --user` no longer reads `~/.claude.json`,
+  which stores the Claude Code sign-in. User-scoped MCP servers kept there are
+  no longer audited; `~/.claude/settings.json` still is.
+
+### Removed
+
+- `documentationUrl` and `supportUrl` from `.claude-plugin/plugin.json`: Claude
+  Code does not recognize them. `homepage`, `repository` and
+  `privacyPolicyUrl` remain.
+
 ## [3.0.2] — 2026-10-23
 
 Directory listing links. No skill rule changed.
