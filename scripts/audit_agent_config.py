@@ -9,7 +9,9 @@ Run it in any project — standard library only, no network, read-only:
 
 Reads, when present: .claude/settings*.json, .mcp.json, .gemini/settings.json,
 .codex/config.toml, .codex/hooks.json, .cursor/mcp.json, .vscode/mcp.json, and
-with --user their counterparts under the home directory.
+with --user their counterparts under the home directory. ~/.claude.json is
+deliberately skipped: it holds the Claude Code sign-in, and this script never
+opens a file whose job is to store the user's credentials.
 
 Errors (exit 1):
   A1  approvals or sandbox switched off wholesale (bypass, yolo, full access)
@@ -57,7 +59,6 @@ PROJECT_FILES = (
 )
 USER_FILES = (
     "~/.claude/settings.json",
-    "~/.claude.json",
     "~/.gemini/settings.json",
     "~/.codex/config.toml",
     "~/.codex/hooks.json",
@@ -127,9 +128,6 @@ def mcp_servers(data: dict) -> dict:
     for key in ("mcpServers", "mcp_servers", "servers"):
         if isinstance(data.get(key), dict):
             servers.update(data[key])
-    for project in (data.get("projects") or {}).values():  # ~/.claude.json
-        if isinstance(project, dict) and isinstance(project.get("mcpServers"), dict):
-            servers.update(project["mcpServers"])
     return servers
 
 
