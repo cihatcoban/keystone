@@ -242,7 +242,7 @@
       ],
       "warn": "info",
       "strict": "info",
-      "summary": "Loads .keystone/handoff.md and the recorded state into a new or compacted session."
+      "summary": "Loads the operating contract (Claude Code), .keystone/handoff.md and the recorded state into a new or compacted session."
     }
   ],
   "review_only_invariants": {
