@@ -149,6 +149,18 @@ class SkillCountClaimTest(unittest.TestCase):
         vr.check_count_claims(self.base, 34)
         self.assertEqual(vr.errors, [])
 
+    def test_readme_naming_another_project_errors(self) -> None:
+        self.write("README.md", "Intro.\n\n| Keystone | everything-claude-code |\n")
+        vr.check_readme_stands_alone(self.base)
+        self.assertEqual(len(vr.errors), 1)
+        self.assertIn("README.md:3", vr.errors[0])
+
+    def test_readme_without_other_projects_is_clean(self) -> None:
+        self.write("README.md", "Keystone ships 34 skills.\n")
+        self.write("docs/compare.md", "everything-claude-code ships 311 skills.\n")
+        vr.check_readme_stands_alone(self.base)
+        self.assertEqual(vr.errors, [])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -7,6 +7,15 @@ change an agent's output on the same input.
 
 ## [Unreleased]
 
+## [3.0.4] — 2026-11-13
+
+README wording. No skill rule changed.
+
+### Changed
+
+- The README states Keystone's own catalog size and no longer compares it with
+  another project. `make validate` check 14 keeps the README from naming one.
+
 ## [3.0.3] — 2026-11-12
 
 Plugin directory review fixes. No skill rule changed.

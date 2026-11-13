@@ -18,6 +18,7 @@ Checks
      to a hook or a stated review-only reason, docs/hooks.md lists exactly the
      registry's IDs, manifests wired, no hooks/hooks.json (ADR-001)
  13  skill counts stated in manifests, README and docs match the skills shipped
+ 14  the README names no other project to compare Keystone with
 
 Exit code 1 on any error. Warnings never fail the build.
 """
@@ -226,6 +227,16 @@ def check_count_claims(root: Path, count: int) -> None:
                             f"{f.relative_to(root)}:{n}: says {claim} skills, "
                             f"{count} exist"
                         )
+
+
+def check_readme_stands_alone(root: Path) -> None:
+    """The README describes Keystone by its own measurements, not against others."""
+    readme = root / "README.md"
+    if not readme.is_file():
+        return
+    for n, line in enumerate(readme.read_text(encoding="utf-8").splitlines(), 1):
+        if OTHER_PROJECT.search(line):
+            err(f"README.md:{n}: names another project; describe Keystone on its own")
 
 
 def check_contract_parity() -> None:
@@ -451,6 +462,7 @@ def main() -> int:
     check_references(skills)
     check_doc_pointers(ROOT)
     check_count_claims(ROOT, len(skills))
+    check_readme_stands_alone(ROOT)
     check_contract_parity()
     check_evals(skills)
 
