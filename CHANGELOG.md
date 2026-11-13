@@ -7,6 +7,21 @@ change an agent's output on the same input.
 
 ## [Unreleased]
 
+## [3.0.5] — 2026-11-13
+
+Operating contract in Claude Code. No skill rule changed.
+
+### Fixed
+
+- Claude Code never loaded Keystone's operating contract: it reads `CLAUDE.md`
+  from the project, not from a plugin, so the ten invariants and the §4
+  triggers that skills, commands and agents cite were missing, and a citation
+  of `CLAUDE.md` §4 landed on the project's own file. The `session-start` hook
+  now adds the contract in Claude Code, labelled so those citations resolve to
+  it, and skips it when the project's `CLAUDE.md` is the same text. Codex and
+  Gemini CLI are unchanged. Costs ≈ 1,100 tokens per session; with
+  `KEYSTONE_HOOK_PROFILE=off` the contract is not added.
+
 ## [3.0.4] — 2026-11-13
 
 README wording. No skill rule changed.

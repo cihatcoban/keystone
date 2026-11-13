@@ -74,6 +74,40 @@ def _age(path: Path) -> tuple[str, bool]:
     return (f"{hours:.0f} hour(s) ago" if hours >= 1 else "minutes ago"), False
 
 
+def _read(path: Path) -> str | None:
+    """A file's text, or None when it is absent or unreadable.
+
+    A hook must never fail the session it serves; the caller decides what a
+    missing file means.
+    """
+    try:
+        return path.read_text(encoding="utf-8")
+    except OSError:
+        return None
+
+
+def _contract(event: Event, keystone_root: Path) -> str:
+    """Keystone's operating contract, for harnesses that do not load it.
+
+    Claude Code loads a CLAUDE.md from the project, never from a plugin, so
+    without this the invariants and the §4 triggers that skills, commands and
+    agents cite never reach the agent. Gemini CLI loads AGENTS.md through
+    `contextFileName`. Skipped when the project's own CLAUDE.md is the same
+    text, as in Keystone itself, so the contract is never loaded twice.
+    """
+    if event.harness != "claude-code":
+        return ""
+    text = _read(keystone_root / "CLAUDE.md")
+    if text is None or _read(event.root / "CLAUDE.md") == text:
+        return ""
+    return (
+        "Keystone operating contract (Keystone's CLAUDE.md). Where a Keystone "
+        "skill, command or agent cites `CLAUDE.md` §N, it means this text, not "
+        "the project's own CLAUDE.md. The project's CLAUDE.md wins only where it "
+        "is stricter.\n\n" + text.strip()
+    )
+
+
 def handoff_load(event: Event, ctx: dict) -> list[Finding]:
     root = event.root
     verify_cmd = f'python3 "{ctx["keystone_root"] / "scripts" / "verify.py"}"'
@@ -81,6 +115,9 @@ def handoff_load(event: Event, ctx: dict) -> list[Finding]:
         f"Keystone is active (hook profile: {ctx['profile']}). Keystone root: "
         f"{ctx['keystone_root']} — /verify runs {verify_cmd}."
     ]
+    contract = _contract(event, ctx["keystone_root"])
+    if contract:
+        parts.append(contract)
     note = root / HANDOFF
     if note.is_file():
         age, stale = _age(note)

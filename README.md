@@ -191,7 +191,7 @@ The operating contract is one text under two names, kept byte-identical by
 
 | Agent | Reads | Check with |
 |---|---|---|
-| Claude Code | `CLAUDE.md` (`AGENTS.md` only when no `CLAUDE.md` exists) | `/context` |
+| Claude Code | The plugin's session-start hook adds Keystone's `CLAUDE.md` (Claude Code loads no `CLAUDE.md` from a plugin); your project's own `CLAUDE.md` loads as usual | `/context` |
 | Codex (OpenAI, also in ChatGPT) | `AGENTS.md` | `/status` |
 | Gemini CLI | `AGENTS.md`, named by `contextFileName` in `gemini-extension.json` | `/memory show` |
 
@@ -331,5 +331,5 @@ Licensed under the [Apache License 2.0](LICENSE). See [NOTICE](NOTICE).
 [license-badge]: https://img.shields.io/badge/license-Apache%202.0-blue.svg
 [ci-badge]: https://github.com/cihatcoban/keystone/actions/workflows/validate.yml/badge.svg
 [ci]: https://github.com/cihatcoban/keystone/actions/workflows/validate.yml
-[version-badge]: https://img.shields.io/badge/version-3.0.4-informational
+[version-badge]: https://img.shields.io/badge/version-3.0.5-informational
 [skills-badge]: https://img.shields.io/badge/skills-34-success

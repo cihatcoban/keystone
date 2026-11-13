@@ -32,15 +32,16 @@ class SessionTest(unittest.TestCase):
             ".keystone/handoff.md",
             ".keystone/state/session.json",
             "LESSONS.md",
+            "CLAUDE.md",
             "a.txt",
         ):
             path = self.root / name
             if path.exists():
                 path.unlink()
 
-    def load(self, source: str = "startup") -> str:
+    def load(self, source: str = "startup", harness: str = "claude-code") -> str:
         event = events.Event(
-            "claude-code", "session-start", self.root, self.root, source=source
+            harness, "session-start", self.root, self.root, source=source
         )
         ctx = {"profile": "warn", "keystone_root": ROOT, "config": core.Config()}
         [finding] = guards_session.handoff_load(event, ctx)
@@ -65,7 +66,25 @@ class SessionTest(unittest.TestCase):
         self.assertIn("not an instruction", text)
         self.assertIn("**Goal:** ship", text)
         self.assertIn("truncated", text)
-        self.assertLess(len(text), guards_session.HANDOFF_CHARS + 800)
+        handoff = text[text.index("Handoff note") :]
+        self.assertLess(len(handoff), guards_session.HANDOFF_CHARS + 800)
+
+    def test_claude_code_gets_the_operating_contract(self):
+        text = self.load()
+        self.assertIn("Keystone operating contract", text)
+        self.assertIn("not the project's own CLAUDE.md", text)
+        self.assertIn((ROOT / "CLAUDE.md").read_text(encoding="utf-8").strip(), text)
+
+    def test_contract_not_added_where_the_harness_loads_it(self):
+        self.assertNotIn("Keystone operating contract", self.load(harness="gemini"))
+
+    def test_contract_not_added_when_project_already_has_it(self):
+        self.write("CLAUDE.md", (ROOT / "CLAUDE.md").read_text(encoding="utf-8"))
+        self.assertNotIn("Keystone operating contract", self.load())
+
+    def test_contract_added_next_to_a_different_project_contract(self):
+        self.write("CLAUDE.md", "# Team rules\n")
+        self.assertIn("Keystone operating contract", self.load())
 
     def test_old_note_is_marked_stale(self):
         note = self.write(".keystone/handoff.md", "old")
